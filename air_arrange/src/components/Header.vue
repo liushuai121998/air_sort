@@ -34,6 +34,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .header{
+    position: relative;
+    z-index: 888;
     height: 30px;
     background-color: gray;
     line-height: 30px;

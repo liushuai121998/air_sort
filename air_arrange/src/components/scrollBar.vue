@@ -16,6 +16,7 @@
 <style>
   .scroll-bar{
     position: absolute;
+    z-index: 999;
     right: 45px;
     top: 32px;
     width: 10px;
