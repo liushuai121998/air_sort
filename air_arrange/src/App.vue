@@ -12,6 +12,14 @@ import sideBar from './components/sideBar'
 import tableContent from './components/tableContent'
 export default {
   name: 'app',
+  data () {
+    return {
+     
+    }
+  },
+  methods: {
+    
+  },
   components: {'v-header': header, 'side-bar': sideBar, 'table-content': tableContent}
 }
 </script>

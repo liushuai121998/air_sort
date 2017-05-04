@@ -10,6 +10,7 @@
   export default {
     mounted () {
         $scrollBar.scrollBar('.scroll', '.scrollTbody')
+        $scrollBar.mouseScroll('.scroll', '.scrollTbody')
     }
   }
 </script>
@@ -17,8 +18,9 @@
   .scroll-bar{
     position: absolute;
     z-index: 999;
-    right: 45px;
-    top: 32px;
+    /*right: 45px;
+    top: 32px;*/
+    left: 0;
     width: 10px;
     height: 100%;
     background: #bfa;

@@ -1,21 +1,21 @@
 <template>
   <div class='wrap'>
     <div class='contentWrap'>
-        <div class='theadWrap'>
+        <div class='theadWrap scrollX'>
             <table>
               <thead>
                 <tr>
-                  <th v-for='item in thLeftData' :style='{width: item.width}'>
+                  <th v-for='item in thLeftData' :style='{width: item.width}' @click='sortTable'>
                     <div>{{item.title}}</div>
                   </th>
                 </tr>
               </thead>  
             </table>
         </div> 
-        <div class='scrollTbody'>
+        <div class='scrollTbody scrollX'>
           <table>
               <tbody>
-                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}">
+                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr'>
                   <td :style='{width: "44px"}'>{{index + 1}}</td>
                   <td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}'>{{str}}</td>
                 </tr>
@@ -39,18 +39,21 @@
       <div class='scrollTbody'>
         <table>
           <tbody>
-                <tr v-for='item in fixData'>
-                  <td v-for='(str, key) in item' :style='{width: fixTdWidth[key]}'>{{str}}</td>
+                <tr v-for='(item, index) in fixData'>
+                  <td v-for='(str, key) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</td>
                 </tr>
           </tbody>
         </table>
       </div>
-      <scroll-bar></scroll-bar>
     </div>
+    <scroll-bar></scroll-bar>
+    <scroll-x-bar></scroll-x-bar>
   </div>
+  
 </template>
 <script>
   import scrollBar from './scrollBar'
+  import scrollXBar from './scrollXBar'
   export default {
     data () { 
       return {
@@ -65,7 +68,6 @@
         fixData: null,
         temp: null,
         fixTemp: null,
-        // fixTdArr: []  
         fixTdWidth: {
           "enterStart": "54px",
           "enterFinish": "54px",
@@ -74,66 +76,205 @@
           "makeFinish1": "53px",
           "makeFinish2": "55px"
         },
-        localArr: []  
+        localArr: [],
+        // fixData随机显示颜色的索引
+        randomIndexArr: [],
+        strRandomArr: [],
+        // 选中tr的indexArr
+        selectIndexArr: [],
+        // 选中的tr
+        selectTrArr: [],
+        // 是否点击了机位这个表头
+        isFlightClick: false
       }
     },
     created () {
-      this.$http.get('/api/data')
-        .then(res => {
-          // 请求的数据
-          this.tdData = res.data.data
-          // 第一个数据同时发生了变化, 可以通过这个来模拟数据的变化
-          // this.temp = this.tdData[0]
-          // let count = 0
-          // for(var n in this.temp){
-          //   count++
-          //   let temp = this.thLeftData[count]
-          //   this.temp[n] = temp.width
-          // }
-          // console.log(this.tdData)
-        })
-      this.$http.get('/api/fix')
-        .then(res => {
-          this.fixData = res.data.data
-          })  
+      // this.$http.get('/api/data')
+      //   .then(res => {
+      //     // 请求的数据
+      //     this.tdData = res.data.data
+      //   })
+      
+      this.tdData = this.$store.state.data.contentData
+
+      // this.$http.get('/api/fix')
+      //   .then(res => {
+      //     this.fixData = res.data.data
+      //   })
+      this.fixData = this.$store.state.data.fixData
+
+        // fixData中的tr随机
+      this.randomIndexArr = this.$store.state.arr 
+      // console.info(this.randomIndexArr.indexOf(44))  
+      // fixData中的tr中的td随机
+      this.strRandomArr = this.$store.state.strRandomArr 
+
     },
     mounted () {
-      this.setInter()
+      // 每3秒刷新一次,之前的增删改都失效？？？？？？
+      // this.setInter()
+      
     },
     methods: {
+      // WebSockets
       // 模拟数据发生变化
       setInter () {
         this.timeId1 = setInterval(() => {
           this.$http.get('/api/data')
           .then(res => {
             this.tdData = res.data.data
+            //this.tdData = this.$store.state.data
             // 随机数
             let random = Math.round(Math.random()*150)
             let randomArr = ['flightState', 'task']
             let randomStr = randomArr[Math.round(Math.random())]
-            let randomFlight = ['到达/延误', '到达/无', '前起/无']
+            // let randomFlight = ['到达/延误', '到达/无', '前起/无']
             let randomObj = {
-              'flightState': randomFlight[Math.round(Math.random()*2)],
+              'flightState': '到达/延误',
               'task': '补班'
             }
             /// 模拟动态数据的变化(结合离线存储技术localStorage)
             for(var n in this.tdData[random]){
               if(n === randomStr){
                 let local = JSON.parse(localStorage.getItem('addItem'))
+                
                 if(local){
                   for(var i=0, len=local.length; i<len; i++){
                     this.tdData[(local[i].random)][(local[i].n)] = randomObj[(local[i].randomStr)]
                   }
+                  // 存储的数据大于10条, 清除定时器
+                  if(local.length > 10){
+                  clearInterval(this.timeId1)
+                }
                 }
                 this.tdData[random][n] = randomObj[randomStr]
                 let obj = {random, n, randomStr}
                 this.localArr.push(obj)
                 localStorage.setItem('addItem', JSON.stringify(this.localArr))
-                
-              }
+                }
             }
           })
         }, 5000)
+      },
+      /*选中的td*/
+      selectTr (ev) {
+
+        ev = ev || event
+         // 点击删除按钮之后，下一次删除需要把之前的给清空？？？？？？？？ 已解决
+        if(this.$store.state.isClickDel) {
+          // 需要再次更新isClickDel
+          this.$store.commit('CHANGE_CLICK_STATE') 
+          this.selectIndexArr = []
+          this.selectTrArr = []
+        }
+
+        // console.log(ev.target.parentNode.children[0].style.background = 'red')
+        // 切换点击的状态
+        if(!ev.target.isClick) {
+          ev.target.isClick = true
+          ev.target.parentNode.id = 'selectTr'
+        }else {
+          ev.target.isClick = !ev.target.isClick
+          ev.target.parentNode.id = ''
+        }
+
+
+       
+        
+        // let tdNodes = ev.target.parentNode.children
+        // for(let i=0, len=tdNodes.length; i<len; i++){
+        //   // tdNodes[i].innerHTML = '-'
+        // }
+        
+        let index = Array.from(document.querySelectorAll('.scrollX tr')).indexOf(ev.target.parentNode)
+        if(this.selectIndexArr.indexOf(index) < 0) {
+          this.selectIndexArr.push(index)
+        }// else if(this.selectIndexArr.indexOf(index) > 0 && !ev.target.parentNode.id){
+          // this.selectIndexArr.splice(index, 1)
+        // }
+        if(this.selectTrArr.indexOf(ev.target.parentNode) < 0) {
+          // console.log('iiiiiiii___________')
+          this.selectTrArr.push(ev.target.parentNode)
+        }// else if(this.selectTrArr.indexOf(ev.target.parentNode) >= 0  && !ev.target.parentNode.id){
+        //   console.log('bilibili___________', ev.target.parentNode.id)
+        //   let _index = this.selectTrArr.indexOf(ev.target.parentNode)
+        //   this.selectTrArr.splice(_index, 1)
+        // }
+        // 将选中的tr保存到store
+        this.$store.commit('SELECT_TR', this.selectTrArr)
+
+        // 将索引保存到store
+        this.$store.commit('SELECT_TR_INDEX', this.selectIndexArr)
+      },
+      // 表格排序
+      sortTable (ev) {
+        this.isFlightClick = true
+        this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
+
+
+        // ev.target
+        let thNodes = document.getElementsByTagName('tr')[0].getElementsByTagName('th')
+        let index = Array.from(thNodes).indexOf(ev.target.parentNode)
+        if(index === -1) {
+          index = 0
+        }
+        console.log(index)
+        let sortArr = []
+        let trNodes = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')
+
+        for(let i=0, len=trNodes.length; i<len; i++) {
+          let tdNodes = trNodes[i].getElementsByTagName('td')
+          // tdNodes[index].style.background='#bbf'
+          let str = tdNodes[index].innerHTML
+
+          if(ev.target.innerHTML === '机位') {
+            if(tdNodes[index].children[0]) {
+              str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
+              console.log(str)
+            }
+          }
+
+          if(ev.target.innerHTML === '机号') {
+            // 去除前面的字母B
+            console.log('去除前面的字母B')
+            str = tdNodes[index].innerHTML.substring(1)
+          }
+
+          if(ev.target.innerHTML === '主航班号' || ev.target.innerHTML === '共享航班号') {
+            str = tdNodes[index].innerHTML[0].charCodeAt()
+          }
+
+          // Number(tdNodes[index].innerHTML) 将字符串转化为数字
+          sortArr.push({index: i, num: Number(str)})
+          
+        }
+
+        let length = sortArr.length
+
+        // 降序
+        for(let j=0; j<length-1; j++) {
+          for(let h=j+1; h<length; h++) {
+            if(sortArr[j]['num']>sortArr[h]['num']){//如果前面的数据比后面的大就交换  
+                let temp=sortArr[j];  
+                sortArr[j]=sortArr[h];  
+                sortArr[h]=temp;  
+            }  
+          }
+        }
+
+        // 通过sortArr来调整tr在数据中的顺序？？？？？
+        // console.log(sortArr)
+        // console.log(this.tdData[12])
+        this.$store.commit('SORT_TABLE', sortArr)
+        // 解决v-for强制刷新列表 this.$forceUpdate()
+
+        this.$forceUpdate()
+
+          // .then(() => {
+          //   trNodes[0].offsetLeft
+          //   console.log(document.documentElement.clientHeight)
+          //    //location.reload() 
+          // })
       }
     },
     computed: {
@@ -168,12 +309,16 @@
           return this.temp
       }
     },
-    components: {'scroll-bar': scrollBar}
+    components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar}
   }
 </script>
 <style>
   .wrap{
     margin-left: 80px;
+  }
+  .contentWrap {
+    width: 1376px;
+    overflow: hidden;
   }
   .contentWrap, .rightWrap{
     float: left;
@@ -217,5 +362,18 @@
   .preFlight td{
     background-color: #b8ff3f;
     color: black;
+  }
+  .fixDataBac{
+    background: #f5501f;
+  }
+  .noFixDataBac{
+    background: #3b3b3b;
+  }
+  /*搜索索引*/
+  .searchTd td {
+    background: #bfa;
+  }
+  #selectTr td {
+    background: pink;
   }
 </style>
