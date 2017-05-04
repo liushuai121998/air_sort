@@ -83,9 +83,7 @@
         // 选中tr的indexArr
         selectIndexArr: [],
         // 选中的tr
-        selectTrArr: [],
-        // 是否点击了机位这个表头
-        isFlightClick: false
+        selectTrArr: []
       }
     },
     created () {
@@ -208,16 +206,17 @@
       },
       // 表格排序
       sortTable (ev) {
-        this.isFlightClick = true
-        this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
-
-
+        // 在输入框检索sortTable无效，这个需求不太合理，？？？？？怎么解决
+        if(this.$store.state.isFlightClick) {
+          return
+        }
         // ev.target
         let thNodes = document.getElementsByTagName('tr')[0].getElementsByTagName('th')
         let index = Array.from(thNodes).indexOf(ev.target.parentNode)
         if(index === -1) {
           index = 0
         }
+
         console.log(index)
         let sortArr = []
         let trNodes = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')

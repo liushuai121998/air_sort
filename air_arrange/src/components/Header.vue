@@ -19,7 +19,8 @@ export default {
         return {
           inputValue: '',
           arr: [],
-          tdFlightData: []
+          tdFlightData: [],
+          isFlightClick: false
         }
     },
     mounted () {
@@ -91,12 +92,14 @@ export default {
             this.$store.commit('CHANGE_CLICK_STATE')
             this.$store.commit('DELETE_DATA', this.arr)
             ev.target.parentNode.firstChild.value = ''
-            
+
           }
           
         },
         // 搜索框输入检索相关的列表
         textChange () {
+          this.isFlightClick = true
+          this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
           this.highLight()
         },
         /*高亮显示输入框选择的文本*/
