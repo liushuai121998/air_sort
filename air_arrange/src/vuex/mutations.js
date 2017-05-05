@@ -22,21 +22,22 @@ export default {
     /**
      * 修改
      * @param {*} state 
-     * @param {*} arr 
+     * @param {*} num 机位号 
      */
-    SET_DATA(state, arr) {
-        for (let i = 0, len = arr.length; i < len; i++) {
-            state.data.contentData[arr[i] - 1]['task'] = '补班'
-        }
+    SET_DATA(state, num) {
+        // for (let i = 0, len = arr.length; i < len; i++) {
+        //     state.data.contentData[arr[i] - 1]['task'] = '补班'
+        // }
+
 
         // 将选中的tr删除之后将id值 置空
         let l = state.selectTrArr.length
         for (let h = 0; h < l; h++) {
-            state.selectTrArr[h].contentEditable = 'true'
-                // 
+            // state.selectTrArr[h].contentEditable = 'true'
+            // 
             state.selectTrArr[h].onblur = function() {
                 if (confirm('确定修改吗？')) {
-                    this.contentEditable = 'false'
+                    // this.contentEditable = 'false'
                 }
             }
 
@@ -47,15 +48,19 @@ export default {
      * @param {*} state 
      * @param {*} arr 
      */
-    DELETE_DATA(state, arr) {
-        console.log(state.selectIndexArr, 'top')
-            // 根据输入的值删除对应的tr
-        for (let i = 0, len = arr.length; i < len; i++) {
-            state.data.contentData.splice(arr[i] - 1, 1)
-        }
+    DELETE_DATA(state, delInfo) {
+        //console.log(state.selectIndexArr, 'top')
+        // 根据输入的值删除对应的tr
+        //for (let i = 0, len = arr.length; i < len; i++) {
+        // 这是根据索引删除
+        // state.data.contentData.splice(arr[i] - 1, 1)
+        //}
         //console.log(state.selectIndexArr.length)
+        if (state.data.contentData[delInfo['j']]['airPos'] == delInfo['text']) {
+            state.data.contentData.splice(delInfo['j'], 1)
+        }
 
-        // 选中的tr(点击选中的) 删除选中的tr
+        // 选中的tr(点击选中的) 删除选中的tr   新添加的选中了删除不了？？？
         let length = state.selectIndexArr.length
         console.log(state.selectIndexArr, '_______________________________________________')
         for (let j = 0; j < length; j++) {
@@ -111,6 +116,7 @@ export default {
         for (let i = 0, len = sortArr.length; i < len; i++) {
             state.data.contentData[i] = data[sortArr[i].index]
         }
+
     },
     /**
      * 是否点击了机位这个表头
@@ -119,5 +125,22 @@ export default {
      */
     IS_FLIGHT_CLICK(state, isFlightClick) {
         state.isFlightClick = isFlightClick
+    },
+    UPDATE_TD(state, tdInfo) {
+        state.data.contentData[tdInfo.j]['airPos'] = tdInfo.text
     }
+    /**
+     * 高亮显示的tr
+     */
+    // HIGH_LIGHT_TR(state, trNode) {
+    //     state.highLightTr.push(trNode)
+    //         // console.log(state.highLightTr)
+    // },
+    /***
+     * 将高亮的tr置空
+     */
+    // HIGH_LIGHT_TR_EMPTY(state) {
+    //     state.highLightTr = []
+    //     console.log(state.highLightTr)
+    // }
 }

@@ -20,7 +20,9 @@ export default {
           inputValue: '',
           arr: [],
           tdFlightData: [],
-          isFlightClick: false
+          isFlightClick: false,
+          isInputChange: true,
+          showFirstIndex: 0 
         }
     },
     mounted () {
@@ -28,7 +30,19 @@ export default {
     },
     methods: {
         getInputValue (ev) {
-          this.inputValue = ev.target.value
+          // 每次变化将state中高亮的tr置空
+          // this.$store.commit('HIGH_LIGHT_TR_EMPTY')
+          // 失去焦点 
+          this.isInputChange = false
+          // 失去焦点时再次触发高亮
+          // this.highLight()
+          // //console.log($(this.$store.state.highLightTr[0]))
+          // for(let i=0, len=this.$store.state.highLightTr.length; i<len; i++) {
+          //   $(this.$store.state.highLightTr[i]).children().css({
+          //     background: '#bfa'
+          //   })
+          // }
+          // ev.target.value = ''
         },
       
         moveToDes(arr) {
@@ -75,8 +89,7 @@ export default {
         setData (ev) {
           // 修改数据
           this.getValue(this.inputValue)
-          this.moveToDes(this.arr)
-          this.$store.commit('SET_DATA', this.arr)
+          this.$store.commit('SET_DATA', this.inputValue)
           // console.info(ev.target.parentNode.firstChild)
           ev.target.parentNode.firstChild.value = ''
         },
@@ -90,7 +103,7 @@ export default {
             this.getValue(this.inputValue)
             // this.moveToDes(this.arr)
             this.$store.commit('CHANGE_CLICK_STATE')
-            this.$store.commit('DELETE_DATA', this.arr)
+            this.$store.commit('DELETE_DATA', {j: this.showFirstIndex, text: this.inputValue})
             ev.target.parentNode.firstChild.value = ''
 
           }
@@ -98,12 +111,15 @@ export default {
         },
         // 搜索框输入检索相关的列表
         textChange () {
+          
+          this.isInputChange = true
           this.isFlightClick = true
           this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
           this.highLight()
         },
         /*高亮显示输入框选择的文本*/
         highLight () {
+          // 排序与检索两者之间出现了冲突     ？？ 怎么解决
           let $thNodes = $('.contentWrap th')
           let $trNodes = $('.contentWrap .scrollTbody tr')
           let index = 0
@@ -128,21 +144,29 @@ export default {
               // 第一次进入判断
               if(isFirst) {
                 isFirst = false
+                this.showFirstIndex = j
                 console.log(j, 'jjjjjj')
-                // 移动与排序冲突了??   判断是否点击了机位这个表头
                 this.moveToDes([j+1])
               }
-              
+              // 不会高亮显示的文本
               let notHighLight = str.substring(this.inputValue.length)
-
-              //$(tdNodes[index].parentNode).show()
+              str = this.inputValue + notHighLight
               $(tdNodes[index]).html(`<span style='background: yellow; color: black; font-size: 20px'>${this.inputValue}</span><span>${notHighLight}</span>`)
 
-            }else {
-              //tdNodes[index].style.background = '#3b3b3b'
+              // 改变dom与vuex中的数据冲突了 如何解决高亮显示??? 还没有很好的办法
+              this.$store.commit('UPDATE_TD', {j, text: str})
 
-              // $(tdNodes[index].parentNode).hide()
+              // $(tdNodes[index].parentNode).children().css({
+              //   background: '#bfa'
+              // })
+              // if(!this.isInputChange) {
+              //   // console.log(tdNodes[index])
+              //   //tdNodes[index].style.background = 'red'
+              //   this.$store.commit('HIGH_LIGHT_TR', tdNodes[index].parentNode)
+              // }
+            }else {
               $(tdNodes[index]).html(this.tdFlightData[j])
+              this.$store.commit('UPDATE_TD', {j, text: this.tdFlightData[j]})
             }
           }
         }

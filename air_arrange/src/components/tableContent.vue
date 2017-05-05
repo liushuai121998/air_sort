@@ -13,7 +13,7 @@
             </table>
         </div> 
         <div class='scrollTbody scrollX'>
-          <table>
+          <table>  
               <tbody>
                 <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr'>
                   <td :style='{width: "44px"}'>{{index + 1}}</td>
@@ -54,6 +54,7 @@
 <script>
   import scrollBar from './scrollBar'
   import scrollXBar from './scrollXBar'
+  import $scrollBar from '../js/jqueryScrollBar'
   export default {
     data () { 
       return {
@@ -110,7 +111,7 @@
     },
     mounted () {
       // 每3秒刷新一次,之前的增删改都失效？？？？？？
-      // this.setInter()
+      this.setInter()
       
     },
     methods: {
@@ -204,11 +205,14 @@
         // 将索引保存到store
         this.$store.commit('SELECT_TR_INDEX', this.selectIndexArr)
       },
+      moveToDes(arr) {
+          $scrollBar.moveToDestation('.scroll', '.scrollTbody', arr[0])
+        },
       // 表格排序
       sortTable (ev) {
-        // 在输入框检索sortTable无效，这个需求不太合理，？？？？？怎么解决
+        // 在输入框检索sortTable无效？？？？？ 怎么解决
         if(this.$store.state.isFlightClick) {
-          return
+          // return
         }
         // ev.target
         let thNodes = document.getElementsByTagName('tr')[0].getElementsByTagName('th')
@@ -225,13 +229,15 @@
           let tdNodes = trNodes[i].getElementsByTagName('td')
           // tdNodes[index].style.background='#bbf'
           let str = tdNodes[index].innerHTML
-
           if(ev.target.innerHTML === '机位') {
+            // console.log(i, str)
             if(tdNodes[index].children[0]) {
+              // console.log(i, 'i________________________________________')
               str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
-              console.log(str)
+              // console.log(str, 'str________________')
             }
           }
+          // console.log(str, 'jiwei_--------------')
 
           if(ev.target.innerHTML === '机号') {
             // 去除前面的字母B
@@ -262,11 +268,12 @@
         }
 
         // 通过sortArr来调整tr在数据中的顺序？？？？？
-        // console.log(sortArr)
+        console.log(sortArr)
+        
         // console.log(this.tdData[12])
         this.$store.commit('SORT_TABLE', sortArr)
         // 解决v-for强制刷新列表 this.$forceUpdate()
-
+        console.log(this.$store.state.data.contentData)
         this.$forceUpdate()
 
           // .then(() => {
