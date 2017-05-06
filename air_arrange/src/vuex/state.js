@@ -5,9 +5,10 @@ for (let i = 0; i < 150; i++) {
 }
 let strRandomArr = ['1225', '1118', '-']
 
-let data = require('../../data.json')
+let data = require('../../dataTest.json')
 export default {
     data,
+    inputValue: "",
     arr,
     strRandomArr,
     // 搜索的索引
@@ -18,7 +19,8 @@ export default {
     selectTrArr: [],
     // 是否按下删除按钮
     isClickDel: false,
-    isFlightClick: false
-        // 选择的高亮显示的tr
-        // highLightTr: []
+    isFlightClick: false,
+    // 选择的高亮显示的tr
+    // highLightTr: []
+    sort: true
 }
