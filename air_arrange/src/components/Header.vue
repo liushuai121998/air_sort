@@ -120,64 +120,7 @@ export default {
           this.isInputChange = true
           this.isFlightClick = true
           this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
-          this.highLight()
-        },
-        /*高亮显示输入框选择的文本*/
-        highLight () {
-
-          // 排序与检索两者之间出现了冲突     ？？ 怎么解决
-          // let $thNodes = $('.contentWrap th')
-          // let $trNodes = $('.contentWrap .scrollTbody tr')
-          // let index = 0
-          // for(let i=0, len=$thNodes.length; i<len; i++) {
-          //   if($thNodes[i].children[0].innerHTML === '机位') {
-          //     index = i
-          //   }
-          // }
-          // let isFirst = true
-          // for(let j=0, lent=$trNodes.length; j<lent; j++) {
-          //   let tdNodes = $trNodes[j].getElementsByTagName('td')
-          //   let str = tdNodes[index].innerHTML
-          //   this.tdFlightData.push(str)
-          //   if(tdNodes[index].children[0]) {
-          //     // 除第一次
-          //     str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
-          //   }else {
-          //     str = tdNodes[index].innerHTML  // 第一次进入
-          //   }
-          //   if(str.indexOf(this.inputValue) === 0) {
-          //     //找出匹配的第一个
-          //     // 第一次进入判断
-          //     if(isFirst) {
-          //       isFirst = false
-          //       this.showFirstIndex = j
-          //       console.log(j, 'jjjjjj')
-          //       this.moveToDes([j+1])
-          //     }
-          //     // 不会高亮显示的文本
-          //     let notHighLight = str.substring(this.inputValue.length)
-          //     str =`<span style='background: yellow; color: black; font-size: 20px'>${this.inputValue}</span><span>${notHighLight}</span>`
-          //     //$(tdNodes[index]).html(`<span style='background: yellow; color: black; font-size: 20px'>${this.inputValue}</span><span>${notHighLight}</span>`)
-
-          //     // 改变dom与vuex中的数据冲突了 如何解决高亮显示??? 还没有很好的办法
-
-
-
-              this.$store.commit('UPDATE_TD',this.inputValue)
-
-              // $(tdNodes[index].parentNode).children().css({
-              //   background: '#bfa'
-              // })
-              // if(!this.isInputChange) {
-              //   // console.log(tdNodes[index])
-              //   //tdNodes[index].style.background = 'red'
-              //   this.$store.commit('HIGH_LIGHT_TR', tdNodes[index].parentNode)
-              // }
-            // }else {
-            //   //$(tdNodes[index]).html(this.tdFlightData[j])
-            //   this.$store.commit('UPDATE_TD', {j, text: this.tdFlightData[j]})
-            // }
-          // }
+          this.$store.commit('UPDATE_TD',this.inputValue)
         }
     }
 }

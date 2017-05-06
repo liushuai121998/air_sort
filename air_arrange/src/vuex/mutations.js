@@ -126,7 +126,7 @@ export default {
         state.sort = !state.sort
         console.log(param)
     },
-    /**
+    /** 
      * 是否点击了机位这个表头
      * @param {*} state 
      * @param {*} isFlightClick 
@@ -135,6 +135,20 @@ export default {
         state.isFlightClick = isFlightClick
     },
     UPDATE_TD(state, inputValue) {
+        var arr = []
+        var arrIndex = []
+        state.data.contentData.forEach(function(item, index) {
+            if (item.airPos.search(inputValue) === 0) {
+                arrIndex.push(index)
+            }
+        })
+        var flag = 0
+        arrIndex.forEach(function(item) {
+            state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
+
+        })
+
+
         state.inputValue = inputValue
     }
     /**

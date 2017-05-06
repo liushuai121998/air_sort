@@ -135,7 +135,7 @@
             this.tdData = res.data.data
             //this.tdData = this.$store.state.data
             // 随机数
-            let random = Math.round(Math.random()*150)
+            let random = Math.round(Math.random() * 150)
             let randomArr = ['flightState', 'task']
             let randomStr = randomArr[Math.round(Math.random())]
             // let randomFlight = ['到达/延误', '到达/无', '前起/无']
@@ -331,6 +331,7 @@
     text-align: center;
     vertical-align: middle;
     background: #e9e9e9;
+    cursor: pointer;
   }
   td{
     height: 29px;
