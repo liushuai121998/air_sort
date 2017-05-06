@@ -4,8 +4,8 @@
         <div class='theadWrap scrollX'>
             <table>
               <thead>
-                <tr>
-                  <th v-for='item in thLeftData' :style='{width: item.width}' @click='sortTable'>
+                <tr ref='firstTh'>
+                  <th v-for='(item,index) in thLeftData' :style='{width: item.width}' @click='sortTable($event,index)' >
                     <div>{{item.title}}</div>
                   </th>
                 </tr>
@@ -15,9 +15,9 @@
         <div class='scrollTbody scrollX'>
           <table>  
               <tbody>
-                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr'>
+                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)'>
                   <td :style='{width: "44px"}'>{{index + 1}}</td>
-                  <td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}'>{{str}}</td>
+                  <td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' v-html='filterStr(str,index,key)'></td>
                 </tr>
               </tbody>
           </table>
@@ -111,12 +111,23 @@
     },
     mounted () {
       // 每3秒刷新一次,之前的增删改都失效？？？？？？
-      this.setInter()
+      // this.setInter()
       
     },
     methods: {
       // WebSockets
       // 模拟数据发生变化
+
+      filterStr(str,index,key){
+        if(key === 'airPos'){
+           return this.$store.state.data.contentData[index].airPos.search(this.$store.state.inputValue) === 0 ? 
+       "<span style='background: yellow; color: black; font-size: 18px'>" + this.$store.state.inputValue + "</span>" 
+       + this.$store.state.data.contentData[index].airPos.substr(this.$store.state.inputValue.length) : this.$store.state.data.contentData[index][key]
+        }else{
+          return this.$store.state.data.contentData[index][key]
+        }
+      
+      },
       setInter () {
         this.timeId1 = setInterval(() => {
           this.$http.get('/api/data')
@@ -156,125 +167,98 @@
         }, 5000)
       },
       /*选中的td*/
-      selectTr (ev) {
+      selectTr (ev,index) {
 
         ev = ev || event
-         // 点击删除按钮之后，下一次删除需要把之前的给清空？？？？？？？？ 已解决
-        if(this.$store.state.isClickDel) {
-          // 需要再次更新isClickDel
-          this.$store.commit('CHANGE_CLICK_STATE') 
-          this.selectIndexArr = []
-          this.selectTrArr = []
-        }
+        console.log (ev,index)
+    
+         if(ev.target.parentNode.classList.toggle ('selectTr')){
+            this.selectIndexArr.push(index)
+         }else{
+            this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)  
+         }
 
-        // console.log(ev.target.parentNode.children[0].style.background = 'red')
-        // 切换点击的状态
-        if(!ev.target.isClick) {
-          ev.target.isClick = true
-          ev.target.parentNode.id = 'selectTr'
-        }else {
-          ev.target.isClick = !ev.target.isClick
-          ev.target.parentNode.id = ''
-        }
-
-
-       
-        
-        // let tdNodes = ev.target.parentNode.children
-        // for(let i=0, len=tdNodes.length; i<len; i++){
-        //   // tdNodes[i].innerHTML = '-'
-        // }
-        
-        let index = Array.from(document.querySelectorAll('.scrollX tr')).indexOf(ev.target.parentNode)
-        if(this.selectIndexArr.indexOf(index) < 0) {
-          this.selectIndexArr.push(index)
-        }// else if(this.selectIndexArr.indexOf(index) > 0 && !ev.target.parentNode.id){
-          // this.selectIndexArr.splice(index, 1)
-        // }
-        if(this.selectTrArr.indexOf(ev.target.parentNode) < 0) {
-          // console.log('iiiiiiii___________')
-          this.selectTrArr.push(ev.target.parentNode)
-        }// else if(this.selectTrArr.indexOf(ev.target.parentNode) >= 0  && !ev.target.parentNode.id){
-        //   console.log('bilibili___________', ev.target.parentNode.id)
-        //   let _index = this.selectTrArr.indexOf(ev.target.parentNode)
-        //   this.selectTrArr.splice(_index, 1)
-        // }
-        // 将选中的tr保存到store
-        this.$store.commit('SELECT_TR', this.selectTrArr)
-
-        // 将索引保存到store
-        this.$store.commit('SELECT_TR_INDEX', this.selectIndexArr)
+         
+         //传过去
+          this.$store.commit('SELECT_TR_INDEX',this.selectIndexArr)
       },
+
       moveToDes(arr) {
           $scrollBar.moveToDestation('.scroll', '.scrollTbody', arr[0])
         },
       // 表格排序
-      sortTable (ev) {
+      sortTable (ev,index) {
         // 在输入框检索sortTable无效？？？？？ 怎么解决
-        if(this.$store.state.isFlightClick) {
-          // return
-        }
+        // if(this.$store.state.isFlightClick) {
+        //   // return
+        // }
         // ev.target
-        let thNodes = document.getElementsByTagName('tr')[0].getElementsByTagName('th')
-        let index = Array.from(thNodes).indexOf(ev.target.parentNode)
-        if(index === -1) {
-          index = 0
-        }
+        
+        // console.log(this.$refs.firstTh)
+        // let thNodes = this.$refs.firstTh.getElementsByTagName('th')
+        // let index = [].slice.call(thNodes).indexOf(ev.target.parentNode)
+        // if(index === -1) {
+        //   index = 0
+        // }
 
-        console.log(index)
-        let sortArr = []
-        let trNodes = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')
+        // let sortArr = []
+        // let trNodes = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')
 
-        for(let i=0, len=trNodes.length; i<len; i++) {
-          let tdNodes = trNodes[i].getElementsByTagName('td')
-          // tdNodes[index].style.background='#bbf'
-          let str = tdNodes[index].innerHTML
-          if(ev.target.innerHTML === '机位') {
-            // console.log(i, str)
-            if(tdNodes[index].children[0]) {
-              // console.log(i, 'i________________________________________')
-              str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
-              // console.log(str, 'str________________')
-            }
-          }
+        // for(let i=0, len=trNodes.length; i<len; i++) {
+        //   let tdNodes = trNodes[i].getElementsByTagName('td')
+        //   // // tdNodes[index].style.background='#bbf'
+        //   // let str = tdNodes[index].innerHTML
+        //   if(ev.target.innerHTML === '机位') {
+        //     // console.log(i, str)
+        //     if(tdNodes[index].children[0]) {
+        //       // console.log(i, 'i________________________________________')
+        //       str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
+        //       // console.log(str, 'str________________')
+        //     }
+        //   }
           // console.log(str, 'jiwei_--------------')
 
-          if(ev.target.innerHTML === '机号') {
-            // 去除前面的字母B
-            console.log('去除前面的字母B')
-            str = tdNodes[index].innerHTML.substring(1)
-          }
+        //   if(ev.target.innerHTML === '机号') {
+        //     // 去除前面的字母B
+        //     console.log('去除前面的字母B')
+        //     str = tdNodes[index].innerHTML.substring(1)
+        //   }
 
-          if(ev.target.innerHTML === '主航班号' || ev.target.innerHTML === '共享航班号') {
-            str = tdNodes[index].innerHTML[0].charCodeAt()
-          }
+        //   if(ev.target.innerHTML === '主航班号' || ev.target.innerHTML === '共享航班号') {
+        //     str = tdNodes[index].innerHTML[0].charCodeAt()
+        //   }
 
-          // Number(tdNodes[index].innerHTML) 将字符串转化为数字
-          sortArr.push({index: i, num: Number(str)})
+        //   // Number(tdNodes[index].innerHTML) 将字符串转化为数字
+        //   sortArr.push({index: i, num: Number(str)})
           
-        }
+        // }
+        
+        // let length = sortArr.length
 
-        let length = sortArr.length
+        //lihao 注
+        //降序
+        // for(let j=0; j<length-1; j++) {
+        //   for(let h=j+1; h<length; h++) {
+        //     if(sortArr[j]['num']>sortArr[h]['num']){//如果前面的数据比后面的大就交换  
+        //         let temp=sortArr[j];  
+        //         sortArr[j]=sortArr[h];  
+        //         sortArr[h]=temp;  
+        //     }  
+        //   }
+        // }
 
-        // 降序
-        for(let j=0; j<length-1; j++) {
-          for(let h=j+1; h<length; h++) {
-            if(sortArr[j]['num']>sortArr[h]['num']){//如果前面的数据比后面的大就交换  
-                let temp=sortArr[j];  
-                sortArr[j]=sortArr[h];  
-                sortArr[h]=temp;  
-            }  
-          }
-        }
+        
+
 
         // 通过sortArr来调整tr在数据中的顺序？？？？？
-        console.log(sortArr)
+       // console.log(sortArr)
         
         // console.log(this.tdData[12])
-        this.$store.commit('SORT_TABLE', sortArr)
+        this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0])[index-1])
+
         // 解决v-for强制刷新列表 this.$forceUpdate()
         console.log(this.$store.state.data.contentData)
-        this.$forceUpdate()
+        //this.$forceUpdate()
 
           // .then(() => {
           //   trNodes[0].offsetLeft
@@ -354,6 +338,7 @@
     vertical-align: middle;
     background: #3b3b3b;
     color: #fff;
+    cursor: pointer;
   }
   .delay td{
     background-color: red;
@@ -379,7 +364,7 @@
   .searchTd td {
     background: #bfa;
   }
-  #selectTr td {
+  .selectTr td {
     background: pink;
   }
 </style>
