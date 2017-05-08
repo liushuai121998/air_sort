@@ -1,5 +1,7 @@
 export default {
-    // SORT_TABLE(context) {
-    //     context.commit('SORT_TABLE')
-    // }
+    RANDOM_DATA({ commit }) {
+        setInterval(() => {
+            commit('RANDOM_DATA')
+        }, 3000)
+    }
 }

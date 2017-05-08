@@ -238,5 +238,26 @@ export default {
             }
             return false
         }
+    },
+    moveTd(el, left) {
+        let startPoint = {
+            left: 0
+        }
+        let movePoint = {
+            left: 0
+        }
+
+        el.onmousedown = function(ev) {
+            startPoint.left = ev.clientX
+            document.onmousemove = function(ev) {
+                movePoint.left = ev.clientX
+                el.style.left = left + 'px'
+                el.style.width = el.offsetWidth + movePoint.left - startPoint.left + 'px'
+
+            }
+        }
+        document.onmouseup = function(ev) {
+            document.onmousemove = document.onmouseup = null
+        }
     }
 }

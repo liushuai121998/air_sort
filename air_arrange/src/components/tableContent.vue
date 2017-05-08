@@ -4,8 +4,8 @@
         <div class='theadWrap scrollX'>
             <table>
               <thead>
-                <tr ref='firstTh'>
-                  <th v-for='(item,index) in thLeftData' :style='{width: item.width}' @click='sortTable($event,index)' >
+                <tr>
+                  <th v-for='(item,index) in thLeftData' :width= 'item.width' @click='sortTable($event,index)' @mousemove='moveTd($event)'>
                     <div>{{item.title}}</div>
                   </th>
                 </tr>
@@ -85,6 +85,7 @@
         selectIndexArr: [],
         // 选中的tr
         selectTrArr: []
+
       }
     },
     created () {
@@ -110,16 +111,15 @@
 
     },
     mounted () {
-      // 每3秒刷新一次,之前的增删改都失效？？？？？？
       // this.setInter()
+      this.$store.dispatch('RANDOM_DATA')
       
     },
     methods: {
-      // WebSockets
-      // 模拟数据发生变化
-
+      // 检索高亮 
       filterStr(str,index,key){
         if(key === 'airPos'){
+          // 搜索机位 
            return this.$store.state.data.contentData[index].airPos.search(this.$store.state.inputValue) === 0 ? 
        "<span style='background: yellow; color: black; font-size: 18px'>" + this.$store.state.inputValue + "</span>" 
        + this.$store.state.data.contentData[index].airPos.substr(this.$store.state.inputValue.length) : this.$store.state.data.contentData[index][key]
@@ -166,21 +166,36 @@
           })
         }, 5000)
       },
-      /*选中的td*/
+      /*选中的tr*/
       selectTr (ev,index) {
 
         ev = ev || event
-        console.log (ev,index)
-    
+        console.log(ev.target)
+        // console.log (ev,index)
+        console.log(this.$store.state.isClickDel, 'this.$store.state.isClickDel')
+        if(this.$store.state.isClickDel) {
+          // 删除之后将this.selectIndexArr, this.selectTrArr 置为空数组
+          this.selectIndexArr = []
+          this.selectTrArr = []
+          this.$store.commit('CHANGE_CLICK_STATE')
+        }
+
+        // classList属性 toggle()切换(添加返回true 删除返回false) add()添加 remove()删除
          if(ev.target.parentNode.classList.toggle ('selectTr')){
             this.selectIndexArr.push(index)
+            this.selectTrArr.push(ev.target.parentNode)
          }else{
-            this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)  
-         }
+            // this.selectIndexArr.indexOf(index) >= 0 && this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)
+            // this.selectTrArr.indexOf(ev.target.parentNode) >= 0 && this.selectTrArr.splice(this.selectTrArr.indexOf(ev.target.parentNode),1)
+            this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)
+            this.selectTrArr.splice(this.selectTrArr.indexOf(ev.target.parentNode),1)
 
-         
+         }
+         console.log(this.selectIndexArr, 'this.selectIndexArr')
          //传过去
-          this.$store.commit('SELECT_TR_INDEX',this.selectIndexArr)
+         this.$store.commit('SELECT_TR_INDEX',{index: this.selectIndexArr, arr: this.selectTrArr})
+         
+
       },
 
       moveToDes(arr) {
@@ -188,84 +203,24 @@
         },
       // 表格排序
       sortTable (ev,index) {
-        // 在输入框检索sortTable无效？？？？？ 怎么解决
-        // if(this.$store.state.isFlightClick) {
-        //   // return
-        // }
-        // ev.target
-        
-        // console.log(this.$refs.firstTh)
-        // let thNodes = this.$refs.firstTh.getElementsByTagName('th')
-        // let index = [].slice.call(thNodes).indexOf(ev.target.parentNode)
-        // if(index === -1) {
-        //   index = 0
-        // }
-
-        // let sortArr = []
-        // let trNodes = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr')
-
-        // for(let i=0, len=trNodes.length; i<len; i++) {
-        //   let tdNodes = trNodes[i].getElementsByTagName('td')
-        //   // // tdNodes[index].style.background='#bbf'
-        //   // let str = tdNodes[index].innerHTML
-        //   if(ev.target.innerHTML === '机位') {
-        //     // console.log(i, str)
-        //     if(tdNodes[index].children[0]) {
-        //       // console.log(i, 'i________________________________________')
-        //       str = tdNodes[index].children[0].innerHTML + tdNodes[index].children[1].innerHTML
-        //       // console.log(str, 'str________________')
-        //     }
-        //   }
-          // console.log(str, 'jiwei_--------------')
-
-        //   if(ev.target.innerHTML === '机号') {
-        //     // 去除前面的字母B
-        //     console.log('去除前面的字母B')
-        //     str = tdNodes[index].innerHTML.substring(1)
-        //   }
-
-        //   if(ev.target.innerHTML === '主航班号' || ev.target.innerHTML === '共享航班号') {
-        //     str = tdNodes[index].innerHTML[0].charCodeAt()
-        //   }
-
-        //   // Number(tdNodes[index].innerHTML) 将字符串转化为数字
-        //   sortArr.push({index: i, num: Number(str)})
-          
-        // }
-        
-        // let length = sortArr.length
-
-        //lihao 注
-        //降序
-        // for(let j=0; j<length-1; j++) {
-        //   for(let h=j+1; h<length; h++) {
-        //     if(sortArr[j]['num']>sortArr[h]['num']){//如果前面的数据比后面的大就交换  
-        //         let temp=sortArr[j];  
-        //         sortArr[j]=sortArr[h];  
-        //         sortArr[h]=temp;  
-        //     }  
-        //   }
-        // }
-
-        
-
-
-        // 通过sortArr来调整tr在数据中的顺序？？？？？
-       // console.log(sortArr)
-        
-        // console.log(this.tdData[12])
         this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0])[index-1])
 
         // 解决v-for强制刷新列表 this.$forceUpdate()
         console.log(this.$store.state.data.contentData)
         //this.$forceUpdate()
-
-          // .then(() => {
-          //   trNodes[0].offsetLeft
-          //   console.log(document.documentElement.clientHeight)
-          //    //location.reload() 
-          // })
+      },
+      moveTd (ev) {
+        // 移动到边框才显示col-resize 
+        console.log(String(ev.target).search('Table') >= 0)
+        if(String(ev.target).search('Table') >= 0) {
+          // console.log(ev.target)
+          ev.target.style.cursor = 'col-resize'
+          $scrollBar.moveTd(ev.target)
+        }else {
+          ev.target.parentNode.style.cursor = 'pointer'
+        }
       }
+      
     },
     computed: {
       backData () {
@@ -323,8 +278,16 @@
     left: 0;
     top: 0;
   }
-  table, th, td{
+  table{
+    /*border: 'none'*/
+    /*border-collapse: collapse;*/
+  }
+  th, td{
     border: 1px solid #5c5c5c;
+    /*border-right: 1px solid red*/
+  }
+  th{
+    border-bottom: none
   }
   th{
     height: 34px;
@@ -332,6 +295,7 @@
     vertical-align: middle;
     background: #e9e9e9;
     cursor: pointer;
+
   }
   td{
     height: 29px;

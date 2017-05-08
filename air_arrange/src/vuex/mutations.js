@@ -1,11 +1,13 @@
 export default {
-    /**
-     * 寻找
-     * @param {*} state 
-     * @param {*} arr 
-     */
-    SEARCH(state, arr) {
-        state.searchIndexArr = arr
+    RANDOM_DATA(state) {
+        let randomStrArr = ['task', 'flightState']
+        let taskRandom = ['补班', '正班']
+        let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
+        if (randomStrArr[Math.round(Math.random())] === 'flightState') {
+            state.data.contentData[Math.round(Math.random() * 30 + 200)]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
+        } else {
+            state.data.contentData[Math.round(Math.random() * 10 + 150)]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
+        }
     },
     /**
      * 新增数据
@@ -24,87 +26,74 @@ export default {
      * @param {*} state 
      * @param {*} num 机位号 
      */
-    SET_DATA(state, num) {
-        // for (let i = 0, len = arr.length; i < len; i++) {
-        //     state.data.contentData[arr[i] - 1]['task'] = '补班'
-        // }
-
-
+    SET_DATA(state) {
         // 将选中的tr删除之后将id值 置空
-        let l = state.selectTrArr.length
-        for (let h = 0; h < l; h++) {
-            // state.selectTrArr[h].contentEditable = 'true'
-            // 
-            state.selectTrArr[h].onblur = function() {
-                if (confirm('确定修改吗？')) {
-                    // this.contentEditable = 'false'
-                }
-            }
+        let randomStrArr = ['task', 'flightState']
+        let taskRandom = ['补班', '正班']
+        let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
 
-        }
+        state.searchData.forEach((item, index) => {
+            if (randomStrArr[Math.round(Math.random())] === 'flightState') {
+                item['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
+            } else {
+                item['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
+            }
+        })
     },
     /**
      * 删除
      * @param {*} state 
      * @param {*} arr 
      */
-    DELETE_DATA(state, delInfo) {
-        //console.log(state.selectIndexArr, 'top')
-        // 根据输入的值删除对应的tr
-        //for (let i = 0, len = arr.length; i < len; i++) {
-        // 这是根据索引删除
-        // state.data.contentData.splice(arr[i] - 1, 1)
-        //}
-        //console.log(state.selectIndexArr.length)
-        if (state.data.contentData[delInfo['j']]['airPos'] == delInfo['text']) {
-            state.data.contentData.splice(delInfo['j'], 1)
-        }
+    DELETE_DATA(state) {
+        // 将检索到的数据删除
+        let flag = 0
+        let cloneData = [].concat(state.data.contentData)
+        let cloneIndex = [].concat(state.selectIndexArr)
+        let selectData = []
+        let isClick = true
 
-        // 选中的tr(点击选中的) 删除选中的tr   新添加的选中了删除不了？？？
-        //let length = state.selectIndexArr.length
-        // console.log(state.selectIndexArr, '_______________________________________________')
-        // for (let j = 0; j < length; j++) {
-        //     state.data.contentData.splice(state.selectIndexArr[j] - 1, 1)
-        //     state.data.fixData.splice(state.selectIndexArr[j] - 1, 1)
-        // }
+        cloneIndex.forEach((item, index) => {
+            selectData.push(state.data.contentData[item])
+        })
 
-        // 将选中的tr删除之后将id值 置空
-        // state.selectTrArr = state.selectTrArr.filters((item, index) => {
-        //     return item.id
-        // })
-        var indexFlag = 0
-        console.log(state.selectIndexArr)
+        state.searchData.forEach((item, index) => {
+            // 检索并选中该tr才删除
+            if (selectData.indexOf(item) >= 0) {
+                isClick = false
+                state.data.contentData.splice(cloneData.indexOf(item) - flag, 1)
+                flag++
+            }
+        })
+
+        // 将选中tr的删除 删除之后selectTr这个类名还在
+        state.selectTrArr.forEach((item, index) => {
+            item.classList.remove('selectTr')
+        })
+        let indexFlag = 0
+            // console.log(state.selectIndexArr)
+            // 将索引进行排序state.selectIndexArr.sort()
         state.selectIndexArr.sort().forEach(function(item, index) {
-            state.data.contentData.splice(item - indexFlag, 1)
-            console.log(item, "++", index)
-            indexFlag++
+            if (isClick) {
+                state.data.contentData.splice(item - indexFlag, 1)
+                console.log(item, "++", index)
+                indexFlag++
+            }
         });
+        // 点击删除按钮之后将selectIndexArr 置为空数组
         state.selectIndexArr = []
-
-
-        // state.selectIndexArr = []
-        // state.selectTrArr = []
-        // console.log(state.selectIndexArr, 'bottom')
+        state.selectTrArr = []
     },
-
-
     /**
      * 保存选中的tr的索引进行修改和删除
      * @param {*} state 
      * @param {*} arr 
      */
-    SELECT_TR_INDEX(state, arr) {
-        state.selectIndexArr = arr
+    SELECT_TR_INDEX(state, obj) {
+        state.selectIndexArr = obj.index
+        state.selectTrArr = obj.arr
     },
-    /**
-     * 保存选中的tr
-     * @param {*} state 
-     * @param {*} arr 
-     */
-    SELECT_TR(state, arr) {
-        state.selectTrArr = arr
-            // console.log(state.selectTrArr)
-    },
+
     CHANGE_CLICK_STATE(state) {
         state.isClickDel = !state.isClickDel
     },
@@ -113,56 +102,42 @@ export default {
      * @param {*} state 
      */
     SORT_TABLE(state, param) {
+
         if (Object.is(Number(state.data.contentData[0][param]), NaN)) {
             state.data.contentData.sort(function(a, b) {
+                // 字母数字排序
                 return state.sort ? a[param] > b[param] : b[param] > a[param]
             })
         } else {
+            // 数字排序 
             state.data.contentData.sort(function(a, b) {
                 return state.sort ? a[param] - b[param] : b[param] - a[param]
             })
         }
 
         state.sort = !state.sort
-        console.log(param)
+            // console.log(param)
     },
-    /** 
-     * 是否点击了机位这个表头
-     * @param {*} state 
-     * @param {*} isFlightClick 
+
+    /**
+     * 根据输入框输入的内容重新排序
      */
-    IS_FLIGHT_CLICK(state, isFlightClick) {
-        state.isFlightClick = isFlightClick
-    },
     UPDATE_TD(state, inputValue) {
-        var arr = []
+        state.searchData = []
         var arrIndex = []
         state.data.contentData.forEach(function(item, index) {
             if (item.airPos.search(inputValue) === 0) {
                 arrIndex.push(index)
             }
         })
-        var flag = 0
         arrIndex.forEach(function(item) {
+            // arr.splice(start, end) 返回一个数组保存的是删除的项
+            // arr.unshift() 在数组的最前面添加
+            // 把删除的项放到最前面
             state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
-
+            state.searchData.unshift(state.data.contentData[0])
         })
-
-
+        console.log(state.searchData)
         state.inputValue = inputValue
     }
-    /**
-     * 高亮显示的tr
-     */
-    // HIGH_LIGHT_TR(state, trNode) {
-    //     state.highLightTr.push(trNode)
-    //         // console.log(state.highLightTr)
-    // },
-    /***
-     * 将高亮的tr置空
-     */
-    // HIGH_LIGHT_TR_EMPTY(state) {
-    //     state.highLightTr = []
-    //     console.log(state.highLightTr)
-    // }
 }
