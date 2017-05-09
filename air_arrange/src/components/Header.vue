@@ -1,7 +1,15 @@
 <template>
     <div class="header">
       <!--v-model 双向数据绑定-->
-      <input type="text" class="search" @keydown.enter='search' placeholder="搜索机位" v-model='inputValue' @input='textChange'>
+      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange'>
+      <select @change='selectValue($event)'>
+        <option>请选择搜索类型</option>
+        <option selected>按机位搜索</option>
+        <option>按时间搜索</option>
+        <option>按航班搜索</option>
+        <option>按航线搜索</option>
+        <option>按航班状态搜索</option>
+      </select>
       <!--操作数据-->
       <input type="button" value="新增" @click='addData'>
       <input type="button" value="修改" @click='setData'>
@@ -12,44 +20,73 @@
 <script>
 // let data = require('../../data.json')
 // 自定义过滤器 filters
-import $scrollBar from '../js/jqueryScrollBar'
-import $ from 'jquery'
 export default {
     data () {
         return {
           inputValue: '',
-          arr: [],
+          searchInfo: {},
           tdFlightData: [],
           isFlightClick: false,
           isInputChange: true,
-          showFirstIndex: 0 
+          showFirstIndex: 0,
+          placeHolderValue: '按机位搜索'
         }
     },
     mounted () {
-
+      
     },
     methods: {
-        moveToDes(arr) {
-          $scrollBar.moveToDestation('.scroll', '.scrollTbody', arr[0])
-        },
 
         /**
          * 获取输入的数据
         */
         getValue (val) {
-          //console.log(val.indexOf('0'))
           val = val.trim()
-          if(val.indexOf('0') === 0 || !val){
-            return
+          if(!val){
+              return
           }
-          if(val.indexOf(' ') > 0){
-            this.arr = val.split(' ')
-          }else if(val.indexOf(',') > 0){
-            this.arr = val.split(',')
-          }else if(val.indexOf(', ')) {
-            this.arr = val.split(', ')
-          }else {
-            this.arr.push(val)
+          switch (this.placeHolderValue) {
+            case '按机位搜索':
+              this.searchInfo.name = 'airPos'
+              if(val.indexOf(' ') > 0){
+                val = val.split(' ')  
+              }else if(val.indexOf(',') > 0){
+                val = val.split(',')
+              }else if(val.indexOf(', ') > 0) {
+                val = val.split(', ')
+              }else if(val.indexOf('-') > 0 && val.indexOf(':') < 0){
+                val = val.split('-')
+                val.push('-')
+              }else {
+                val = [val]
+              }
+              this.searchInfo.val = val
+
+              break
+            case '按时间搜索':
+              this.searchInfo.name = 'time'
+              if(val.indexOf(':') > 0) {
+                  if(val.indexOf('-') > 0) {
+                    val = val.split('-')
+                  }else {
+                    val = [val]
+                  }
+              }
+              this.searchInfo.val = val
+              break
+            case '按航班搜索':
+              this.searchInfo.name = 'airPlan'
+              this.searchInfo.val = [val]
+              break
+
+            case '按航线搜索':
+              this.searchInfo.name = 'airRouter'
+              this.searchInfo.val = [val]
+              break
+            case '按航班状态搜索':
+              this.searchInfo.name = 'airState'
+              this.searchInfo.val = [val]
+              break  
           }
         },
         addData (ev) {
@@ -83,12 +120,24 @@ export default {
           }
           
         },
+        search (ev) {
+
+          this.getValue(this.inputValue)
+          ev.target.value = ''
+          
+          this.$store.commit('SEARCH', this.searchInfo)
+
+        },
         // 搜索框输入检索相关的列表
         textChange () {
-          // this.isInputChange = true
-          // this.isFlightClick = true
-          // this.$store.commit('IS_FLIGHT_CLICK', this.isFlightClick)
-          this.$store.commit('UPDATE_TD',this.inputValue)
+         
+          // this.$store.commit('UPDATE_TD',this.inputValue)
+
+        },
+        selectValue (ev) {
+          this.placeHolderValue = ev.target.value
+          this.searchInfo = {}
+          // console.log(ev.target.value)
         }
     }
 }

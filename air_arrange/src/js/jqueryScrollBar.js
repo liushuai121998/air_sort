@@ -1,3 +1,4 @@
+import css from '../utils/transform.js'
 export default {
     /**
      * 滚动条滚动
@@ -30,7 +31,8 @@ export default {
         for (var i = 0, len = tableDom.length; i < len; i++) {
             leftValue += tableDom[i].offsetWidth
         }
-        dom.parentNode.style.left = 80 + leftValue + 'px'
+        // dom.parentNode.style.left = 80 + leftValue + 'px'
+        css(dom.parentNode, 'translateX', 80 + leftValue)
         const maxT = dom.parentNode.offsetHeight - dom.clientHeight
             // 滚动条的高度
         setTimeout(function() {
@@ -42,7 +44,8 @@ export default {
         dom.onmousedown = function(ev) {
             ev = ev || event
                 // ev.preventDefault()
-            elementPoint.top = this.offsetTop
+                // elementPoint.top = this.offsetTop
+            elementPoint.top = css(this, 'translateY')
             startPoint.top = ev.clientY
             let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
             const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
@@ -56,9 +59,13 @@ export default {
                 } else if (T > maxT) {
                     T = maxT
                 }
-                dom.style.top = T + 'px'
+                // dom.style.top = T + 'px'
+                css(dom, 'translateY', T)
+                css(dom, 'translateZ', 0.00001)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
-                    tableDom[i].style.top = -T * scale + 'px'
+                    // tableDom[i].style.top = -T * scale + 'px'
+                    css(tableDom[i], 'translateY', -T * scale)
+                    css(tableDom[i], 'translateZ', 0.00001)
                 }
             }
             document.onmouseup = function() {
@@ -109,21 +116,27 @@ export default {
                     // console.log(ev.wheelDelta, 'ev.wheelDelta')
                 if (ev.wheelDelta > 0) {
                     // 鼠标向上滚 滚动条向上滚
-                    top = dom.offsetTop - 30
+                    // top = dom.offsetTop - 30
+                    top += css(dom, 'translateY') - 30
                     if (top < 0) {
                         top = 0
                     }
 
                 } else if (ev.wheelDelta < 0) {
                     // 向下滚 滚动条向下滚
-                    top = dom.offsetTop + 30
+                    // top = dom.offsetTop + 30
+                    top += css(dom, 'translateY') + 30
                     if (top > maxT) {
                         top = maxT
                     }
                 }
-                dom.style.top = top + 'px'
+                // dom.style.top = top + 'px'
+                css(dom, 'translateY', top)
+                css(dom, 'translateZ', 0.00001)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
-                    tableDom[i].style.top = -top * scale + 'px'
+                    // tableDom[i].style.top = -top * scale + 'px'
+                    css(tableDom[i], 'translateY', -top * scale)
+                    css(tableDom[i], 'translateZ', 0.00001)
                 }
             })
             // fireFox
@@ -138,21 +151,27 @@ export default {
             const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
             if (ev.detail > 0) {
                 // 向上滚
-                top += dom.offsetTop + 20
+                // top += dom.offsetTop + 20
+                top += css(dom, 'translateY') + 20
                 if (top > maxT) {
                     top = maxT
                 }
 
             } else if (ev.detail < 0) {
                 // 向下滚
-                top += dom.offsetTop - 20
+                // top += dom.offsetTop - 20
+                top += css(dom, 'translateY') - 20
                 if (top < 0) {
                     top = 0
                 }
             }
-            dom.style.top = top + 'px'
+            // dom.style.top = top + 'px'
+            css(dom, 'translateY', top)
+            css(dom, 'translateZ', 0.00001)
             for (var i = 0, len = tableDom.length; i < len; i++) {
-                tableDom[i].style.top = -top * scale + 'px'
+                //tableDom[i].style.top = -top * scale + 'px'
+                css(tableDom[i], 'translateY', -top * scale)
+                css(tableDom[i], 'translateZ', 0.00001)
             }
         })
 
@@ -213,10 +232,10 @@ export default {
         dom.onmousedown = function(ev) {
             ev = ev || event
                 // ev.preventDefault()
-            elementPoint.left = this.offsetLeft
+            elementPoint.left = css(this, 'translateX')
             startPoint.left = ev.clientX
             let tableMaxL = tableDom[0].offsetWidth - dom.parentNode.offsetWidth
-            console.log(tableDom[0].offsetWidth, 'tableDom[0].offsetWidth')
+                // console.log(tableDom[0].offsetWidth, 'tableDom[0].offsetWidth')
             const scale = tableMaxL / (dom.parentNode.offsetWidth - dom.offsetWidth)
             document.onmousemove = function(ev) {
                 ev = ev || event
@@ -228,9 +247,13 @@ export default {
                 } else if (L > maxL) {
                     L = maxL
                 }
-                dom.style.left = L + 'px'
+                //dom.style.left = L + 'px'
+                css(dom, 'translateX', L)
+                css(dom, 'translateZ', 0.00001)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
-                    tableDom[i].style.left = L * scale + 'px'
+                    // tableDom[i].style.left = L * scale + 'px'
+                    css(tableDom[i], 'translateX', L * scale)
+                    css(tableDom[i], 'translateZ', 0.00001)
                 }
             }
             document.onmouseup = function() {
@@ -246,7 +269,6 @@ export default {
         let movePoint = {
             left: 0
         }
-
         el.onmousedown = function(ev) {
             startPoint.left = ev.clientX
             document.onmousemove = function(ev) {

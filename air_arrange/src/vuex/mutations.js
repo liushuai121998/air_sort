@@ -4,9 +4,9 @@ export default {
         let taskRandom = ['补班', '正班']
         let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
         if (randomStrArr[Math.round(Math.random())] === 'flightState') {
-            state.data.contentData[Math.round(Math.random() * 30 + 200)]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
+            state.data.contentData[Math.round(Math.random() * 30 + 100)]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
         } else {
-            state.data.contentData[Math.round(Math.random() * 10 + 150)]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
+            state.data.contentData[Math.round(Math.random() * 10 + 200)]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
         }
     },
     /**
@@ -27,11 +27,9 @@ export default {
      * @param {*} num 机位号 
      */
     SET_DATA(state) {
-        // 将选中的tr删除之后将id值 置空
         let randomStrArr = ['task', 'flightState']
         let taskRandom = ['补班', '正班']
         let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
-
         state.searchData.forEach((item, index) => {
             if (randomStrArr[Math.round(Math.random())] === 'flightState') {
                 item['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
@@ -139,5 +137,67 @@ export default {
         })
         console.log(state.searchData)
         state.inputValue = inputValue
+    },
+    SEARCH(state, searchInfo) {
+        if (searchInfo && searchInfo.name) {
+            switch (searchInfo.name) {
+                case 'airPos':
+                    if (searchInfo.val.indexOf('-') > 0) {
+                        searchInfo.val.splice(searchInfo.val.indexOf('-'), 1)
+                        let indexArr = []
+                        console.log(searchInfo.val)
+                        state.data.contentData.forEach((item, index) => {
+                            if (item['airPos'] < searchInfo.val[0] || item['airPos'] > searchInfo.val[1]) {
+                                indexArr.push(index)
+                            }
+                        })
+                        let flag = 0
+                        console.log(indexArr)
+
+                        indexArr.forEach((item) => {
+                                state.data.contentData.splice(item - flag, 1)
+
+                                state.data.fixData.splice(item - flag, 1)
+                                flag++
+                            })
+                            // 检索到之后排序
+                        state.data.contentData.sort((a, b) => {
+                            return a['airPos'] - b['airPos']
+                        })
+                    } else if (searchInfo.val.length > 1) {
+                        let indexArr = []
+                        console.log(searchInfo.val)
+                        state.data.contentData.forEach((item, index) => {
+                            if (item['airPos'] != searchInfo.val[0] || item['airPos'] != searchInfo.val[1]) {
+                                indexArr.push(index)
+                            }
+                        })
+                        console.log(indexArr)
+                        let flag = 0
+                        indexArr.forEach((item) => {
+                            state.data.contentData.splice(item - flag, 1)
+                            state.data.fixData.splice(item - flag, 1)
+                            flag++
+                        })
+                    } else {
+
+                        let indexArr = []
+                        console.log(searchInfo.val)
+                        state.data.contentData.forEach((item, index) => {
+                            if (item['airPos'] != searchInfo.val[0]) {
+                                indexArr.push(index)
+                            }
+                        })
+                        let flag = 0
+                        indexArr.forEach((item) => {
+                            state.data.contentData.splice(item - flag, 1)
+
+                            state.data.fixData.splice(item - flag, 1)
+                            flag++
+                        })
+                    }
+                    break
+            }
+        }
     }
 }

@@ -1,11 +1,12 @@
 <template>
-  <div class='wrap'>
+  <div class='wrap '>
     <div class='contentWrap'>
         <div class='theadWrap scrollX'>
             <table>
               <thead>
-                <tr>
-                  <th v-for='(item,index) in thLeftData' :width= 'item.width' @click='sortTable($event,index)' @mousemove='moveTd($event)'>
+                <!--<tr  @mouseup='upTd' v-html='thHtml'>-->
+                  <tr  @mouseup='upTd'>
+                  <th v-for='(item,index) in thLeftData' :width= 'item.width' @click='sortTable($event,index)' @mousemove='moveTd($event, index)' @mousedown='downTd($event)' :key='index'>
                     <div>{{item.title}}</div>
                   </th>
                 </tr>
@@ -14,10 +15,13 @@
         </div> 
         <div class='scrollTbody scrollX'>
           <table>  
-              <tbody>
-                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)'>
+              <!--<tbody v-html='trHtml'>-->
+                <tbody>
+                <!--<td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' v-html='filterStr(str,index,key)'></td>-->
+                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)' :key='index'>
                   <td :style='{width: "44px"}'>{{index + 1}}</td>
-                  <td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' v-html='filterStr(str,index,key)'></td>
+                  
+                  <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i'>{{str}}</td>
                 </tr>
               </tbody>
           </table>
@@ -27,8 +31,9 @@
       <div class='theadWrap'>
         <table>
           <thead>
-              <tr>
-                <th v-for='item in thRightData' :style='{width: item.width}' :colspan='item.col'>
+              <!--<tr v-html='rightThHtml'>-->
+                <tr>
+                <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
                   <div>{{item.title}}</div>
                 </th>
               </tr>
@@ -38,14 +43,16 @@
       </div>
       <div class='scrollTbody'>
         <table>
-          <tbody>
-                <tr v-for='(item, index) in fixData'>
-                  <td v-for='(str, key) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</td>
+          <!--<tbody v-html='rightTrHtml'>-->
+            <tbody>
+                <tr v-for='(item, index) in fixData' :key='index'>
+                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i'>{{str}}</td>
                 </tr>
           </tbody>
         </table>
       </div>
     </div>
+    
     <scroll-bar></scroll-bar>
     <scroll-x-bar></scroll-x-bar>
   </div>
@@ -84,8 +91,18 @@
         // 选中tr的indexArr
         selectIndexArr: [],
         // 选中的tr
-        selectTrArr: []
-
+        selectTrArr: [],
+        // 是否点击mousedown
+        isMouseDown: false,
+        // 鼠标点击的位置
+        pos: {},
+        // 是否mouseup
+        isMouseUp: false,
+        target: '',
+        thHtml: '',
+        trHtml: '',
+        rightThHtml: '',
+        rightTrHtml: ''
       }
     },
     created () {
@@ -109,11 +126,78 @@
       // fixData中的tr中的td随机
       this.strRandomArr = this.$store.state.strRandomArr 
 
+      // <th v-for='(item,index) in thLeftData' :width= 'item.width' @click='sortTable($event,index)' @mousemove='moveTd($event, index)' @mousedown='downTd($event)'>
+      //               <div>{{item.title}}</div>
+      //             </th>
+      
+
+
     },
     mounted () {
+
       // this.setInter()
-      this.$store.dispatch('RANDOM_DATA')
+     // this.$store.dispatch('RANDOM_DATA')
+
+
+      // let thText = ''
+      // this.thLeftData.forEach((item, index) => {
+      //   // @click="${this.sortTable($event,index)}" @mousemove="${this.moveTd($event, index)}" @mousedown="${this.downTd($event)}"
+      //   thText += `<th  width= "${item.width}" ><div>${item.title}</div></th>`
+      // })
+      // this.thHtml = thText
+
+      // let trText = ''
+
+
+      // <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)'>
+      //             <td :style='{width: "44px"}'>{{index + 1}}</td>
+                  
+      //             <td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}'></td>
+      //           </tr>
+
+      // this.tdData.forEach((item, index) => {
+      //   let tdFirst = `<td width="44px">${index + 1}</td>`
+      //   let tdNodes = ''
+      //   for(var key in item) {
+      //     tdNodes += `<td width="${this.backData[key]}">${item[key]}</td>`
+      //   }
+      //   let tdText = tdFirst + tdNodes
+      //   trText += `<tr>${tdText}</tr>`
+      // })
+
+      // this.trHtml = trText
+
+
+
       
+      // <!--<th v-for='item in thRightData' :style='{width: item.width}' :colspan='item.col'>
+      //             <div>{{item.title}}</div>
+      //           </th>-->
+
+      // let rightThText = ''
+      // this.thRightData.forEach((item, index) => {
+      //   rightThText += `<th  width= "${item.width}" colspan="${item.col}"><div>${item.title}</div></th>`
+      // })
+      // this.rightThHtml = rightThText
+
+
+
+      
+      // <!--<tr v-for='(item, index) in fixData'>
+      //             <td v-for='(str, key) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</td>
+      //           </tr>-->
+
+      // let rightTrText = ''
+      // this.fixData.forEach((item, index) => {
+      //   let tdNodes = ''
+      //   for(var key in item) {
+      //     tdNodes += `<td width="${this.fixTdWidth[key]}">${item[key]}</td>`
+      //   }
+      //   rightTrText += `<tr>${tdNodes}</tr>`
+      // })
+      // this.rightTrHtml = rightTrText
+
+
     },
     methods: {
       // 检索高亮 
@@ -197,10 +281,6 @@
          
 
       },
-
-      moveToDes(arr) {
-          $scrollBar.moveToDestation('.scroll', '.scrollTbody', arr[0])
-        },
       // 表格排序
       sortTable (ev,index) {
         this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0])[index-1])
@@ -209,16 +289,42 @@
         console.log(this.$store.state.data.contentData)
         //this.$forceUpdate()
       },
-      moveTd (ev) {
-        // 移动到边框才显示col-resize 
-        console.log(String(ev.target).search('Table') >= 0)
-        if(String(ev.target).search('Table') >= 0) {
-          // console.log(ev.target)
-          ev.target.style.cursor = 'col-resize'
-          $scrollBar.moveTd(ev.target)
-        }else {
-          ev.target.parentNode.style.cursor = 'pointer'
+      moveTd (ev, index) {
+        // 移动到附近边框才显示col-resize 
+        if(this.isMouseUp) {
+          this.isMouseUp = false
+          this.isMouseDown = false
+          this.pos.left = ''
+          console.log('----------')
         }
+        if((ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10) || (ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10) ) {
+          // 进入可点击拉伸区域
+          ev.target.style.cursor = 'col-resize'
+          if(this.pos.left && this.isMouseDown && this.target === ev.target) {
+            // console.log(ev.clientX, 'ev.clientX') 
+            let l = ev.clientX - this.pos.left
+            if((ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10)) {
+              this.thLeftData[index]['width'] = ev.target.offsetWidth - l + 'px'
+            } else if((ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10)) {
+              this.thLeftData[index]['width'] = ev.target.offsetWidth + l + 'px'
+            }
+            
+          }
+        }else {
+          ev.target.style.cursor = 'pointer'
+        }
+      },
+      downTd (ev) {
+        if(ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10 || (ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10) ) {
+          this.target = ev.target
+          this.isMouseDown = true
+          this.pos.left = ev.clientX
+
+        }
+      },
+      upTd () {
+        // console.log('upupupup')
+        this.isMouseUp = true
       }
       
     },
@@ -260,6 +366,12 @@
 <style>
   .wrap{
     margin-left: 80px;
+    /*position: relative;*/
+  }
+  .wrap:after{
+    content: '';
+    display: block;
+    clear: both;
   }
   .contentWrap {
     width: 1376px;
@@ -278,11 +390,10 @@
     left: 0;
     top: 0;
   }
-  table{
-    /*border: 'none'*/
-    /*border-collapse: collapse;*/
-  }
   th, td{
+    position: relative;
+    left: 0;
+    top: 0;
     border: 1px solid #5c5c5c;
     /*border-right: 1px solid red*/
   }

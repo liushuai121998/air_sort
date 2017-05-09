@@ -5,7 +5,7 @@ for (let i = 0; i < 150; i++) {
 }
 let strRandomArr = ['1225', '1118', '-']
 
-let data = require('../../dataTest.json')
+let data = require('../../data.json')
 export default {
     data,
     inputValue: "",

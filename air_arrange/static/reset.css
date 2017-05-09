@@ -131,8 +131,9 @@ table {
     border-spacing: 0;
 }
 
-html,
+
+/*html,
 body {
     height: 100%;
     overflow: hidden;
-}
+}*/
