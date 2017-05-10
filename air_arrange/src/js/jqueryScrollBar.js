@@ -25,18 +25,22 @@ export default {
         let dom = document.querySelector(el)
             // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
-
-        // 滚动条的位置
+            // let theadDom = []
+            // let theadTopValue = []
+            // 滚动条的位置
         let leftValue = 0
         for (var i = 0, len = tableDom.length; i < len; i++) {
             leftValue += tableDom[i].offsetWidth
+                // theadDom.push(tableDom[i].querySelector('thead'))
+                // theadTopValue.push(css(tableDom[i].querySelector('thead'), 'translateY'))
         }
+
         // dom.parentNode.style.left = 80 + leftValue + 'px'
         css(dom.parentNode, 'translateX', 80 + leftValue)
         const maxT = dom.parentNode.offsetHeight - dom.clientHeight
             // 滚动条的高度
         setTimeout(function() {
-            console.log(((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight)
+            // console.log(((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight)
             dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
         }, 20)
 
@@ -65,7 +69,9 @@ export default {
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.top = -T * scale + 'px'
                     css(tableDom[i], 'translateY', -T * scale)
-                    css(tableDom[i], 'translateZ', 0.00001)
+                    css(tableDom[i], 'translateZ', 0.0001)
+                        // css(theadDom[i], 'translateY', T * scale)
+                        // css(theadDom[i], 'translateZ', 0.0001)
                 }
             }
             document.onmouseup = function() {
@@ -280,6 +286,140 @@ export default {
         }
         document.onmouseup = function(ev) {
             document.onmousemove = document.onmouseup = null
+        }
+    },
+    widthChange(sel) {
+        function $(Id) {
+
+            return document.getElementById(Id);
+        };
+        // 事件监听
+        function addListener(element, e, fn) {
+            element.addEventListener ? element.addEventListener(e, fn, false) : element.attachEvent("on" + e, fn);
+        };
+        // 事件解绑
+        function removeListener(element, e, fn) {
+            element.removeEventListener ? element.removeEventListener(e, fn, false) : element.detachEvent("on" + e, fn);
+        };
+
+        // 为元素添加样式
+        var Css = function(e, o) {
+            if (typeof o == "string") {
+                e.style.cssText = o;
+                return;
+            }
+            for (var i in o)
+                e.style[i] = o[i];
+        };
+
+        var Bind = function(object, fun) {
+            var args = Array.prototype.slice.call(arguments).slice(2); // 实参个数大于形参个数
+            return function() {
+                return fun.apply(object, args);
+            };
+        };
+        var BindAsEventListener = function(object, fun) {
+            var args = Array.prototype.slice.call(arguments).slice(2);
+            return function(event) {
+                return fun.apply(object, [event || window.event].concat(args));
+            };
+        };
+        var Class = function(properties) {
+            var _class = function() { // this 谁调用的就是谁
+                return (arguments[0] !== null && this.initialize && typeof(this.initialize) == 'function') ? this.initialize.apply(this, arguments) : this;
+            };
+            _class.prototype = properties;
+            return _class;
+        };
+        var Table = new Class({
+            initialize: function(tab, set) {
+                this.table = tab; // tableDom
+                this.thead = tab.getElementsByTagName('thead')[0]; //常用的dom元素做成索引 theadNode
+                this.theadths = this.thead.getElementsByTagName('th'); // thead下面所有的tdNodes
+                this.clos = {}; //里面记录所有列元素的引用 
+                this.closarg = {
+                    tdnum: null,
+                    totdnum: null,
+                    closmove: BindAsEventListener(this, this.closmove),
+                    closup: BindAsEventListener(this, this.closup)
+                }; //关于列拖拽的一些属性方法 
+                this.widtharg = {
+                    td: null,
+                    nexttd: null,
+                    x: 0,
+                    tdwidth: 0,
+                    nexttdwidth: 0,
+                    widthmove: BindAsEventListener(this, this.widthmove),
+                    widthup: BindAsEventListener(this, this.widthup)
+                };
+                var i = 0,
+                    j = 0,
+                    d = document;
+
+
+                var divs = this.thead.getElementsByTagName('div'); // thead下所有的div
+
+                this.line = d.body.appendChild(d.createElement('div'));
+                this.line.className = 'line';
+                this.line.style.top = tab.getBoundingClientRect().top + "px";
+
+                for (var i = 0, l = divs.length; i < l; i++) {
+                    addListener(divs[i], 'mousedown', BindAsEventListener(this, this.widthdrag));
+                }
+                /*---------------------------------------------*/
+                /*---------------------------------------------*/
+                addListener(this.thead, 'mouseover', BindAsEventListener(this, this.theadhover));
+
+            },
+            theadhover: function(e) {
+                e = e || window.event;
+                var obj = e.srcElement || e.target;
+                if (obj.nodeName.toLowerCase() == 'th')
+                    this.closarg.totdnum = (obj).getAttribute('clos');
+                else if (obj.nodeName.toLowerCase() == 'div')
+                    obj.style.cursor = "col-resize";
+            },
+            widthdrag: function(e) {
+                e.stopPropagation()
+                this.widtharg.x = e.clientX;
+                this.widtharg.td = (e.srcElement || e.target).parentNode;
+                this.widtharg.nexttd = this.widtharg.td.nextSibling.nextSibling;
+                this.widtharg.tdwidth = this.widtharg.td.offsetWidth;
+                this.widtharg.nexttdwidth = this.widtharg.nexttd.offsetWidth;
+                this.line.style.height = this.table.offsetHeight + "px";
+                addListener(document, 'mousemove', this.widtharg.widthmove);
+                addListener(document, 'mouseup', this.widtharg.widthup);
+            },
+            widthmove: function(e) {
+                window.getSelection ? window.getSelection().removeAllRanges() : document.selection.empty();
+                var x = e.clientX - this.widtharg.x,
+                    left = e.clientX,
+                    clientx = e.clientX;
+                if (clientx < this.widtharg.x) {
+                    if (this.widtharg.x - clientx > this.widtharg.tdwidth - 35)
+                        left = this.widtharg.x - this.widtharg.tdwidth + 35;
+                }
+                if (clientx > this.widtharg.x) {
+                    if (clientx - this.widtharg.x > this.widtharg.nexttdwidth - 35)
+                        left = this.widtharg.x + this.widtharg.nexttdwidth - 35;
+                }
+                Css(this.line, {
+                    display: "block",
+                    left: left + "px"
+                });
+            },
+            widthup: function(e) {
+                this.line.style.display = "none";
+                var x = parseInt(this.line.style.left) - this.widtharg.x;
+                this.widtharg.nexttd.style.width = this.widtharg.nexttdwidth - x + 'px';
+                this.widtharg.td.style.width = this.widtharg.tdwidth + x + 'px';
+                removeListener(document, 'mousemove', this.widtharg.widthmove);
+                removeListener(document, 'mouseup', this.widtharg.widthup);
+            },
+
+        });
+        window.onload = function() {
+            new Table($(sel));
         }
     }
 }

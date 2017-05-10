@@ -3,10 +3,11 @@ export default {
         let randomStrArr = ['task', 'flightState']
         let taskRandom = ['补班', '正班']
         let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
+        let length = state.data.contentData.length
         if (randomStrArr[Math.round(Math.random())] === 'flightState') {
-            state.data.contentData[Math.round(Math.random() * 30 + 100)]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
+            state.data.contentData[Math.round(Math.random() * (length - 1))]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
         } else {
-            state.data.contentData[Math.round(Math.random() * 10 + 200)]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
+            state.data.contentData[Math.round(Math.random() * (length - 1))]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
         }
     },
     /**
@@ -30,14 +31,16 @@ export default {
         let randomStrArr = ['task', 'flightState']
         let taskRandom = ['补班', '正班']
         let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
-        state.searchData.forEach((item, index) => {
+        state.selectIndexArr.forEach((item) => {
             if (randomStrArr[Math.round(Math.random())] === 'flightState') {
-                item['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
+                state.data.contentData[item]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
             } else {
-                item['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
+                state.data.contentData[item]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
             }
+
         })
     },
+
     /**
      * 删除
      * @param {*} state 
@@ -129,41 +132,55 @@ export default {
             }
         })
         arrIndex.forEach(function(item) {
-            // arr.splice(start, end) 返回一个数组保存的是删除的项
-            // arr.unshift() 在数组的最前面添加
-            // 把删除的项放到最前面
-            state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
-            state.searchData.unshift(state.data.contentData[0])
-        })
-        console.log(state.searchData)
+                // arr.splice(start, end) 返回一个数组保存的是删除的项
+                // arr.unshift() 在数组的最前面添加
+                // 把删除的项放到最前面
+                state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
+                state.searchData.unshift(state.data.contentData[0])
+            })
+            // console.log(state.searchData)
         state.inputValue = inputValue
     },
     SEARCH(state, searchInfo) {
+        let utilSearch = {
+
+            getIndexArr(val, param) {
+                let indexArr = []
+                state.data.contentData.forEach((item, index) => {
+                    if (item[param] != val[0]) {
+                        indexArr.push(index)
+                    }
+                })
+                this.spliceData(indexArr)
+            },
+            spliceData(indexArr) {
+                let flag = 0
+                indexArr.forEach((item) => {
+                    state.data.contentData.splice(item - flag, 1)
+
+                    state.data.fixData.splice(item - flag, 1)
+                    flag++
+                })
+            }
+        }
         if (searchInfo && searchInfo.name) {
             switch (searchInfo.name) {
                 case 'airPos':
                     if (searchInfo.val.indexOf('-') > 0) {
                         searchInfo.val.splice(searchInfo.val.indexOf('-'), 1)
                         let indexArr = []
-                        console.log(searchInfo.val)
                         state.data.contentData.forEach((item, index) => {
                             if (item['airPos'] < searchInfo.val[0] || item['airPos'] > searchInfo.val[1]) {
                                 indexArr.push(index)
                             }
                         })
-                        let flag = 0
-                        console.log(indexArr)
-
-                        indexArr.forEach((item) => {
-                                state.data.contentData.splice(item - flag, 1)
-
-                                state.data.fixData.splice(item - flag, 1)
-                                flag++
-                            })
+                        utilSearch.spliceData(indexArr)
                             // 检索到之后排序
                         state.data.contentData.sort((a, b) => {
                             return a['airPos'] - b['airPos']
                         })
+
+
                     } else if (searchInfo.val.length > 1) {
                         let indexArr = []
                         console.log(searchInfo.val)
@@ -172,13 +189,7 @@ export default {
                                 indexArr.push(index)
                             }
                         })
-                        console.log(indexArr)
-                        let flag = 0
-                        indexArr.forEach((item) => {
-                            state.data.contentData.splice(item - flag, 1)
-                            state.data.fixData.splice(item - flag, 1)
-                            flag++
-                        })
+                        utilSearch.spliceData(indexArr)
                     } else {
 
                         let indexArr = []
@@ -188,14 +199,41 @@ export default {
                                 indexArr.push(index)
                             }
                         })
-                        let flag = 0
-                        indexArr.forEach((item) => {
-                            state.data.contentData.splice(item - flag, 1)
-
-                            state.data.fixData.splice(item - flag, 1)
-                            flag++
-                        })
+                        utilSearch.spliceData(indexArr)
                     }
+                    break
+                case 'calCome':
+                    if (searchInfo.val.indexOf('-') > 0) {
+                        searchInfo.val.splice(searchInfo.val.indexOf('-'), 1)
+                        let indexArr = []
+                        state.data.contentData.forEach((item, index) => {
+                            if (item['calCome'] < searchInfo.val[0].split(':').join('') || item['calCome'] > searchInfo.val[1].split(':').join('')) {
+                                indexArr.push(index)
+                            }
+                        })
+                        utilSearch.spliceData(indexArr)
+                            // 检索到之后排序
+                        state.data.contentData.sort((a, b) => {
+                            return a['calCome'] - b['calCome']
+                        })
+                    } else {
+                        let indexArr = []
+                        state.data.contentData.forEach((item, index) => {
+                            if (item['calCome'] != searchInfo.val[0].split(':').join('')) {
+                                indexArr.push(index)
+                            }
+                        })
+                        utilSearch.spliceData(indexArr)
+                    }
+                    break
+                case 'mainFlightNum':
+                    utilSearch.getIndexArr(searchInfo.val, 'mainFlightNum')
+                    break
+                case 'flightRoute':
+                    utilSearch.getIndexArr(searchInfo.val, 'flightRoute')
+                    break
+                case 'flightState':
+                    utilSearch.getIndexArr(searchInfo.val, 'flightState')
                     break
             }
         }

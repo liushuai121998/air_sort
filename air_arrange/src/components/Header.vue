@@ -61,49 +61,51 @@ export default {
                 val = [val]
               }
               this.searchInfo.val = val
-
               break
             case '按时间搜索':
-              this.searchInfo.name = 'time'
+              this.searchInfo.name = 'calCome'
               if(val.indexOf(':') > 0) {
                   if(val.indexOf('-') > 0) {
                     val = val.split('-')
+                    val.push('-')
                   }else {
                     val = [val]
                   }
               }
+              
               this.searchInfo.val = val
               break
             case '按航班搜索':
-              this.searchInfo.name = 'airPlan'
+              this.searchInfo.name = 'mainFlightNum'
               this.searchInfo.val = [val]
               break
-
             case '按航线搜索':
-              this.searchInfo.name = 'airRouter'
+              this.searchInfo.name = 'flightRoute'
               this.searchInfo.val = [val]
               break
             case '按航班状态搜索':
-              this.searchInfo.name = 'airState'
+              this.searchInfo.name = 'flightState'
               this.searchInfo.val = [val]
               break  
           }
         },
         addData (ev) {
           // 新增数据
-          let contentStr = this.$store.state.data.contentData[0]
-          let fixStr = this.$store.state.data.fixData[0]
+          let length = this.$store.state.cloneData.contentData.length
+
+          let contentStr = this.$store.state.cloneData.contentData[Math.round(Math.random()*length)]
+          let fixStr = this.$store.state.cloneData.fixData[Math.round(Math.random()*length)]
           // console.info(fixStr)
           // console.log(str, 'str--------')
           this.$store.commit('ADD_DATA', contentStr)
           this.$store.commit('ADD_FIX_DATA', fixStr)
         },
-        setData (ev) {
+        setData () {
           // 修改数据
           this.getValue(this.inputValue)
           this.$store.commit('SET_DATA')
           // console.info(ev.target.parentNode.firstChild)
-          ev.target.parentNode.firstChild.value = ''
+          this.inputValue = ''
         },
         deleteData (ev) {  
           if(confirm('确定要删除这些信息吗？')){
@@ -124,18 +126,17 @@ export default {
 
           this.getValue(this.inputValue)
           ev.target.value = ''
-          
           this.$store.commit('SEARCH', this.searchInfo)
 
         },
         // 搜索框输入检索相关的列表
-        textChange () {
-         
+        textChange (ev) {
           // this.$store.commit('UPDATE_TD',this.inputValue)
-
         },
         selectValue (ev) {
+          
           this.placeHolderValue = ev.target.value
+          this.inputValue = ''
           this.searchInfo = {}
           // console.log(ev.target.value)
         }

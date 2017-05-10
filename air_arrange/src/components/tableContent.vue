@@ -2,27 +2,35 @@
   <div class='wrap '>
     <div class='contentWrap'>
         <div class='theadWrap scrollX'>
-            <table>
-              <thead>
                 <!--<tr  @mouseup='upTd' v-html='thHtml'>-->
-                  <tr  @mouseup='upTd'>
-                  <th v-for='(item,index) in thLeftData' :width= 'item.width' @click='sortTable($event,index)' @mousemove='moveTd($event, index)' @mousedown='downTd($event)' :key='index'>
-                    <div>{{item.title}}</div>
-                  </th>
-                </tr>
-              </thead>  
-            </table>
+           <table  id='tab'>
+              <thead>
+                  <tr>
+                    <th v-for='(item,index) in thLeftData' :width= 'item.width':key='index' @mousedown='sortTable($event, index)'>
+                      <span v-text='item.title'></span><div class='ww'></div>
+                    </th>
+                  </tr>
+              </thead> 
+           </table>
         </div> 
         <div class='scrollTbody scrollX'>
           <table>  
+              <!--<thead class='fixThead'>
+                  <tr>
+                    <th v-for='(item,index) in thLeftData' :width= 'item.width':key='index' @mousedown='sortTable($event, index)'>
+                      <span v-text='item.title'></span><div class='ww'></div>
+                    </th>
+                  </tr>
+              </thead>-->
               <!--<tbody v-html='trHtml'>-->
-                <tbody>
+                <tbody class='tbodyScroll'>
                 <!--<td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' v-html='filterStr(str,index,key)'></td>-->
-                <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)' :key='index'>
+                  <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)' :key='index'>
                   <td :style='{width: "44px"}'>{{index + 1}}</td>
                   
-                  <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i'>{{str}}</td>
+                  <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i' v-text='str'></td>
                 </tr>
+                
               </tbody>
           </table>
         </div>
@@ -31,10 +39,10 @@
       <div class='theadWrap'>
         <table>
           <thead>
-              <!--<tr v-html='rightThHtml'>-->
+              
                 <tr>
-                <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
-                  <div>{{item.title}}</div>
+                  <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
+                  <div v-text='item.title'></div>
                 </th>
               </tr>
           </thead>
@@ -43,10 +51,17 @@
       </div>
       <div class='scrollTbody'>
         <table>
+          <!--<thead class='fixThead'>
+                <tr>
+                  <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
+                  <span v-text='item.title'></span><div class='ww'></div>
+                </th>
+              </tr>
+          </thead>-->
           <!--<tbody v-html='rightTrHtml'>-->
-            <tbody>
+            <tbody class='tbodyScroll'>
                 <tr v-for='(item, index) in fixData' :key='index'>
-                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i'>{{str}}</td>
+                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i' v-text='str'></td>
                 </tr>
           </tbody>
         </table>
@@ -65,13 +80,8 @@
   export default {
     data () { 
       return {
-        thLeftData: [{title: '', width: '44px'}, {title: '月/日', width: '69px'}, {title: '标记', width: '42px'}, {title: '主航班号', width: '85px'},
-              {title: '共享航班号', width: '151px'}, {title: '机号', width: '65px'}, {title: '类型', width: '69px'}, {title: '机型', width: '75px'}, {title: '任务', width: '70px'},
-              {title: '航班状态', width: '131px'}, {title: '航线', width: '99px'}, {title: '机位', width: '64px'}, {title: '登机口', width: '69px'}, {title: '计到', width: '54px'},
-              {title: '计离', width: '54px'}, {title: '预离', width: '54px'}, {title: '实离', width: '54px'}, {title: '预位', width: '54px'}, {title: '跑道', width: '53px'}],
-        thRightData: [
-          {title: '进港桥载开始', width: '54px', col: 0}, {title: '进港撤桥结束', width: '54px', col: 0}, {title: '进港撤桥载', width: '114px', col: 2}, {title: '上轮档(结束)', width: '109px', col: 2}
-        ],
+        thLeftData: [],
+        thRightData: [],
         tdData: null,
         fixData: null,
         temp: null,
@@ -118,6 +128,7 @@
       //   .then(res => {
       //     this.fixData = res.data.data
       //   })
+
       this.fixData = this.$store.state.data.fixData
 
         // fixData中的tr随机
@@ -130,15 +141,17 @@
       //               <div>{{item.title}}</div>
       //             </th>
       
+      this.thLeftData = this.$store.state.thLeftData
 
+      this.thRightData = this.$store.state.thRightData
 
     },
     mounted () {
 
       // this.setInter()
-     // this.$store.dispatch('RANDOM_DATA')
-
-
+      // this.$store.dispatch('RANDOM_DATA')
+      $scrollBar.widthChange('tab')
+     
       // let thText = ''
       // this.thLeftData.forEach((item, index) => {
       //   // @click="${this.sortTable($event,index)}" @mousemove="${this.moveTd($event, index)}" @mousedown="${this.downTd($event)}"
@@ -201,17 +214,16 @@
     },
     methods: {
       // 检索高亮 
-      filterStr(str,index,key){
-        if(key === 'airPos'){
-          // 搜索机位 
-           return this.$store.state.data.contentData[index].airPos.search(this.$store.state.inputValue) === 0 ? 
-       "<span style='background: yellow; color: black; font-size: 18px'>" + this.$store.state.inputValue + "</span>" 
-       + this.$store.state.data.contentData[index].airPos.substr(this.$store.state.inputValue.length) : this.$store.state.data.contentData[index][key]
-        }else{
-          return this.$store.state.data.contentData[index][key]
-        }
-      
-      },
+      // filterStr(str,index,key){
+      //   if(key === 'airPos'){
+      //     // 搜索机位 
+      //      return this.$store.state.data.contentData[index].airPos.search(this.$store.state.inputValue) === 0 ? 
+      //  "<span style='background: yellow; color: black; font-size: 18px'>" + this.$store.state.inputValue + "</span>" 
+      //  + this.$store.state.data.contentData[index].airPos.substr(this.$store.state.inputValue.length) : this.$store.state.data.contentData[index][key]
+      //   }else{
+      //     return this.$store.state.data.contentData[index][key]
+      //   }
+      // },
       setInter () {
         this.timeId1 = setInterval(() => {
           this.$http.get('/api/data')
@@ -288,45 +300,7 @@
         // 解决v-for强制刷新列表 this.$forceUpdate()
         console.log(this.$store.state.data.contentData)
         //this.$forceUpdate()
-      },
-      moveTd (ev, index) {
-        // 移动到附近边框才显示col-resize 
-        if(this.isMouseUp) {
-          this.isMouseUp = false
-          this.isMouseDown = false
-          this.pos.left = ''
-          console.log('----------')
-        }
-        if((ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10) || (ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10) ) {
-          // 进入可点击拉伸区域
-          ev.target.style.cursor = 'col-resize'
-          if(this.pos.left && this.isMouseDown && this.target === ev.target) {
-            // console.log(ev.clientX, 'ev.clientX') 
-            let l = ev.clientX - this.pos.left
-            if((ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10)) {
-              this.thLeftData[index]['width'] = ev.target.offsetWidth - l + 'px'
-            } else if((ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10)) {
-              this.thLeftData[index]['width'] = ev.target.offsetWidth + l + 'px'
-            }
-            
-          }
-        }else {
-          ev.target.style.cursor = 'pointer'
-        }
-      },
-      downTd (ev) {
-        if(ev.clientX > ev.target.getBoundingClientRect().left && ev.clientX < ev.target.getBoundingClientRect().left + 10 || (ev.clientX < ev.target.getBoundingClientRect().left+ev.target.clientWidth && ev.clientX > ev.target.getBoundingClientRect().left+ev.target.clientWidth - 10) ) {
-          this.target = ev.target
-          this.isMouseDown = true
-          this.pos.left = ev.clientX
-
-        }
-      },
-      upTd () {
-        // console.log('upupupup')
-        this.isMouseUp = true
-      }
-      
+      },  
     },
     computed: {
       backData () {
@@ -353,7 +327,7 @@
           let count = 0
           for(var n in this.temp){
             count++
-            let temp = this.thLeftData[count]
+            let temp = this.$store.state.thLeftData[count]
             this.temp[n] = temp.width
           }
           // console.log(this.tdData)
@@ -389,6 +363,7 @@
     z-index: 9;
     left: 0;
     top: 0;
+    perspective: 800px;
   }
   th, td{
     position: relative;
@@ -403,10 +378,12 @@
   th{
     height: 34px;
     text-align: center;
+    /*line-height: 34px;*/
+    /*不换行*/
+    /*white-space:nowrap; */
     vertical-align: middle;
     background: #e9e9e9;
     cursor: pointer;
-
   }
   td{
     height: 29px;
@@ -443,4 +420,22 @@
   .selectTr td {
     background: pink;
   }
+  .ww {     
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background:  #e9e9e9;
+           
+            cursor: col-resize
+        }
+        
+        .line {
+            width: 2px;
+            background-color: #999999;
+            position: absolute;
+            z-index: 1000;
+            display: none;
+        }
 </style>
