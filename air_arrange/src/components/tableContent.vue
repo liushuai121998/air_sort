@@ -1,73 +1,52 @@
 <template>
   <div class='wrap '>
     <div class='contentWrap'>
-        <div class='theadWrap scrollX'>
-                <!--<tr  @mouseup='upTd' v-html='thHtml'>-->
-           <table  id='tab'>
+        <div class='theadWrap'>
+           <table id='tab' border='1' cellpadding='0' cellspacing='0' class=" scrollX">
               <thead>
                   <tr>
                     <th v-for='(item,index) in thLeftData' :width= 'item.width':key='index' @mousedown='sortTable($event, index)'>
-                      <span v-text='item.title'></span><div class='ww'></div>
+                      <span>{{item.title}}</span><div class='ww'></div>
                     </th>
                   </tr>
               </thead> 
            </table>
         </div> 
-        <div class='scrollTbody scrollX'>
-          <table>  
-              <!--<thead class='fixThead'>
-                  <tr>
-                    <th v-for='(item,index) in thLeftData' :width= 'item.width':key='index' @mousedown='sortTable($event, index)'>
-                      <span v-text='item.title'></span><div class='ww'></div>
-                    </th>
-                  </tr>
-              </thead>-->
-              <!--<tbody v-html='trHtml'>-->
+        <div class='tbodyWrap'>
+          <table border='1' cellpadding='0' cellspacing='0' class='scrollTbody scrollX'>  
                 <tbody class='tbodyScroll'>
-                <!--<td v-for='(str, key) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' v-html='filterStr(str,index,key)'></td>-->
                   <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)' :key='index'>
-                  <td :style='{width: "44px"}'>{{index + 1}}</td>
-                  
-                  <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i' v-text='str'></td>
-                </tr>
-                
-              </tbody>
+                    <td :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</td>
+                    <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i'>{{str}}</td>
+                  </tr>  
+               </tbody>
           </table>
         </div>
     </div>
     <div class='rightWrap'>
       <div class='theadWrap'>
-        <table>
+        <table border='1' cellpadding='0' cellspacing='0'>
           <thead>
-              
                 <tr>
                   <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
-                  <div v-text='item.title'></div>
-                </th>
-              </tr>
+                    <div>{{item.title}}</div>
+                  </th>
+                </tr>
           </thead>
           
         </table>
       </div>
-      <div class='scrollTbody'>
-        <table>
-          <!--<thead class='fixThead'>
-                <tr>
-                  <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
-                  <span v-text='item.title'></span><div class='ww'></div>
-                </th>
-              </tr>
-          </thead>-->
-          <!--<tbody v-html='rightTrHtml'>-->
+      <div class='tbodyWrap'>
+        <table border='1' cellpadding='0' cellspacing='0'  class='scrollTbody'>
             <tbody class='tbodyScroll'>
                 <tr v-for='(item, index) in fixData' :key='index'>
-                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i' v-text='str'></td>
+                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i'>{{str}}</td>
                 </tr>
           </tbody>
         </table>
       </div>
-    </div>
-    
+      <div class='fixed-x-bar'></div>
+    </div>    
     <scroll-bar></scroll-bar>
     <scroll-x-bar></scroll-x-bar>
   </div>
@@ -142,15 +121,15 @@
       //             </th>
       
       this.thLeftData = this.$store.state.thLeftData
-
+      
       this.thRightData = this.$store.state.thRightData
 
     },
     mounted () {
 
       // this.setInter()
-      // this.$store.dispatch('RANDOM_DATA')
-      $scrollBar.widthChange('tab')
+      this.$store.dispatch('RANDOM_DATA')
+      $scrollBar.widthChange('tab', this)
      
       // let thText = ''
       // this.thLeftData.forEach((item, index) => {
@@ -362,15 +341,19 @@
     position: relative;
     z-index: 9;
     left: 0;
-    top: 0;
-    perspective: 800px;
+    top: 0;   
+  }
+  .tbodyWrap {
+    /*width: 100%;*/
+    overflow: hidden;
+  }
+  table {
+    border-collapse: collapse;
+    border: 1px solid #5c5c5c;
   }
   th, td{
-    position: relative;
-    left: 0;
-    top: 0;
     border: 1px solid #5c5c5c;
-    /*border-right: 1px solid red*/
+    empty-cells : show  
   }
   th{
     border-bottom: none
@@ -421,21 +404,30 @@
     background: pink;
   }
   .ww {     
-            position: absolute;
-            right: 0;
-            top: 0;
-            height: 100%;
-            width: 3px;
-            background:  #e9e9e9;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background:  #e9e9e9;
            
-            cursor: col-resize
-        }
+    cursor: col-resize
+  }
         
-        .line {
-            width: 2px;
-            background-color: #999999;
-            position: absolute;
-            z-index: 1000;
-            display: none;
-        }
+ .line {
+    width: 2px;
+    background-color: #999999;
+    position: absolute;
+    z-index: 1000;
+    display: none;
+  }
+ .fixed-x-bar{
+    position: absolute;
+    z-index: 889;
+    bottom: 0;
+    height: 10px;
+    width: 336px;
+    background: #2a2a2a;
+    border-radius: 0px 5px 5px 0;
+  }       
 </style>

@@ -25,16 +25,13 @@ export default {
         let dom = document.querySelector(el)
             // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
-            // let theadDom = []
-            // let theadTopValue = []
+        tableDom[0].parentNode.style.height = document.documentElement.clientHeight - 75 + 'px'
+        tableDom[1].parentNode.style.height = document.documentElement.clientHeight - 75 + 'px'
             // 滚动条的位置
         let leftValue = 0
         for (var i = 0, len = tableDom.length; i < len; i++) {
             leftValue += tableDom[i].offsetWidth
-                // theadDom.push(tableDom[i].querySelector('thead'))
-                // theadTopValue.push(css(tableDom[i].querySelector('thead'), 'translateY'))
         }
-
         // dom.parentNode.style.left = 80 + leftValue + 'px'
         css(dom.parentNode, 'translateX', 80 + leftValue)
         const maxT = dom.parentNode.offsetHeight - dom.clientHeight
@@ -42,6 +39,7 @@ export default {
         setTimeout(function() {
             // console.log(((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight)
             dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
+            console.log(tableDom[0].offsetHeight)
         }, 20)
 
         // 自定义滚动条
@@ -65,13 +63,11 @@ export default {
                 }
                 // dom.style.top = T + 'px'
                 css(dom, 'translateY', T)
-                css(dom, 'translateZ', 0.00001)
+                css(dom, 'translateZ', 1)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.top = -T * scale + 'px'
                     css(tableDom[i], 'translateY', -T * scale)
-                    css(tableDom[i], 'translateZ', 0.0001)
-                        // css(theadDom[i], 'translateY', T * scale)
-                        // css(theadDom[i], 'translateZ', 0.0001)
+                        // css(tableDom[i], 'translateZ', 1)
                 }
             }
             document.onmouseup = function() {
@@ -111,6 +107,7 @@ export default {
         }
         // chrome IE
         addEvent(document.body, 'mousewheel', function(ev) {
+                console.log(tableDom, 'tableDom')
                 ev = ev || event
                     //console.log(ev.wheelDelta, ev)
                     // ev.whellDelta 为正 鼠标向上滚 (120)
@@ -138,11 +135,11 @@ export default {
                 }
                 // dom.style.top = top + 'px'
                 css(dom, 'translateY', top)
-                css(dom, 'translateZ', 0.00001)
+                css(dom, 'translateZ', 1)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.top = -top * scale + 'px'
                     css(tableDom[i], 'translateY', -top * scale)
-                    css(tableDom[i], 'translateZ', 0.00001)
+                        // css(tableDom[i], 'translateZ', 1)
                 }
             })
             // fireFox
@@ -173,11 +170,11 @@ export default {
             }
             // dom.style.top = top + 'px'
             css(dom, 'translateY', top)
-            css(dom, 'translateZ', 0.00001)
+            css(dom, 'translateZ', 1)
             for (var i = 0, len = tableDom.length; i < len; i++) {
                 //tableDom[i].style.top = -top * scale + 'px'
                 css(tableDom[i], 'translateY', -top * scale)
-                css(tableDom[i], 'translateZ', 0.00001)
+                    // css(tableDom[i], 'translateZ', 1)
             }
         })
 
@@ -224,9 +221,8 @@ export default {
 
         // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
-            //console.error(document.querySelector('.contentWrap').offsetWidth + document.querySelector('.rightWrap').offsetWidth)
-        dom.parentNode.style.width = document.querySelector('.contentWrap').offsetWidth + document.querySelector('.rightWrap').offsetWidth + 'px'
 
+        // dom.parentNode.style.width = tableDom[0].offsetWidth
         const maxL = dom.parentNode.offsetWidth - dom.clientWidth
             // 滚动条的宽度
         setTimeout(function() {
@@ -255,11 +251,11 @@ export default {
                 }
                 //dom.style.left = L + 'px'
                 css(dom, 'translateX', L)
-                css(dom, 'translateZ', 0.00001)
+                css(dom, 'translateZ', 1)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.left = L * scale + 'px'
                     css(tableDom[i], 'translateX', L * scale)
-                    css(tableDom[i], 'translateZ', 0.00001)
+                        // css(tableDom[i], 'translateZ', 1)
                 }
             }
             document.onmouseup = function() {
@@ -288,9 +284,11 @@ export default {
             document.onmousemove = document.onmouseup = null
         }
     },
-    widthChange(sel) {
+    /**
+     * 表格宽度拉伸
+     */
+    widthChange(sel, vm) {
         function $(Id) {
-
             return document.getElementById(Id);
         };
         // 事件监听
@@ -311,13 +309,6 @@ export default {
             for (var i in o)
                 e.style[i] = o[i];
         };
-
-        var Bind = function(object, fun) {
-            var args = Array.prototype.slice.call(arguments).slice(2); // 实参个数大于形参个数
-            return function() {
-                return fun.apply(object, args);
-            };
-        };
         var BindAsEventListener = function(object, fun) {
             var args = Array.prototype.slice.call(arguments).slice(2);
             return function(event) {
@@ -336,16 +327,8 @@ export default {
                 this.table = tab; // tableDom
                 this.thead = tab.getElementsByTagName('thead')[0]; //常用的dom元素做成索引 theadNode
                 this.theadths = this.thead.getElementsByTagName('th'); // thead下面所有的tdNodes
-                this.clos = {}; //里面记录所有列元素的引用 
-                this.closarg = {
-                    tdnum: null,
-                    totdnum: null,
-                    closmove: BindAsEventListener(this, this.closmove),
-                    closup: BindAsEventListener(this, this.closup)
-                }; //关于列拖拽的一些属性方法 
                 this.widtharg = {
                     td: null,
-                    nexttd: null,
                     x: 0,
                     tdwidth: 0,
                     nexttdwidth: 0,
@@ -355,7 +338,6 @@ export default {
                 var i = 0,
                     j = 0,
                     d = document;
-
 
                 var divs = this.thead.getElementsByTagName('div'); // thead下所有的div
 
@@ -374,19 +356,19 @@ export default {
             theadhover: function(e) {
                 e = e || window.event;
                 var obj = e.srcElement || e.target;
-                if (obj.nodeName.toLowerCase() == 'th')
-                    this.closarg.totdnum = (obj).getAttribute('clos');
-                else if (obj.nodeName.toLowerCase() == 'div')
+                if (obj.nodeName.toLowerCase() == 'div')
                     obj.style.cursor = "col-resize";
             },
             widthdrag: function(e) {
                 e.stopPropagation()
                 this.widtharg.x = e.clientX;
-                this.widtharg.td = (e.srcElement || e.target).parentNode;
-                this.widtharg.nexttd = this.widtharg.td.nextSibling.nextSibling;
-                this.widtharg.tdwidth = this.widtharg.td.offsetWidth;
-                this.widtharg.nexttdwidth = this.widtharg.nexttd.offsetWidth;
-                this.line.style.height = this.table.offsetHeight + "px";
+                this.widtharg.td = (e.srcElement || e.target).parentNode; /// th
+                // 索引
+                this.index = [].slice.call(this.theadths).indexOf(this.widtharg.td)
+                this.widtharg.tdwidth = parseInt(vm.$store.state.thLeftData[this.index]['width'])
+                this.widtharg.nexttdwidth = parseInt(vm.$store.state.thLeftData[this.index + 1]['width'])
+                this.line.style.height = this.table.parentNode.parentNode.offsetHeight + "px";
+
                 addListener(document, 'mousemove', this.widtharg.widthmove);
                 addListener(document, 'mouseup', this.widtharg.widthup);
             },
@@ -411,8 +393,9 @@ export default {
             widthup: function(e) {
                 this.line.style.display = "none";
                 var x = parseInt(this.line.style.left) - this.widtharg.x;
-                this.widtharg.nexttd.style.width = this.widtharg.nexttdwidth - x + 'px';
-                this.widtharg.td.style.width = this.widtharg.tdwidth + x + 'px';
+                this.nextTdWidth = this.widtharg.nexttdwidth - x + 'px'
+                this.tdWidth = this.widtharg.tdwidth + x + 'px'
+                vm.$store.commit('CHANGE_TH_WIDTH', { index: this.index, nextTdWidth: this.nextTdWidth, tdWidth: this.tdWidth })
                 removeListener(document, 'mousemove', this.widtharg.widthmove);
                 removeListener(document, 'mouseup', this.widtharg.widthup);
             },

@@ -141,6 +141,9 @@ export default {
             // console.log(state.searchData)
         state.inputValue = inputValue
     },
+    /**
+     * 搜索
+     */
     SEARCH(state, searchInfo) {
         let utilSearch = {
 
@@ -237,5 +240,13 @@ export default {
                     break
             }
         }
+    },
+    /**
+     * 改变td的宽度，拉伸效果
+     */
+    CHANGE_TH_WIDTH(state, thInfo) {
+        console.log(thInfo)
+        state.thLeftData[thInfo.index]['width'] = thInfo.tdWidth
+        state.thLeftData[(thInfo.index + 1)]['width'] = thInfo.nextTdWidth
     }
 }

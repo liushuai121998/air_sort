@@ -4,6 +4,7 @@
         <div class='scroll-x-bar'>
             <span class='scroll-x'></span>
         </div>
+        
     </div>
 </template>
 <script>
@@ -21,10 +22,10 @@
     /*right: 45px;
     top: 32px;*/
     bottom: 0;
-    width: 100%;
     height: 10px;
-    background: #bfa;
-    border-radius: 5px;
+    width: 1376px;
+    background: #2a2a2a;
+    border-radius: 5px 0 0 5px;
   }
   .scroll-x{
     position: absolute;
@@ -32,7 +33,10 @@
     top: 0;
     width: 50px !important;
     height: 10px;
+    box-sizing: border-box;
+    border: 1px solid black;
     background-color: gray;
     border-radius: 5px;
   }
+  
 </style>

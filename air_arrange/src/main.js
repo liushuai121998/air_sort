@@ -5,6 +5,7 @@ import App from './App'
 import VueResource from 'vue-resource'
 
 import store from './vuex'
+import './style.css'
 // 发送ajax vue-resource 
 Vue.use(VueResource)
 

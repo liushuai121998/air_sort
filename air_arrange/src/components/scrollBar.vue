@@ -21,9 +21,10 @@
     /*right: 45px;
     top: 32px;*/
     left: 0;
+    top: 65px;
     width: 10px;
-    height: 100%;
-    background: #bfa;
+    height: calc(100% - 75px);
+    background: #2a2a2a;
     border-radius: 5px;
   }
   .scroll{
@@ -31,7 +32,9 @@
     display: inline-block;
     width: 100%;
     /*height: 50px;*/
+    box-sizing: border-box;
     background-color: gray;
+    border: 1px solid black;
     border-radius: 5px;
   }
 </style>
