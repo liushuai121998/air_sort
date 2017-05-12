@@ -55,7 +55,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 80px;
+    width: 60px;
     background-color: black;
     color: #fff;
   }

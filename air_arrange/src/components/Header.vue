@@ -152,7 +152,7 @@ export default {
     height: 30px;
     background-color: gray;
     line-height: 30px;
-    margin-left: 80px;
+    margin-left: 60px;
   }
   .search{
     margin-left: 30px;

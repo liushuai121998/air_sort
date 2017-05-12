@@ -5,7 +5,7 @@
            <table id='tab' border='1' cellpadding='0' cellspacing='0' class=" scrollX">
               <thead>
                   <tr>
-                    <th v-for='(item,index) in thLeftData' :width= 'item.width':key='index' @mousedown='sortTable($event, index)'>
+                    <th v-for='(item,index) in thLeftData' :width= 'item.width' :key='index' @mousedown='sortTable($event, index)' class='change_th'>
                       <span>{{item.title}}</span><div class='ww'></div>
                     </th>
                   </tr>
@@ -48,12 +48,14 @@
       <div class='fixed-x-bar'></div>
     </div>    
     <scroll-bar></scroll-bar>
+    <right-content></right-content>
     <scroll-x-bar></scroll-x-bar>
   </div>
   
 </template>
 <script>
   import scrollBar from './scrollBar'
+  import rightContent from './rightContent'
   import scrollXBar from './scrollXBar'
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
@@ -313,13 +315,13 @@
           return this.temp
       }
     },
-    components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar}
+    components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar, 'right-content': rightContent}
   }
 </script>
 <style>
   .wrap{
-    margin-left: 80px;
-    /*position: relative;*/
+    margin-left: 60px;
+    width: calc(100% - 60px);
   }
   .wrap:after{
     content: '';
@@ -327,9 +329,16 @@
     clear: both;
   }
   .contentWrap {
-    width: 1376px;
+    /*width: 1376px;*/
+    /*width: 75%;*/
     overflow: hidden;
   }
+  /*.rightWrap {
+    width: 15%;
+  }*/
+  /*.rightWrap .theadWrap, .rightWrap .tbodyWrap, .rightWrap .tbodyWrap table, .rightWrap .tbodyWrap tr, .rightWrap .theadWrap tr{
+    width: 100%;
+  }*/
   .contentWrap, .rightWrap{
     float: left;
   }
@@ -349,11 +358,11 @@
   }
   table {
     border-collapse: collapse;
-    border: 1px solid #5c5c5c;
+    /*border: 1px solid #5c5c5c;*/
   }
   th, td{
+    /*position: relative;*/
     border: 1px solid #5c5c5c;
-    empty-cells : show  
   }
   th{
     border-bottom: none
@@ -361,12 +370,14 @@
   th{
     height: 34px;
     text-align: center;
-    /*line-height: 34px;*/
     /*不换行*/
     /*white-space:nowrap; */
     vertical-align: middle;
     background: #e9e9e9;
     cursor: pointer;
+  }
+  th.change_th {
+    line-height: 34px;
   }
   td{
     height: 29px;
@@ -404,13 +415,13 @@
     background: pink;
   }
   .ww {     
-    position: absolute;
+    /*position: absolute;
     right: 0;
-    top: 0;
+    top: 0;*/
+    float: right;
     height: 100%;
     width: 3px;
-    background:  #e9e9e9;
-           
+    background:  #e8e8e8;       
     cursor: col-resize
   }
         

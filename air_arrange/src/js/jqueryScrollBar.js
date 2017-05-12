@@ -33,7 +33,7 @@ export default {
             leftValue += tableDom[i].offsetWidth
         }
         // dom.parentNode.style.left = 80 + leftValue + 'px'
-        css(dom.parentNode, 'translateX', 80 + leftValue)
+        css(dom.parentNode, 'translateX', 60 + leftValue)
         const maxT = dom.parentNode.offsetHeight - dom.clientHeight
             // 滚动条的高度
         setTimeout(function() {
