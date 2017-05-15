@@ -248,5 +248,9 @@ export default {
         console.log(thInfo)
         state.thLeftData[thInfo.index]['width'] = thInfo.tdWidth
         state.thLeftData[(thInfo.index + 1)]['width'] = thInfo.nextTdWidth
+    },
+
+    DEL_RIGHT_CONTENT(state, delArr) {
+        state.delRightContent = delArr
     }
 }

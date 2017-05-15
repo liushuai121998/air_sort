@@ -19,11 +19,8 @@
     .scroll-x-bar{
     position: absolute;
     z-index: 889;
-    /*right: 45px;
-    top: 32px;*/
     bottom: 0;
     height: 10px;
-    width: 1376px;
     background: #2a2a2a;
     border-radius: 5px 0 0 5px;
   }
@@ -31,7 +28,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 50px !important;
+    /*width: 50px !important;*/
     height: 10px;
     box-sizing: border-box;
     border: 1px solid black;

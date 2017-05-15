@@ -23,6 +23,7 @@
     </div>
 </template>
 <script>
+    import $scrollBar from '../js/jqueryScrollBar'
     export default {
         data () {
             return {
@@ -32,8 +33,8 @@
         },
         methods: {
             hiddenSection (ev, ref) {
-                ev.target.isClick = !ev.target.isClick
-                if(ev.target.isClick) {
+                this.$refs[ref][0].isClick = !this.$refs[ref][0].isClick
+                if(this.$refs[ref][0].isClick) {
                     // console.log(this.$refs[ref] instanceof Array)   // true
                     this.$refs[ref][0].style.display = 'flex'
                 }else {
@@ -45,28 +46,30 @@
                 if(confirm(`确定删除${item.title}相关信息吗`)) {
                     console.log(this.$refs[item.secRef][0])
                     this.$refs[item.ref][0].style.display = 'none'
-                    this.$refs.sideContent.removeChild(this.$refs[item.secRef][0])   
-
+                    this.$refs[item.ref][0].isClick = false
+                    this.$refs.sideContent.removeChild(this.$refs[item.secRef][0])
                     if(this.undoArr.indexOf(item.secRef) >= 0) {
                         this.undoArr.splice(this.undoArr.indexOf(item.secRef), 1).push(item.secRef)
                     }else {
                         this.undoArr.push(item.secRef)
                     }
                 }
+                //this.$store.commit('DEL_RIGHT_CONTENT', this.undoArr)
+                if(this.undoArr.length === 3) {
+                    document.querySelector('.contentWrap').style.width = '80%'
+                    document.querySelector('.rightWrap').style.width = '20%'
+                    $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar')
+                }
             },
-            undo(ev, item) {
-                 console.log(this.undoArr)
+            undo(ev, item) {    // 撤销   数据驱动
+                this.$refs[item.ref][0].isClick = false
+                this.$refs[item.ref][0].style.display = 'none'
                 if(this.undoArr.length > 0 ){
                     let index = Number(this.undoArr[this.undoArr.length -1].slice(0, 1))
-
-                    if(this.$refs[`${index + 1}_sec`][0]) {
-                        
+                    if(this.$refs[`${index + 1}_sec`][0]) {    
                         this.$refs.sideContent.insertBefore(this.$refs[`${index}_sec`][0], this.$refs[`${index+1}_sec`][0])
                     }  
                 }
-                
-               
-                 
             }
         }
     }
@@ -75,8 +78,7 @@
     .right_message {
         position: absolute;
         right: 0;
-        top: 30px;
-        width: 138px;
+        width: calc(15% - 12px);
         height: 100%;
         background: black;
         display: flex;

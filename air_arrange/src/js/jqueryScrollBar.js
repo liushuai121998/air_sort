@@ -5,6 +5,38 @@ export default {
      * @param {*} el 
      * @param {*} tal 
      */
+    resize(el, tal, el2, el3) {
+        let dom = document.querySelector(el)
+        let dom2 = document.querySelector(el2)
+        let dom3 = document.querySelector(el3)
+            // 表格的dom tbody
+        let tableDom = document.querySelectorAll(tal)
+        let leftValue = 0
+        for (var i = 0, len = tableDom.length; i < len; i++) {
+            leftValue += tableDom[i].offsetWidth
+        }
+        css(dom.parentNode, 'translateX', leftValue)
+        dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
+        dom2.parentNode.style.width = tableDom[0].offsetWidth + 'px'
+        dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+            // console.log(dom3)
+        dom3.style.width = dom3.parentNode.offsetWidth + 'px'
+        css(dom3, 'translateY', 880)
+        window.onresize = function() {
+
+            let leftValue = 0
+            for (var i = 0, len = tableDom.length; i < len; i++) {
+                leftValue += tableDom[i].offsetWidth
+            }
+            css(dom.parentNode, 'translateX', leftValue)
+            dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
+            dom2.parentNode.style.width = tableDom[0].offsetWidth + 'px'
+            dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+                // console.log(dom3)
+            dom3.style.width = dom3.parentNode.offsetWidth + 'px'
+            css(dom3, 'translateY', document.documentElement.clientHeight - 40)
+        }
+    },
     scrollBar(el, tal) {
         // 元素刚开始的位置
         let elementPoint = {
@@ -25,22 +57,17 @@ export default {
         let dom = document.querySelector(el)
             // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
-        tableDom[0].parentNode.style.height = document.documentElement.clientHeight - 75 + 'px'
-        tableDom[1].parentNode.style.height = document.documentElement.clientHeight - 75 + 'px'
+            // tableDom[0].parentNode.style.height = document.documentElement.clientHeight - 64 + 'px'
+            // tableDom[1].parentNode.style.height = document.documentElement.clientHeight - 64 + 'px'
             // 滚动条的位置
-        let leftValue = 0
-        for (var i = 0, len = tableDom.length; i < len; i++) {
-            leftValue += tableDom[i].offsetWidth
-        }
-        // dom.parentNode.style.left = 80 + leftValue + 'px'
-        css(dom.parentNode, 'translateX', 60 + leftValue)
-        const maxT = dom.parentNode.offsetHeight - dom.clientHeight
-            // 滚动条的高度
+
+        // 滚动条的高度
         setTimeout(function() {
             // console.log(((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight)
             dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
             console.log(tableDom[0].offsetHeight)
         }, 20)
+
 
         // 自定义滚动条
         dom.onmousedown = function(ev) {
@@ -63,11 +90,11 @@ export default {
                 }
                 // dom.style.top = T + 'px'
                 css(dom, 'translateY', T)
-                css(dom, 'translateZ', 1)
+                    //css(dom, 'translateZ')
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.top = -T * scale + 'px'
                     css(tableDom[i], 'translateY', -T * scale)
-                        // css(tableDom[i], 'translateZ', 1)
+                        //css(tableDom[i], 'translateZ')
                 }
             }
             document.onmouseup = function() {
@@ -135,11 +162,11 @@ export default {
                 }
                 // dom.style.top = top + 'px'
                 css(dom, 'translateY', top)
-                css(dom, 'translateZ', 1)
+                    //css(dom, 'translateZ')
                 for (var i = 0, len = tableDom.length; i < len; i++) {
                     // tableDom[i].style.top = -top * scale + 'px'
                     css(tableDom[i], 'translateY', -top * scale)
-                        // css(tableDom[i], 'translateZ', 1)
+                        //css(tableDom[i], 'translateZ')
                 }
             })
             // fireFox
@@ -170,7 +197,7 @@ export default {
             }
             // dom.style.top = top + 'px'
             css(dom, 'translateY', top)
-            css(dom, 'translateZ', 1)
+                //css(dom, 'translateZ')
             for (var i = 0, len = tableDom.length; i < len; i++) {
                 //tableDom[i].style.top = -top * scale + 'px'
                 css(tableDom[i], 'translateY', -top * scale)
@@ -185,19 +212,19 @@ export default {
      * @param {*} tal 
      * @param {*} index 
      */
-    moveToDestation(el, tal, index) {
-        let dom = document.querySelector(el)
-            // 表格的dom tbody
-        let tableDom = document.querySelectorAll(tal)
-        let tdHeight = tableDom[0].getElementsByTagName('td')[0].offsetHeight
-        let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
-        const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
-        let top = (index - 1) * tdHeight
-        dom.style.top = top / scale + 'px'
-        for (var i = 0, len = tableDom.length; i < len; i++) {
-            tableDom[i].style.top = -top + 'px'
-        }
-    },
+    // moveToDestation(el, tal, index) {
+    //     let dom = document.querySelector(el)
+    //         // 表格的dom tbody
+    //     let tableDom = document.querySelectorAll(tal)
+    //     let tdHeight = tableDom[0].getElementsByTagName('td')[0].offsetHeight
+    //     let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
+    //     const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
+    //     let top = (index - 1) * tdHeight
+    //     dom.style.top = top / scale + 'px'
+    //     for (var i = 0, len = tableDom.length; i < len; i++) {
+    //         tableDom[i].style.top = -top + 'px'
+    //     }
+    // },
     /**
      * 水平滚动条
      * @param {*} el 
@@ -223,20 +250,24 @@ export default {
         let tableDom = document.querySelectorAll(tal)
 
         // dom.parentNode.style.width = tableDom[0].offsetWidth
+
+        dom.parentNode.style.width = tableDom[0].parentNode.clientWidth + 'px'
         const maxL = dom.parentNode.offsetWidth - dom.clientWidth
             // 滚动条的宽度
         setTimeout(function() {
-            console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth)
+            // console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth)
             dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
         }, 20)
+
 
         // 自定义滚动条
         dom.onmousedown = function(ev) {
             ev = ev || event
                 // ev.preventDefault()
             elementPoint.left = css(this, 'translateX')
+                // elementPoint.left = this.offsetLeft
             startPoint.left = ev.clientX
-            let tableMaxL = tableDom[0].offsetWidth - dom.parentNode.offsetWidth
+            let tableMaxL = tableDom[0].offsetWidth - tableDom[0].parentNode.clientWidth
                 // console.log(tableDom[0].offsetWidth, 'tableDom[0].offsetWidth')
             const scale = tableMaxL / (dom.parentNode.offsetWidth - dom.offsetWidth)
             document.onmousemove = function(ev) {
@@ -249,13 +280,13 @@ export default {
                 } else if (L > maxL) {
                     L = maxL
                 }
-                //dom.style.left = L + 'px'
+                // dom.style.left = L + 'px'
                 css(dom, 'translateX', L)
-                css(dom, 'translateZ', 1)
+                    // css(dom, 'translateZ', 1)
                 for (var i = 0, len = tableDom.length; i < len; i++) {
-                    // tableDom[i].style.left = L * scale + 'px'
-                    css(tableDom[i], 'translateX', L * scale)
-                        // css(tableDom[i], 'translateZ', 1)
+                    // tableDom[i].style.left = -L * scale + 'px'
+                    css(tableDom[i], 'translateX', -L * scale)
+                        // css(tableDom[i], 'translateZ')
                 }
             }
             document.onmouseup = function() {

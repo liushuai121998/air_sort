@@ -1,62 +1,43 @@
 <template>
-  <div class='wrap '>
+  <div class='wrap' ref='wrap'>
     <div class='contentWrap'>
-        <div class='theadWrap'>
-           <table id='tab' border='1' cellpadding='0' cellspacing='0' class=" scrollX">
-              <thead>
-                  <tr>
-                    <th v-for='(item,index) in thLeftData' :width= 'item.width' :key='index' @mousedown='sortTable($event, index)' class='change_th'>
-                      <span>{{item.title}}</span><div class='ww'></div>
-                    </th>
-                  </tr>
-              </thead> 
-           </table>
-        </div> 
-        <div class='tbodyWrap'>
-          <table border='1' cellpadding='0' cellspacing='0' class='scrollTbody scrollX'>  
-                <tbody class='tbodyScroll'>
-                  <tr v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}" @click='selectTr($event,index)' :key='index'>
-                    <td :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</td>
-                    <td v-for='(str, key, i) in tdItem' :style='{width: backData[key]}' :class='{uniqueClass: key === "flightState"}' :key='i'>{{str}}</td>
-                  </tr>  
-               </tbody>
-          </table>
+        <div class='main_content'>
+          <div class='theadWrap'>
+           <ul id='tab' class=' scrollX'><!--
+                --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index)'><span>{{item.title}}</span><div class='ww'></div></li>
+           </ul>
+          </div> 
+          <div class='tbodyWrap scrollX scrollTbody'>
+            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}"  @click='selectTr($event,index)' :key='index'>
+                  <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
+                  --><li v-for='(str, key, i) in tdItem' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState"}'>{{str}}</li>
+            </ul>
+          </div>
         </div>
     </div>
     <div class='rightWrap'>
       <div class='theadWrap'>
-        <table border='1' cellpadding='0' cellspacing='0'>
-          <thead>
-                <tr>
-                  <th v-for='(item, index) in thRightData' :style='{width: item.width}' :colspan='item.col' :key='index'>
-                    <div>{{item.title}}</div>
-                  </th>
-                </tr>
-          </thead>
-          
-        </table>
+        <ul>
+          <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
+        </ul>
       </div>
-      <div class='tbodyWrap'>
-        <table border='1' cellpadding='0' cellspacing='0'  class='scrollTbody'>
-            <tbody class='tbodyScroll'>
-                <tr v-for='(item, index) in fixData' :key='index'>
-                  <td v-for='(str, key, i) in item' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}' :key='i'>{{str}}</td>
-                </tr>
-          </tbody>
-        </table>
+      <div class='tbodyWrap scrollTbody'>
+        <ul v-for='(item, index) in fixData' :key='index'>
+          <li v-for='(str, key, i) in item' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
+        </ul>
       </div>
-      <div class='fixed-x-bar'></div>
-    </div>    
+      <div class='fixed-x-bar' ref='fixedBar'></div>
+    </div>
     <scroll-bar></scroll-bar>
-    <right-content></right-content>
     <scroll-x-bar></scroll-x-bar>
+    <right-content></right-content>
   </div>
   
 </template>
 <script>
   import scrollBar from './scrollBar'
-  import rightContent from './rightContent'
   import scrollXBar from './scrollXBar'
+  import rightContent from './rightContent'
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
     data () { 
@@ -68,12 +49,12 @@
         temp: null,
         fixTemp: null,
         fixTdWidth: {
-          "enterStart": "54px",
-          "enterFinish": "54px",
-          "enterRemove1": "58px",
-          "enterRemove2": "55px",
-          "makeFinish1": "53px",
-          "makeFinish2": "55px"
+          "enterStart": "15%",
+          "enterFinish": "15%",
+          "enterRemove1": "17%",
+          "enterRemove2": "18%",
+          "makeFinish1": "17%",
+          "makeFinish2": "18%"
         },
         localArr: [],
         // fixData随机显示颜色的索引
@@ -83,58 +64,35 @@
         selectIndexArr: [],
         // 选中的tr
         selectTrArr: [],
-      
       }
     },
     created () {
-      // this.$http.get('/api/data')
-      //   .then(res => {
-      //     // 请求的数据
-      //     this.tdData = res.data.data
-      //   })
       
       this.tdData = this.$store.state.data.contentData
 
-      // this.$http.get('/api/fix')
-      //   .then(res => {
-      //     this.fixData = res.data.data
-      //   })
-
       this.fixData = this.$store.state.data.fixData
 
-        // fixData中的tr随机
       this.randomIndexArr = this.$store.state.arr 
-      // console.info(this.randomIndexArr.indexOf(44))  
-      // fixData中的tr中的td随机
+      
       this.strRandomArr = this.$store.state.strRandomArr 
 
- 
-      
       this.thLeftData = this.$store.state.thLeftData
       
       this.thRightData = this.$store.state.thRightData
 
     },
     mounted () {
-
+      // console.log(this.$refs.fixedBar)
+      this.$refs.fixedBar.style.width = this.$refs.fixedBar.parentNode.offsetWidth + 'px';
       // this.setInter()
-      this.$store.dispatch('RANDOM_DATA')
-      $scrollBar.widthChange('tab', this)
-
+      // this.$store.dispatch('RANDOM_DATA')
+      // $scrollBar.widthChange('tab', this)
+      
+      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
     },
     methods: {
-      // 检索高亮 
-      // filterStr(str,index,key){
-      //   if(key === 'airPos'){
-      //     // 搜索机位 
-      //      return this.$store.state.data.contentData[index].airPos.search(this.$store.state.inputValue) === 0 ? 
-      //  "<span style='background: yellow; color: black; font-size: 18px'>" + this.$store.state.inputValue + "</span>" 
-      //  + this.$store.state.data.contentData[index].airPos.substr(this.$store.state.inputValue.length) : this.$store.state.data.contentData[index][key]
-      //   }else{
-      //     return this.$store.state.data.contentData[index][key]
-      //   }
-      // },
+      
       setInter () {
         this.timeId1 = setInterval(() => {
           this.$http.get('/api/data')
@@ -233,7 +191,12 @@
             "preLeave": "2100",
             "relLeave": "-",
             "prePos": "-",
-            "race": "02R/"
+            "race": "02R/",
+            "race1": "02R/",
+            "race2": "02R/",
+            "race3": "02R/",
+            "race4": "02R/",
+            "race5": "02R/"
         }
           let count = 0
           for(var n in this.temp){
@@ -252,6 +215,8 @@
   .wrap{
     margin-left: 60px;
     width: calc(100% - 60px);
+    overflow: hidden;
+    position: relative;
   }
   .wrap:after{
     content: '';
@@ -259,100 +224,108 @@
     clear: both;
   }
   .contentWrap {
-    /*width: 1376px;*/
-    /*width: 75%;*/
-    overflow: hidden;
-  }
-  /*.rightWrap {
-    width: 15%;
-  }*/
-  /*.rightWrap .theadWrap, .rightWrap .tbodyWrap, .rightWrap .tbodyWrap table, .rightWrap .tbodyWrap tr, .rightWrap .theadWrap tr{
-    width: 100%;
-  }*/
-  .contentWrap, .rightWrap{
+    width: 70%;
     float: left;
+    
+  }
+  .contentWrap .main_content , .contentWrap .theadWrap{
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .contentWrap ul, .rightWrap ul{
+    /*width: auto;*/
+    box-sizing: border-box;
+    font-size: 0;
+    cursor: pointer;
+  }
+  .contentWrap ul {
+    width: 120%;
   }
   .theadWrap{
     position: relative;
     z-index: 99;
   }
-  .scrollTbody{
-    position: relative;
-    z-index: 9;
-    left: 0;
-    top: 0;   
+  
+  .theadWrap ul li {
+    background: #ebebeb;
   }
-  .tbodyWrap {
-    /*width: 100%;*/
-    overflow: hidden;
-  }
-  table {
-    border-collapse: collapse;
-    /*border: 1px solid #5c5c5c;*/
-  }
-  th, td{
-    /*position: relative;*/
-    border: 1px solid #5c5c5c;
-  }
-  th{
-    border-bottom: none
-  }
-  th{
-    height: 34px;
-    text-align: center;
-    /*不换行*/
-    /*white-space:nowrap; */
-    vertical-align: middle;
-    background: #e9e9e9;
-    cursor: pointer;
-  }
-  th.change_th {
-    line-height: 34px;
-  }
-  td{
-    height: 29px;
-    text-align: center;
-    vertical-align: middle;
+  .tbodyWrap ul li {
     background: #3b3b3b;
     color: #fff;
-    cursor: pointer;
   }
-  .delay td{
+  .wrap ul li {
+    display: inline-block;
+    border: 1px solid black;
+    border-left: none;
+    border-top: none;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 16px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+  }
+  .rightWrap {
+    position: relative;
+    z-index: 88;
+    width: 15%;
+    float: left;
+  }
+  .rightWrap ul li {
+    display: inline-block;
+    border: 1px solid black;
+    border-left: none;
+    border-top: none;
+    box-sizing: border-box;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 16px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+  }
+  .rightWrap ul li:first-child {
+    border-left: 1px solid black;
+  }
+  .tbodyWrap .delay li{
     background-color: red;
   }
-  .active td{
+  .tbodyWrap .active li{
     background-color: orange;
   }
-  .uniqueClass{
+  .contentWrap .tbodyWrap .uniqueClass{
     background-color: #fff8c6;
     color: black;
   }
-  .preFlight td{
+  .tbodyWrap .preFlight li{
     background-color: #b8ff3f;
     color: black;
   }
-  .fixDataBac{
+  .rightWrap .tbodyWrap .fixDataBac{
     background: #f5501f;
   }
-  .noFixDataBac{
+  .rightWrap .tbodyWrap .noFixDataBac{
     background: #3b3b3b;
   }
   /*搜索索引*/
-  .searchTd td {
+  .tbodyWrap .searchTd li{
     background: #bfa;
   }
-  .selectTr td {
+  .tbodyWrap  .selectTr li{
     background: pink;
   }
-  .ww {     
-    /*position: absolute;
-    right: 0;
-    top: 0;*/
+  /*.ww {     
     float: right;
     height: 100%;
     width: 3px;
     background:  #e8e8e8;       
-    cursor: col-resize
+    
+    cursor: col-resize;
   }
         
  .line {
@@ -361,13 +334,12 @@
     position: absolute;
     z-index: 1000;
     display: none;
-  }
+  }*/
  .fixed-x-bar{
     position: absolute;
-    z-index: 889;
-    bottom: 0;
+    z-index: 1001;
+    top: 0;
     height: 10px;
-    width: 336px;
     background: #2a2a2a;
     border-radius: 0px 5px 5px 0;
   }       

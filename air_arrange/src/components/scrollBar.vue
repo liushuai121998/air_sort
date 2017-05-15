@@ -11,6 +11,7 @@
     mounted () {
         $scrollBar.scrollBar('.scroll', '.scrollTbody')
         $scrollBar.mouseScroll('.scroll', '.scrollTbody')
+        $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar')
     }
   }
 </script>
@@ -18,12 +19,10 @@
   .scroll-bar{
     position: absolute;
     z-index: 999;
-    /*right: 45px;
-    top: 32px;*/
     left: 0;
-    top: 65px;
+    top: 34px;
     width: 10px;
-    height: calc(100% - 75px);
+    height: calc(100% - 34px);
     background: #2a2a2a;
     border-radius: 5px;
   }
