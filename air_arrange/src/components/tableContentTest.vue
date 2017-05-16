@@ -89,7 +89,7 @@
       // $scrollBar.widthChange('tab', this)
       setInterval(() => {
         this.thLeftData = this.$store.state.thLeftData
-        // this.tdData = this.$store.state.data.contentData
+        this.tdData = this.$store.state.data.contentData
       }, 1000)
       // this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 

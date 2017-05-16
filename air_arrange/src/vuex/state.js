@@ -6,6 +6,7 @@ for (let i = 0; i < 150; i++) {
 let strRandomArr = ['1225', '1118', '-']
 
 let data = require('../../data.json')
+
 let cloneData = JSON.parse(JSON.stringify(data))
     // console.log(Object.getOwnPropertyDescriptor(cloneData, 'contentData'))
     // let thLeftData = [{ title: '', width: '44px' }, { title: '月/日', width: '69px' }, { title: '标记', width: '42px' }, { title: '主航班号', width: '85px' },

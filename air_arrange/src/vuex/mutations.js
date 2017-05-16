@@ -254,10 +254,7 @@ export default {
         state.delRightContent = delArr
     },
     SHOW_DATA(state, { showData }) {
-        // state.data = {
-        //     contentData: state.cloneData.contentData,
-        //     fixData: state.cloneData.fixData
-        // }
+
         if (showData[0].isChecked) {
             console.log(state.cloneData.contentData)
                 // return
@@ -295,5 +292,13 @@ export default {
             console.log(state.thLeftData, state.data.contentData)
         }
 
+    },
+    RESET_DATA(state) {
+        console.log('11111')
+        state.data = {
+            contentData: JSON.parse(JSON.stringify(state.cloneData.contentData)),
+            fixData: JSON.parse(JSON.stringify(state.cloneData.fixData))
+        }
+        state.thLeftData = state.cloneLeftData
     }
 }

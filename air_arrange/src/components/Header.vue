@@ -52,7 +52,8 @@ export default {
           showFirstIndex: 0,
           placeHolderValue: '按机位搜索',
           toggle: false,
-          showData: [{value: 'eq', text: '全部显示', isChecked: false}]
+          showData: [{value: 'eq', text: '全部显示', isChecked: false}],
+          logFlag: false
         }
     },
     created () {
@@ -194,9 +195,18 @@ export default {
           
         },
         confirmShow(isShow) {
-        
+          if(this.logFlag) {
+            console.log(this.$store.state.cloneData.contentData)
+            // let contentData = this.$store.state.cloneData.contentData
+            // let thLeftData = this.$store.state.cloneLeftData
+            // this.$store.commit('RESET_DATA', {contentData, thLeftData})
+            this.$store.dispatch('RESET_DATA')
+            
+            this.logFlag = false
+          }
           if(isShow) {
             this.$store.commit('SHOW_DATA', this)
+            this.logFlag = true
           }
           this.toggle = !this.toggle
         }
