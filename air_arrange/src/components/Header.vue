@@ -14,6 +14,27 @@
       <input type="button" value="新增" @click='addData'>
       <input type="button" value="修改" @click='setData'>
       <input type="button" value="删除" @click='deleteData'>
+      <select>
+        <option>全部代理</option>
+        <option>中国国航航空公司</option>
+        <option>中国东方航空公司</option>
+        <option>未知</option>
+        <option>杭州萧山</option>
+        <option>中宇</option>
+      </select>
+      <section class='showInfo'>
+        <span @click='toggleShow(toggle = !toggle)'>显示状态</span>
+        <ul class='inputWrap' v-show='toggle'>
+          <li>
+            <input type='button' value='确定' @click='confirmShow(true)'>
+            <input type='button' value='取消' @click='confireShow(false)'>
+          </li>
+          <li v-for='(item, index) in showData'>
+            <input type='checkbox' :id='index' :value='item.value' @click='show($event, item.value, index)' v-model='item.isChecked'>
+            <label :for='index' v-text='item.text'></label>
+          </li>
+        </ul>
+      </section>
       <span>标准时间</span>
     </div>
 </template>
@@ -29,11 +50,26 @@ export default {
           isFlightClick: false,
           isInputChange: true,
           showFirstIndex: 0,
-          placeHolderValue: '按机位搜索'
+          placeHolderValue: '按机位搜索',
+          toggle: false,
+          showData: [{value: 'eq', text: '全部显示', isChecked: false}]
         }
     },
-    mounted () {
-      
+    created () {
+      let arr = [].concat(this.$store.state.thLeftData)
+      arr.splice(0, 1)
+      let obj = this.$store.state.data.contentData[0]
+      let count = 0
+      for(let key in obj) {
+        if(key != 'spot') {
+          this.showData.push({
+            value: key,
+            text: arr[count]['title'],
+            isChecked: false
+          })
+        }
+        count++
+      }
     },
     methods: {
 
@@ -139,6 +175,30 @@ export default {
           this.inputValue = ''
           this.searchInfo = {}
           // console.log(ev.target.value)
+        },
+        toggleShow () {
+          //this.toggle = !this.toggle
+        },
+        show (ev, val, index) {
+          if(val === 'eq') {
+            // this.showData[index].isChecked
+            this.showData.forEach((item, i) => {
+              item.isChecked = this.showData[index].isChecked
+            })
+
+          }else {
+            let arr = [].concat(this.showData)
+            arr.splice(0, 1)
+            this.showData[0].isChecked = JSON.stringify(arr).search('false') >= 0 ? false : true
+          }
+          
+        },
+        confirmShow(isShow) {
+        
+          if(isShow) {
+            this.$store.commit('SHOW_DATA', this)
+          }
+          this.toggle = !this.toggle
         }
     }
 }
@@ -156,5 +216,33 @@ export default {
   }
   .search{
     margin-left: 30px;
+  }
+  .showInfo {
+    position: relative;
+    display: inline-block;
+    width: 100px;
+    height: 20px;
+    background: #bfa;
+    text-align: center;
+    line-height: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .showInfo .inputWrap {
+    position: absolute;
+    left: 0;
+    top: 20px;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid blue;
+    border-radius: 5px;
+    height: 150px;
+    overflow: auto;
+  }
+  .showInfo .inputWrap li {
+    float: left;
+    /*text-overflow: ellipsis;
+    overflow: hidden;*/
+    white-space: nowrap;
   }
 </style>

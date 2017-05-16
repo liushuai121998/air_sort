@@ -11,7 +11,7 @@
     mounted () {
         $scrollBar.scrollBar('.scroll', '.scrollTbody')
         $scrollBar.mouseScroll('.scroll', '.scrollTbody')
-        $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar')
+        $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
     }
   }
 </script>

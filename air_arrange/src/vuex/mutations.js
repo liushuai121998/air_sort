@@ -252,5 +252,48 @@ export default {
 
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
+    },
+    SHOW_DATA(state, { showData }) {
+        // state.data = {
+        //     contentData: state.cloneData.contentData,
+        //     fixData: state.cloneData.fixData
+        // }
+        if (showData[0].isChecked) {
+            console.log(state.cloneData.contentData)
+                // return
+        } else {
+
+            let valueArr = []
+            let textArr = []
+            showData.forEach((item) => {
+                if (item.isChecked) {
+                    valueArr.push(item.value)
+                    textArr.push(item.text)
+                }
+            })
+            if (valueArr.length === 0) {
+                return
+            }
+
+            let arr = []
+            state.thLeftData.forEach(item => {
+                if (textArr.indexOf(item.title) >= 0 || item.title === '-') {
+                    arr.push(item)
+                }
+            })
+            state.thLeftData = arr
+
+            state.data.contentData.forEach((item, index) => {
+                const obj = JSON.parse(JSON.stringify(item))
+                state.data.contentData[index] = {}
+                for (let i = 0, len = valueArr.length; i < len; i++) {
+                    if (obj.hasOwnProperty(valueArr[i])) {
+                        state.data.contentData[index][valueArr[i]] = obj[valueArr[i]]
+                    }
+                }
+            })
+            console.log(state.thLeftData, state.data.contentData)
+        }
+
     }
 }

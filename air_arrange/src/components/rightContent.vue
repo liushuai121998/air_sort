@@ -31,6 +31,9 @@
                 undoArr: []
             }
         },
+        mounted () {
+            this.$refs.sideContent.style.height = document.documentElement.clientHeight - 30 + 'px'
+        },
         methods: {
             hiddenSection (ev, ref) {
                 this.$refs[ref][0].isClick = !this.$refs[ref][0].isClick
@@ -57,8 +60,9 @@
                 //this.$store.commit('DEL_RIGHT_CONTENT', this.undoArr)
                 if(this.undoArr.length === 3) {
                     document.querySelector('.contentWrap').style.width = '80%'
-                    document.querySelector('.rightWrap').style.width = '20%'
-                    $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar')
+                    document.querySelector('.rightWrap').style.width = 'calc(20% - 10px)'
+
+                    $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
                 }
             },
             undo(ev, item) {    // 撤销   数据驱动
@@ -78,9 +82,8 @@
     .right_message {
         position: absolute;
         right: 0;
-        width: calc(15% - 12px);
-        height: 100%;
-        background: black;
+        width: calc(15% - 11px);
+        /*height: 100%;*/
         display: flex;
         flex-direction: column;
     }

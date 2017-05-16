@@ -5,36 +5,43 @@ export default {
      * @param {*} el 
      * @param {*} tal 
      */
-    resize(el, tal, el2, el3) {
+    resize(el, tal, el2, el3, el4) {
         let dom = document.querySelector(el)
         let dom2 = document.querySelector(el2)
         let dom3 = document.querySelector(el3)
+        let dom4 = document.querySelector(el4)
             // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
         let leftValue = 0
         for (var i = 0, len = tableDom.length; i < len; i++) {
-            leftValue += tableDom[i].offsetWidth
+            leftValue += tableDom[i].parentNode.offsetWidth
         }
         css(dom.parentNode, 'translateX', leftValue)
         dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
-        dom2.parentNode.style.width = tableDom[0].offsetWidth + 'px'
+
+        dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
         dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
             // console.log(dom3)
         dom3.style.width = dom3.parentNode.offsetWidth + 'px'
-        css(dom3, 'translateY', 880)
+        css(dom3, 'translateY', document.documentElement.clientHeight - 70)
+        console.log(dom4)
+        dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
+
         window.onresize = function() {
 
             let leftValue = 0
             for (var i = 0, len = tableDom.length; i < len; i++) {
-                leftValue += tableDom[i].offsetWidth
+                leftValue += tableDom[i].parentNode.offsetWidth
             }
             css(dom.parentNode, 'translateX', leftValue)
             dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
-            dom2.parentNode.style.width = tableDom[0].offsetWidth + 'px'
+            dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
             dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
                 // console.log(dom3)
             dom3.style.width = dom3.parentNode.offsetWidth + 'px'
-            css(dom3, 'translateY', document.documentElement.clientHeight - 40)
+            css(dom3, 'translateY', document.documentElement.clientHeight - 70)
+
+            dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
         }
     },
     scrollBar(el, tal) {
@@ -249,13 +256,12 @@ export default {
         // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
 
-        // dom.parentNode.style.width = tableDom[0].offsetWidth
-
+        console.log(tableDom[0].parentNode.clientWidth, 'tableDom[0].parentNode')
         dom.parentNode.style.width = tableDom[0].parentNode.clientWidth + 'px'
+
         const maxL = dom.parentNode.offsetWidth - dom.clientWidth
             // 滚动条的宽度
         setTimeout(function() {
-            // console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth)
             dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
         }, 20)
 

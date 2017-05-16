@@ -1,9 +1,9 @@
 <template>
-  <div class='wrap' ref='wrap'>
+  <div class='wrap'>
     <div class='contentWrap'>
         <div class='main_content'>
-          <div class='theadWrap'>
-           <ul id='tab' class=' scrollX'><!--
+          <div class='theadWrap  scrollX'>
+           <ul id='tab'><!--
                 --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index)'><span>{{item.title}}</span><div class='ww'></div></li>
            </ul>
           </div> 
@@ -83,12 +83,15 @@
     },
     mounted () {
       // console.log(this.$refs.fixedBar)
-      this.$refs.fixedBar.style.width = this.$refs.fixedBar.parentNode.offsetWidth + 'px';
+      // this.$refs.fixedBar.style.width = this.$refs.fixedBar.parentNode.offsetWidth + 'px';
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
       // $scrollBar.widthChange('tab', this)
-      
-      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
+      setInterval(() => {
+        this.thLeftData = this.$store.state.thLeftData
+        // this.tdData = this.$store.state.data.contentData
+      }, 1000)
+      // this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
     },
     methods: {
@@ -173,31 +176,7 @@
     },
     computed: {
       backData () {
-          this.temp = {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6971",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "135",
-            "boardingGate": "135",
-            "calCome": "2100",
-            "calLeave": "2100",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }
+          this.temp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0]))
           let count = 0
           for(var n in this.temp){
             count++
@@ -226,9 +205,8 @@
   .contentWrap {
     width: 70%;
     float: left;
-    
   }
-  .contentWrap .main_content , .contentWrap .theadWrap{
+  .contentWrap .main_content {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
@@ -240,7 +218,7 @@
     font-size: 0;
     cursor: pointer;
   }
-  .contentWrap ul {
+  .contentWrap .main_content .tbodyWrap, .contentWrap .main_content .theadWrap {
     width: 120%;
   }
   .theadWrap{

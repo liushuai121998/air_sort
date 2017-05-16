@@ -30,6 +30,9 @@
           }
         }
     },
+    mounted () {
+      this.$refs.sideWrap.style.height = document.documentElement.clientHeight + 'px'
+    },
     methods: {
       selectIcon (ev) {
         if(ev.target.nodeName.toLowerCase() === 'span'){
