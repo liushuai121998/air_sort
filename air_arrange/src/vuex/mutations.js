@@ -330,8 +330,8 @@ export default {
      * @param {*} state 
      */
     FLY_CONTROL_SORT(state) {
-        console.log(state.data.contentData.length)
-            // 第一类
+        //console.log(state.data.contentData.length)
+        // 第一类
         let arr1 = []
             // 第二类
         let arr2 = []
@@ -360,10 +360,8 @@ export default {
                 } else if ((item[0].continue && item[0].continue.departed && item[0].continue.arrival && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.arrival.isRealCome === 'false' && item[0].continue.arrival.isFlighted === 'true') || item[0].arrival && item[0].arrival.isRealCome === 'false' && item[0].arrival.isFlighted === 'true') {
                     arr5.push(item)
                 } else if ((item[0].continue && item[0].continue.departed && item[0].continue.arrival && (item[0].continue.departed.cancelledFlight === 'true') && (item[0].continue.arrival.cancelledFlight === 'true')) || (item[0].arrival && item[0].arrival.cancelledFlight === 'true' || (item[0].departed && item[0].departed.cancelledFlight === 'true'))) {
-                    console.log('hello 1')
                     arr8.push(item)
                 } else if (item[0].arrival && item[0].arrival.isRealCome === 'true' && item[0].arrival.isFlighted === 'true') {
-                    console.log('hello world')
                     arr7.push(item)
                 } else {
                     arr6.push(item)
@@ -405,29 +403,29 @@ export default {
             return a[1]['calLeave'] > b[1]['calLeave']
         })
 
-        arr1.forEach(() => {
-            state.sortClass.push({ id: 1 })
+        arr1.forEach((item) => {
+            item[0].id = 1
         })
-        arr2.forEach(() => {
-            state.sortClass.push({ id: 2 })
+        arr2.forEach((item) => {
+            item[0].id = 2
         })
-        arr3.forEach(() => {
-            state.sortClass.push({ id: 3 })
+        arr3.forEach((item) => {
+            item[0].id = 3
         })
-        arr4.forEach(() => {
-            state.sortClass.push({ id: 4 })
+        arr4.forEach((item) => {
+            item[0].id = 4
         })
-        arr5.forEach(() => {
-            state.sortClass.push({ id: 5 })
+        arr5.forEach((item) => {
+            item[0].id = 5
         })
-        arr6.forEach(() => {
-            state.sortClass.push({ id: 6 })
+        arr6.forEach((item) => {
+            item[0].id = 6
         })
-        arr7.forEach(() => {
-            state.sortClass.push({ id: 7 })
+        arr7.forEach((item) => {
+            item[0].id = 7
         })
-        arr8.forEach(() => {
-            state.sortClass.push({ id: 8 })
+        arr8.forEach((item) => {
+            item[0].id = 8
         })
 
 
@@ -435,7 +433,6 @@ export default {
         arr1.forEach((item, index) => {
             state.data.contentData[index] = item
         })
-
-        console.log(state.sortClass)
+        console.log(state.data.contentData)
     }
 }

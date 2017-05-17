@@ -51,6 +51,5 @@ export default {
     searchData: [],
     delRightContent: [],
     isFirst: true,
-    isBai: false,
-    sortClass: []
+    isBai: false
 }

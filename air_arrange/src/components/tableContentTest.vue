@@ -8,7 +8,7 @@
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem[1]['task'] === '补班', delay: tdItem[1]['flightState'] === '到达/延误', preFlight: tdItem[1]['flightState'] === '前起/无', firstClass: sortClass[index]['id'] === 1, secondClass: sortClass[index]['id'] === 2, thirdClass: sortClass[index]['id'] === 3, forthClass: sortClass[index]['id'] === 4, fifthClass: sortClass[index]['id'] === 5, sixClass: sortClass[index]['id'] === 6, sevenClass: sortClass[index]['id'] === 7, eightClass: sortClass[index]['id'] === 8}"  @click='selectTr($event,index)' :key='index'>
+            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem[1]['task'] === '补班', delay: tdItem[1]['flightState'] === '到达/延误', preFlight: tdItem[1]['flightState'] === '前起/无', firstClass: tdItem[0]['id'] === 1, secondClass: tdItem[0]['id'] === 2, thirdClass: tdItem[0]['id'] === 3, forthClass: tdItem[0]['id'] === 4, fifthClass: tdItem[0]['id'] === 5, sixClass: tdItem[0]['id'] === 6, sevenClass: tdItem[0]['id'] === 7, eightClass: tdItem[0]['id'] === 8}"  @click='selectTr($event,index)' :key='index'>
                   <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
                   --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState"}'>{{str}}</li>
             </ul>
@@ -59,7 +59,8 @@
         // 选中tr的indexArr
         selectIndexArr: [],
         // 选中的tr
-        selectTrArr: []
+        selectTrArr: [],
+        tdData: []
       }
     },
     created () {
@@ -74,21 +75,8 @@
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
       // $scrollBar.widthChange('tab', this)
-      let timeId = setInterval(() => {
-        this.thLeftData = this.$store.state.thLeftData
-       
-        if(this.$store.state.isBai) {
-          this.$refs.theadWrap.style.width = '100%'
-          this.$refs.tbodyWrap.style.width = '100%'
-        }
-      }, 1000)
-
-      
-      // this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-
-
       // 航控排序
-
+      this.tdData = this.$store.state.data.contentData
     },
     methods: {
       setInter () {
@@ -163,10 +151,9 @@
       // 表格排序
       sortTable (ev,index) {
         console.log(Object.keys(this.$store.state.data.contentData[0][1])[index - 1])
-
         this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0][1])[index-1])
         // 解决v-for强制刷新列表 this.$forceUpdate()
-         this.$forceUpdate()
+         //this.$forceUpdate()
       },  
     },
     computed: {
@@ -181,17 +168,17 @@
           // console.log(this.tdData)
           return this.temp
       },
-      sortClass () {
-        // console.log(this.$store.getters.sortClass)
-        return this.$store.getters.sortClass
-      },
       tdData () {
-        return this.$store.getters.tdData
+        return this.$store.state.data.contentData
       },
       fixData () {
         return this.$store.state.data.fixData
       },
       thLeftData () {
+        if(this.$store.state.isBai) {
+          this.$refs.theadWrap.style.width = '100%'
+          this.$refs.tbodyWrap.style.width = '100%'
+        }
         return this.$store.state.thLeftData
       },
       thRightData () {

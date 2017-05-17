@@ -27,7 +27,7 @@
         <ul class='inputWrap' v-show='toggle'>
           <li>
             <input type='button' value='确定' @click='confirmShow(true)'>
-            <input type='button' value='取消' @click='confireShow(false)'>
+            <input type='button' value='取消' @click='confirmShow(false)'>
           </li></br>
           <li v-for='(item, index) in showData'>
             <input type='checkbox' :id='index' :value='item.value' @click='show($event, item.value, index)' v-model='item.isChecked'>
@@ -35,6 +35,7 @@
           </li>
         </ul>
       </section>
+      <input type='button' value='航控排序' @click='flyControlSort'>
       <span>标准时间</span>
     </div>
 </template>
@@ -196,14 +197,19 @@ export default {
             // let thLeftData = this.$store.state.cloneLeftData
             // this.$store.commit('RESET_DATA', {contentData, thLeftData})
             this.$store.dispatch('RESET_DATA')
-            
             this.logFlag = false
           }
           if(isShow) {
+
             this.$store.commit('SHOW_DATA', this)
             this.logFlag = true
+          }else {
+            return
           }
           this.toggle = !this.toggle
+        },
+        flyControlSort () {
+          this.$store.commit('FLY_CONTROL_SORT')
         }
     }
 }
