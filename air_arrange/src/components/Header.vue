@@ -28,7 +28,7 @@
           <li>
             <input type='button' value='确定' @click='confirmShow(true)'>
             <input type='button' value='取消' @click='confireShow(false)'>
-          </li>
+          </li></br>
           <li v-for='(item, index) in showData'>
             <input type='checkbox' :id='index' :value='item.value' @click='show($event, item.value, index)' v-model='item.isChecked'>
             <label :for='index' v-text='item.text'></label>
@@ -59,7 +59,7 @@ export default {
     created () {
       let arr = [].concat(this.$store.state.thLeftData)
       arr.splice(0, 1)
-      let obj = this.$store.state.data.contentData[0]
+      let obj = this.$store.state.data.contentData[0][1]
       let count = 0
       for(let key in obj) {
         if(key != 'spot') {
@@ -128,14 +128,9 @@ export default {
         },
         addData (ev) {
           // 新增数据
-          let length = this.$store.state.cloneData.contentData.length
-
-          let contentStr = this.$store.state.cloneData.contentData[Math.round(Math.random()*length)]
-          let fixStr = this.$store.state.cloneData.fixData[Math.round(Math.random()*length)]
-          // console.info(fixStr)
-          // console.log(str, 'str--------')
-          this.$store.commit('ADD_DATA', contentStr)
-          this.$store.commit('ADD_FIX_DATA', fixStr)
+          this.$store.commit('ADD_DATA')
+          this.$store.commit('ADD_FIX_DATA')
+          this.$store.commit('FLY_CONTROL_SORT')
         },
         setData () {
           // 修改数据
@@ -240,14 +235,15 @@ export default {
   }
   .showInfo .inputWrap {
     position: absolute;
-    left: 0;
+    left: 100%;
     top: 20px;
     box-sizing: border-box;
     background: #fff;
     border: 1px solid blue;
     border-radius: 5px;
-    height: 150px;
-    overflow: auto;
+    /*height: 150px;
+    overflow: auto;*/
+    width: 300px;
   }
   .showInfo .inputWrap li {
     float: left;

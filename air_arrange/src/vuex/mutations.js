@@ -15,11 +15,17 @@ export default {
      * @param {*} state 
      * @param {*} str 
      */
-    ADD_DATA(state, str) {
-        state.data.contentData.push(str)
+    ADD_DATA(state) {
+        let length = state.data.contentData.length
+        let contentStr = state.data.contentData[Math.round(Math.random() * (length - 1))]
+
+        state.data.contentData.push(contentStr)
+            //state.commit('FLY_CONTROL_SORT')
     },
-    ADD_FIX_DATA(state, str) {
-        state.data.fixData.push(str)
+    ADD_FIX_DATA(state) {
+        let length = state.data.contentData.length
+        let fixStr = state.data.fixData[Math.round(Math.random() * (length - 1))]
+        state.data.fixData.push(fixStr)
     },
 
     /**
@@ -104,20 +110,23 @@ export default {
      */
     SORT_TABLE(state, param) {
 
-        if (Object.is(Number(state.data.contentData[0][param]), NaN)) {
+        if (Object.is(Number(state.data.contentData[0][1][param]), NaN)) {
+
             state.data.contentData.sort(function(a, b) {
                 // 字母数字排序
-                return state.sort ? a[param] > b[param] : b[param] > a[param]
+                return state.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
             })
+
         } else {
             // 数字排序 
             state.data.contentData.sort(function(a, b) {
-                return state.sort ? a[param] - b[param] : b[param] - a[param]
+                return state.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
             })
         }
 
         state.sort = !state.sort
             // console.log(param)
+        console.log(state.data.contentData)
     },
 
     /**
@@ -253,13 +262,17 @@ export default {
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
     },
+    /**
+     * 按需显示数据
+     * @param {*} state 
+     * @param {*} param1 
+     */
     SHOW_DATA(state, { showData }) {
 
         if (showData[0].isChecked) {
-            console.log(state.cloneData.contentData)
-                // return
-        } else {
+            state.isBai = false
 
+        } else {
             let valueArr = []
             let textArr = []
             showData.forEach((item) => {
@@ -278,27 +291,151 @@ export default {
                     arr.push(item)
                 }
             })
+            if (arr.length <= 15) {
+                state.isBai = true
+            }
+            arr.forEach((item) => {
+                item.width = (100 / (arr.length)) + '%'
+            })
             state.thLeftData = arr
 
             state.data.contentData.forEach((item, index) => {
-                const obj = JSON.parse(JSON.stringify(item))
-                state.data.contentData[index] = {}
-                for (let i = 0, len = valueArr.length; i < len; i++) {
-                    if (obj.hasOwnProperty(valueArr[i])) {
-                        state.data.contentData[index][valueArr[i]] = obj[valueArr[i]]
+                    const obj = JSON.parse(JSON.stringify(item[1]))
+                    state.data.contentData[index][1] = {}
+                    for (let i = 0, len = valueArr.length; i < len; i++) {
+                        if (obj.hasOwnProperty(valueArr[i])) {
+                            state.data.contentData[index][1][valueArr[i]] = obj[valueArr[i]]
+                        }
                     }
-                }
-            })
-            console.log(state.thLeftData, state.data.contentData)
+                })
+                // console.log(state.thLeftData, state.data.contentData)
         }
 
     },
+    /**
+     * 重置数据
+     * @param {*} state 
+     */
     RESET_DATA(state) {
-        console.log('11111')
+
         state.data = {
             contentData: JSON.parse(JSON.stringify(state.cloneData.contentData)),
             fixData: JSON.parse(JSON.stringify(state.cloneData.fixData))
         }
         state.thLeftData = state.cloneLeftData
+
+    },
+    /**
+     * 航控排序
+     * @param {*} state 
+     */
+    FLY_CONTROL_SORT(state) {
+        console.log(state.data.contentData.length)
+            // 第一类
+        let arr1 = []
+            // 第二类
+        let arr2 = []
+            // 弟三类
+        let arr3 = []
+            // 第四类
+        let arr4 = []
+            // 第五类
+        let arr5 = []
+            // 第六类
+        let arr6 = []
+            // 第7类
+        let arr7 = []
+            // 第八类
+        let arr8 = []
+        state.sortClass = []
+        state.data.contentData.forEach((item, index) => {
+                if ((item[0].continue && item[0].continue.departed && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.departed.isDelay === 'true') || item[0].departed && item[0].departed.isRealFlight === 'false' && item[0].departed.isDelay === 'true') {
+                    arr1.push(item)
+                } else if (item[0].continue && item[0].continue.departed && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.departed.time >= 30) {
+                    arr2.push(item)
+                } else if ((item[0].continue && item[0].continue.departed && (item[0].continue.departed.urgingBoarding === 'true' || item[0].continue.departed.boardingEnd === 'true') && item[0].continue.departed.isRealFlight === 'false') || (item[0].departed && item[0].departed.isRealFlight === 'false' && (item[0].departed.urgingBoarding === 'true' || item[0].departed.boardingEnd === 'true'))) {
+                    arr3.push(item)
+                } else if ((item[0].continue && item[0].continue.departed && item[0].continue.arrival && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.arrival.time >= 0) || item[0].departed && item[0].departed.isRealFlight === 'false') {
+                    arr4.push(item)
+                } else if ((item[0].continue && item[0].continue.departed && item[0].continue.arrival && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.arrival.isRealCome === 'false' && item[0].continue.arrival.isFlighted === 'true') || item[0].arrival && item[0].arrival.isRealCome === 'false' && item[0].arrival.isFlighted === 'true') {
+                    arr5.push(item)
+                } else if ((item[0].continue && item[0].continue.departed && item[0].continue.arrival && (item[0].continue.departed.cancelledFlight === 'true') && (item[0].continue.arrival.cancelledFlight === 'true')) || (item[0].arrival && item[0].arrival.cancelledFlight === 'true' || (item[0].departed && item[0].departed.cancelledFlight === 'true'))) {
+                    console.log('hello 1')
+                    arr8.push(item)
+                } else if (item[0].arrival && item[0].arrival.isRealCome === 'true' && item[0].arrival.isFlighted === 'true') {
+                    console.log('hello world')
+                    arr7.push(item)
+                } else {
+                    arr6.push(item)
+                }
+
+
+
+            })
+            // console.log(arr1, arr2, arr3, arr4, arr5, arr7, arr8, arr6)
+        arr1 && arr1.sort((a, b) => {
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+        arr2 && arr2.sort((a, b) => {
+
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+        arr3 && arr3.sort((a, b) => {
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+        arr4 && arr4.sort((a, b) => {
+
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+        arr5 && arr5.sort((a, b) => {
+
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+        arr6 && arr6.sort((a, b) => {
+
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+
+        arr7 && arr7.sort((a, b) => {
+
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+
+        arr8 && arr8.sort((a, b) => {
+            return a[1]['calLeave'] > b[1]['calLeave']
+        })
+
+        arr1.forEach(() => {
+            state.sortClass.push({ id: 1 })
+        })
+        arr2.forEach(() => {
+            state.sortClass.push({ id: 2 })
+        })
+        arr3.forEach(() => {
+            state.sortClass.push({ id: 3 })
+        })
+        arr4.forEach(() => {
+            state.sortClass.push({ id: 4 })
+        })
+        arr5.forEach(() => {
+            state.sortClass.push({ id: 5 })
+        })
+        arr6.forEach(() => {
+            state.sortClass.push({ id: 6 })
+        })
+        arr7.forEach(() => {
+            state.sortClass.push({ id: 7 })
+        })
+        arr8.forEach(() => {
+            state.sortClass.push({ id: 8 })
+        })
+
+
+        arr1.push(...arr2, ...arr3, ...arr4, ...arr5, ...arr6, ...arr7, ...arr8)
+        arr1.forEach((item, index) => {
+            state.data.contentData[index] = item
+        })
+
+        console.log(state.sortClass)
     }
 }

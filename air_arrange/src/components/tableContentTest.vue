@@ -2,15 +2,15 @@
   <div class='wrap'>
     <div class='contentWrap'>
         <div class='main_content'>
-          <div class='theadWrap  scrollX'>
+          <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul id='tab'><!--
                 --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index)'><span>{{item.title}}</span><div class='ww'></div></li>
            </ul>
           </div> 
-          <div class='tbodyWrap scrollX scrollTbody'>
-            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem['task'] === '补班', delay: tdItem['flightState'] === '到达/延误', preFlight: tdItem['flightState'] === '前起/无'}"  @click='selectTr($event,index)' :key='index'>
+          <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
+            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem[1]['task'] === '补班', delay: tdItem[1]['flightState'] === '到达/延误', preFlight: tdItem[1]['flightState'] === '前起/无', firstClass: sortClass[index]['id'] === 1, secondClass: sortClass[index]['id'] === 2, thirdClass: sortClass[index]['id'] === 3, forthClass: sortClass[index]['id'] === 4, fifthClass: sortClass[index]['id'] === 5, sixClass: sortClass[index]['id'] === 6, sevenClass: sortClass[index]['id'] === 7, eightClass: sortClass[index]['id'] === 8}"  @click='selectTr($event,index)' :key='index'>
                   <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
-                  --><li v-for='(str, key, i) in tdItem' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState"}'>{{str}}</li>
+                  --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState"}'>{{str}}</li>
             </ul>
           </div>
         </div>
@@ -42,10 +42,6 @@
   export default {
     data () { 
       return {
-        thLeftData: [],
-        thRightData: [],
-        tdData: null,
-        fixData: null,
         temp: null,
         fixTemp: null,
         fixTdWidth: {
@@ -63,39 +59,38 @@
         // 选中tr的indexArr
         selectIndexArr: [],
         // 选中的tr
-        selectTrArr: [],
+        selectTrArr: []
       }
     },
     created () {
-      
-      this.tdData = this.$store.state.data.contentData
-
-      this.fixData = this.$store.state.data.fixData
-
       this.randomIndexArr = this.$store.state.arr 
       
       this.strRandomArr = this.$store.state.strRandomArr 
-
-      this.thLeftData = this.$store.state.thLeftData
-      
-      this.thRightData = this.$store.state.thRightData
+      // 排序
+      this.$store.commit('FLY_CONTROL_SORT')
 
     },
     mounted () {
-      // console.log(this.$refs.fixedBar)
-      // this.$refs.fixedBar.style.width = this.$refs.fixedBar.parentNode.offsetWidth + 'px';
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
       // $scrollBar.widthChange('tab', this)
-      setInterval(() => {
+      let timeId = setInterval(() => {
         this.thLeftData = this.$store.state.thLeftData
-        this.tdData = this.$store.state.data.contentData
+       
+        if(this.$store.state.isBai) {
+          this.$refs.theadWrap.style.width = '100%'
+          this.$refs.tbodyWrap.style.width = '100%'
+        }
       }, 1000)
+
+      
       // this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
+
+
+      // 航控排序
 
     },
     methods: {
-      
       setInter () {
         this.timeId1 = setInterval(() => {
           this.$http.get('/api/data')
@@ -167,16 +162,16 @@
       },
       // 表格排序
       sortTable (ev,index) {
-        this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0])[index-1])
+        console.log(Object.keys(this.$store.state.data.contentData[0][1])[index - 1])
 
+        this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0][1])[index-1])
         // 解决v-for强制刷新列表 this.$forceUpdate()
-        console.log(this.$store.state.data.contentData)
-        //this.$forceUpdate()
+         this.$forceUpdate()
       },  
     },
     computed: {
       backData () {
-          this.temp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0]))
+          this.temp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0][1]))
           let count = 0
           for(var n in this.temp){
             count++
@@ -185,6 +180,22 @@
           }
           // console.log(this.tdData)
           return this.temp
+      },
+      sortClass () {
+        // console.log(this.$store.getters.sortClass)
+        return this.$store.getters.sortClass
+      },
+      tdData () {
+        return this.$store.getters.tdData
+      },
+      fixData () {
+        return this.$store.state.data.fixData
+      },
+      thLeftData () {
+        return this.$store.state.thLeftData
+      },
+      thRightData () {
+        return this.$store.state.thRightData
       }
     },
     components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar, 'right-content': rightContent}
@@ -276,7 +287,7 @@
   .tbodyWrap .active li{
     background-color: orange;
   }
-  .contentWrap .tbodyWrap .uniqueClass{
+  .tbodyWrap .uniqueClass{
     background-color: #fff8c6;
     color: black;
   }
@@ -294,7 +305,7 @@
   .tbodyWrap .searchTd li{
     background: #bfa;
   }
-  .tbodyWrap  .selectTr li{
+  .contentWrap .tbodyWrap  .selectTr li{
     background: pink;
   }
   /*.ww {     
@@ -321,4 +332,26 @@
     background: #2a2a2a;
     border-radius: 0px 5px 5px 0;
   }       
+  .tbodyWrap .firstClass li {
+    background: #31849B;
+  }
+  .tbodyWrap .secondClass li {
+    background: #E5E0EC;
+  }
+  .tbodyWrap .thirdClass li {
+    background: #FCD5B4;
+  }
+  .tbodyWrap .forthClass li {
+    background: #B2A1C7;
+  }
+  .tbodyWrap .fifthClass li {
+    background: #E6B9B8;
+  }
+  .tbodyWrap .sixClass li {
+    background: #D7E4BC;
+  }
+  .tbodyWrap .sevenClass li {
+    background: #538ED5;
+  }
+  
 </style>

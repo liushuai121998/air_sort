@@ -5,7 +5,7 @@ for (let i = 0; i < 150; i++) {
 }
 let strRandomArr = ['1225', '1118', '-']
 
-let data = require('../../data.json')
+let data = require('../../dataTest.json')
 
 let cloneData = JSON.parse(JSON.stringify(data))
     // console.log(Object.getOwnPropertyDescriptor(cloneData, 'contentData'))
@@ -17,7 +17,7 @@ let cloneData = JSON.parse(JSON.stringify(data))
 let thLeftData = [{ title: '-', width: '4%' }, { title: '月/日', width: '4%' }, { title: '标记', width: '4%' }, { title: '主航班号', width: '4%' },
         { title: '共享航班号', width: '9%' }, { title: '机号', width: '5%' }, { title: '类型', width: '4%' }, { title: '机型', width: '5%' }, { title: '任务', width: '4%' },
         { title: '航班状态', width: '5%' }, { title: '航线', width: '5%' }, { title: '机位', width: '4%' }, { title: '登机口', width: '5%' }, { title: '计到', width: '4%' },
-        { title: '计离', width: '4.5%' }, { title: '预离', width: '4%' }, { title: '实离', width: '4%' }, { title: '预位', width: '4%' }, { title: '跑道', width: '3%' }, { title: '跑道1', width: '3%' }, { title: '跑道2', width: '3%' }, { title: '跑道3', width: '3%' }, { title: '跑道4', width: '3%' }, { title: '跑道5', width: '3%' }
+        { title: '计离', width: '4%' }, { title: '预离', width: '4%' }, { title: '实离', width: '4%' }, { title: '预位', width: '4%' }, { title: '跑道', width: '3%' }, { title: '跑道1', width: '3%' }, { title: '跑道2', width: '3%' }, { title: '跑道3', width: '3%' }, { title: '跑道4', width: '3%' }, { title: '跑道5', width: '3%' }
     ]
     // let thRightData = [
     //         { title: '进港桥载开始', width: '54px', col: 0 }, { title: '进港撤桥结束', width: '54px', col: 0 }, { title: '进港撤桥载', width: '114px', col: 2 }, { title: '上轮档(结束)', width: '109px', col: 2 }
@@ -50,5 +50,7 @@ export default {
     // 检索到的数据
     searchData: [],
     delRightContent: [],
-    isFirst: true
+    isFirst: true,
+    isBai: false,
+    sortClass: []
 }
