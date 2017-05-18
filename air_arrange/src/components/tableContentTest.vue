@@ -35,6 +35,7 @@
   
 </template>
 <script>
+  import Vue from 'vue'
   import scrollBar from './scrollBar'
   import scrollXBar from './scrollXBar'
   import rightContent from './rightContent'
@@ -70,7 +71,7 @@
 
       this.tdData = this.$store.state.data.contentData
       // 排序
-      this.$store.commit('FLY_CONTROL_SORT', this)
+      this.$store.commit('FLY_CONTROL_SORT', Vue)
     },
     mounted () {
       // this.setInter()

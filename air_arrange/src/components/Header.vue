@@ -40,6 +40,7 @@
     </div>
 </template>
 <script>
+import Vue from 'vue'
 // let data = require('../../data.json')
 // 自定义过滤器 filters
 export default {
@@ -134,7 +135,7 @@ export default {
           // 新增数据
           this.$store.commit('ADD_DATA')
           this.$store.commit('ADD_FIX_DATA')
-          this.$store.commit('FLY_CONTROL_SORT', this)
+          this.$store.commit('FLY_CONTROL_SORT', Vue)
         },
         setData () {
           // 修改数据
@@ -213,7 +214,7 @@ export default {
         },
         flyControlSort () {
 
-          this.$store.commit('FLY_CONTROL_SORT', this) 
+          this.$store.commit('FLY_CONTROL_SORT', Vue) 
         }
     }
 }

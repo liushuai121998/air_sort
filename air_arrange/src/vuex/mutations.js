@@ -438,7 +438,8 @@ export default {
 
         arr1.forEach((item, index) => {
             // state.data.contentData[index] = item
-            //vm.$set(state.data.contentData[index], index, item)
+            vm.set(state.data.contentData, index, item)
+
         })
         console.log(state.data.contentData, '---------------------')
     }
