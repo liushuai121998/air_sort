@@ -20,7 +20,6 @@ export default {
         let contentStr = state.data.contentData[Math.round(Math.random() * (length - 1))]
 
         state.data.contentData.push(contentStr)
-            //state.commit('FLY_CONTROL_SORT')
     },
     ADD_FIX_DATA(state) {
         let length = state.data.contentData.length
@@ -125,8 +124,7 @@ export default {
         }
 
         state.sort = !state.sort
-            // console.log(param)
-        console.log(state.data.contentData)
+
     },
 
     /**
@@ -253,12 +251,21 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, thInfo) {
-        console.log(thInfo)
-        state.thLeftData[thInfo.index]['width'] = thInfo.tdWidth
-        state.thLeftData[(thInfo.index + 1)]['width'] = thInfo.nextTdWidth
-    },
+    CHANGE_TH_WIDTH(state, { index, widthArr, parentNode, cal, $scroll, parentWidth }) {
+        //state.thLeftData[index]['width'] = width
+        widthArr.forEach((item, i) => {
 
+                state.thLeftData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
+                    // state.thLeftData[i]['width'] = item + 'px'
+            })
+            //parentNode.style.width = cal + parentNode.offsetWidth + 'px'
+            //console.log(parentNode.parentNode.nextElementSibling)
+        parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+        parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+            // console.log(parentNode.parentNode.offsetWidth)
+        $scroll.scrollXBar('.scroll-x', '.scrollX')
+
+    },
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
     },
@@ -329,7 +336,7 @@ export default {
      * 航控排序
      * @param {*} state 
      */
-    FLY_CONTROL_SORT(state) {
+    FLY_CONTROL_SORT(state, vm) {
         //console.log(state.data.contentData.length)
         // 第一类
         let arr1 = []
@@ -347,7 +354,6 @@ export default {
         let arr7 = []
             // 第八类
         let arr8 = []
-        state.sortClass = []
         state.data.contentData.forEach((item, index) => {
                 if ((item[0].continue && item[0].continue.departed && item[0].continue.departed.isRealFlight === 'false' && item[0].continue.departed.isDelay === 'true') || item[0].departed && item[0].departed.isRealFlight === 'false' && item[0].departed.isDelay === 'true') {
                     arr1.push(item)
@@ -427,12 +433,13 @@ export default {
         arr8.forEach((item) => {
             item[0].id = 8
         })
-
-
+        console.log(vm, 'vm')
         arr1.push(...arr2, ...arr3, ...arr4, ...arr5, ...arr6, ...arr7, ...arr8)
+
         arr1.forEach((item, index) => {
-            state.data.contentData[index] = item
+            // state.data.contentData[index] = item
+            //vm.$set(state.data.contentData[index], index, item)
         })
-        console.log(state.data.contentData)
+        console.log(state.data.contentData, '---------------------')
     }
 }

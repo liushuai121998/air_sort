@@ -256,10 +256,13 @@ export default {
         // 表格的dom tbody
         let tableDom = document.querySelectorAll(tal)
 
-        console.log(tableDom[0].parentNode.clientWidth, 'tableDom[0].parentNode')
-        dom.parentNode.style.width = tableDom[0].parentNode.clientWidth + 'px'
+        dom.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
 
-        const maxL = dom.parentNode.offsetWidth - dom.clientWidth
+        const maxL = dom.parentNode.offsetWidth - dom.offsetWidth
+
+
+        dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+            // console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px')
             // 滚动条的宽度
         setTimeout(function() {
             dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
@@ -273,9 +276,9 @@ export default {
             elementPoint.left = css(this, 'translateX')
                 // elementPoint.left = this.offsetLeft
             startPoint.left = ev.clientX
-            let tableMaxL = tableDom[0].offsetWidth - tableDom[0].parentNode.clientWidth
+            let tableMaxL = tableDom[0].offsetWidth - tableDom[0].parentNode.offsetWidth
                 // console.log(tableDom[0].offsetWidth, 'tableDom[0].offsetWidth')
-            const scale = tableMaxL / (dom.parentNode.offsetWidth - dom.offsetWidth)
+            const scale = tableMaxL / (dom.parentNode.offsetWidth - dom.clientWidth)
             document.onmousemove = function(ev) {
                 ev = ev || event
                 movePoint.left = ev.clientX
@@ -360,10 +363,10 @@ export default {
             return _class;
         };
         var Table = new Class({
-            initialize: function(tab, set) {
+            initialize: function(tab) {
                 this.table = tab; // tableDom
-                this.thead = tab.getElementsByTagName('thead')[0]; //常用的dom元素做成索引 theadNode
-                this.theadths = this.thead.getElementsByTagName('th'); // thead下面所有的tdNodes
+                this.thead = tab.getElementsByTagName('ul')[0]; //常用的dom元素做成索引 theadNode
+                this.theadths = this.thead.getElementsByTagName('li'); // thead下面所有的tdNodes
                 this.widtharg = {
                     td: null,
                     x: 0,
@@ -441,5 +444,53 @@ export default {
         window.onload = function() {
             new Table($(sel));
         }
+    },
+    widthScale(el, vm) {
+        let _this = this
+        let elDom = document.getElementById(el);
+        let divs = elDom.getElementsByTagName('div');
+        let divArr = [].slice.call(divs)
+        let widthArr = []
+        divArr.forEach((divDom, index) => {
+            // 将之前的数据width百分比都转化为px
+            widthArr.push(divDom.parentNode.offsetWidth)
+
+            divDom.addEventListener('mousedown', function(ev) {
+                ev.preventDefault();
+                let that = this
+                that.startPointX = ev.clientX
+                that.width = that.parentNode.offsetWidth
+                that.parentWidth = that.parentNode.parentNode.offsetWidth
+
+                document.addEventListener('mousemove', callback)
+
+                function callback(ev) {
+
+                    that.movePointX = ev.clientX
+                    let width = that.width + that.movePointX - that.startPointX + 'px'
+
+                    widthArr[index] = that.width + that.movePointX - that.startPointX
+
+                    // that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
+
+                    // that.parentWidth = that.parentWidth + that.movePointX - that.startPointX
+
+                    // vm.$store.commit('CHANGE_TH_WIDTH', { widthArr, parentWidth: this.parentWidth })
+                    vm.$store.commit('CHANGE_TH_WIDTH', { index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, $scroll: _this, parentWidth: that.parentWidth })
+                        // 更新scroll-x 滚动条的宽度
+
+                }
+                document.addEventListener('mouseup', function() {
+                    document.removeEventListener('mousemove', callback)
+                })
+
+            })
+
+
+        })
+
+    },
+    updatedScrollXWidth(el, width) {
+
     }
 }

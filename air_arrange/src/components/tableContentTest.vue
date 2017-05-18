@@ -67,16 +67,21 @@
       this.randomIndexArr = this.$store.state.arr 
       
       this.strRandomArr = this.$store.state.strRandomArr 
-      // 排序
-      this.$store.commit('FLY_CONTROL_SORT')
 
+      this.tdData = this.$store.state.data.contentData
+      // 排序
+      this.$store.commit('FLY_CONTROL_SORT', this)
     },
     mounted () {
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
-      // $scrollBar.widthChange('tab', this)
+      $scrollBar.widthScale('tab', this)
       // 航控排序
-      this.tdData = this.$store.state.data.contentData
+      //this.tdData = this.$store.state.data.contentData
+      setTimeout(() => {
+         this.$set(this, 'tdData', this.$store.state.data.contentData)
+      }, 5000)
+      
     },
     methods: {
       setInter () {
@@ -150,7 +155,6 @@
       },
       // 表格排序
       sortTable (ev,index) {
-        console.log(Object.keys(this.$store.state.data.contentData[0][1])[index - 1])
         this.$store.commit('SORT_TABLE',Object.keys(this.$store.state.data.contentData[0][1])[index-1])
         // 解决v-for强制刷新列表 this.$forceUpdate()
          //this.$forceUpdate()
@@ -165,20 +169,19 @@
             let temp = this.$store.state.thLeftData[count]
             this.temp[n] = temp.width
           }
-          // console.log(this.tdData)
           return this.temp
       },
-      tdData () {
-        return this.$store.state.data.contentData
-      },
+      
       fixData () {
         return this.$store.state.data.fixData
       },
       thLeftData () {
+
         if(this.$store.state.isBai) {
           this.$refs.theadWrap.style.width = '100%'
           this.$refs.tbodyWrap.style.width = '100%'
         }
+
         return this.$store.state.thLeftData
       },
       thRightData () {
@@ -295,22 +298,20 @@
   .contentWrap .tbodyWrap  .selectTr li{
     background: pink;
   }
-  /*.ww {     
-    float: right;
+  #tab li {
+    position: relative;
+  }
+  .ww {     
+    /*float: right;*/
+    position: absolute;
+    right: 0;
+    top: 0;
     height: 100%;
     width: 3px;
-    background:  #e8e8e8;       
-    
-    cursor: col-resize;
+    /*margin-right: -1px;*/
+    background:  #e8e8e8;         
+    cursor: e-resize;
   }
-        
- .line {
-    width: 2px;
-    background-color: #999999;
-    position: absolute;
-    z-index: 1000;
-    display: none;
-  }*/
  .fixed-x-bar{
     position: absolute;
     z-index: 1001;

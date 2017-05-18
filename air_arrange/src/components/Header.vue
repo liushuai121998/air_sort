@@ -35,7 +35,7 @@
           </li>
         </ul>
       </section>
-      <input type='button' value='航控排序' @click='flyControlSort'>
+      <input type='button' value='航控排序' @click='flyControlSort()'>
       <span>标准时间</span>
     </div>
 </template>
@@ -72,6 +72,9 @@ export default {
         }
         count++
       }
+    },
+    mounted () {
+      
     },
     methods: {
 
@@ -131,7 +134,7 @@ export default {
           // 新增数据
           this.$store.commit('ADD_DATA')
           this.$store.commit('ADD_FIX_DATA')
-          this.$store.commit('FLY_CONTROL_SORT')
+          this.$store.commit('FLY_CONTROL_SORT', this)
         },
         setData () {
           // 修改数据
@@ -209,7 +212,8 @@ export default {
           this.toggle = !this.toggle
         },
         flyControlSort () {
-          this.$store.commit('FLY_CONTROL_SORT')
+
+          this.$store.commit('FLY_CONTROL_SORT', this) 
         }
     }
 }
