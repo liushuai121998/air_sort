@@ -20,8 +20,8 @@
     position: absolute;
     z-index: 999;
     left: 0;
-    top: 34px;
-    width: 10px;
+    top: 0;
+    width: 15px;
     height: calc(100% - 34px);
     background: #2a2a2a;
     border-radius: 5px;

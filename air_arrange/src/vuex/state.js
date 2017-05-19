@@ -51,5 +51,7 @@ export default {
     searchData: [],
     delRightContent: [],
     isFirst: true,
-    isBai: false
+    isBai: false,
+    // 是否分屏显示
+    isDiviScreen: true
 }

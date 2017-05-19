@@ -11,7 +11,7 @@
     import $scrollXBar from '../js/jqueryScrollBar'
     export default {
         mounted () {
-           $scrollXBar.scrollXBar('.scroll-x', '.scrollX')
+           
         }
     }    
 </script>
@@ -20,6 +20,7 @@
     position: absolute;
     z-index: 889;
     bottom: 0;
+    width: 100%;
     height: 10px;
     background: #2a2a2a;
     border-radius: 5px 0 0 5px;
@@ -28,7 +29,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    /*width: 50px !important;*/
+    /*width: 50px;*/
     height: 10px;
     box-sizing: border-box;
     border: 1px solid black;

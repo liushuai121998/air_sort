@@ -17,38 +17,55 @@
     </div>
     <div class='cog'>
       <span class="icon-cog"></span>
+      <section ref='menuControl'>
+        <span @click='toggleChecked()'><input type="checkbox" id='merge' v-model='isChecked'/><label for='merge'>到离港合并</label></span>
+        <input type="checkbox" id='flight-sort'/><label for='flight-sort'>航控排序</label>
+      </section>
     </div>
   </div>
 </template>
 <script>
   export default {
     data () {
-        console.log(window.innerHeight)
+        
         return {
           style: {
               height: window.innerHeight + 'px',
-          }
+              
+          },
+          isChecked: this.$store.state.isDiviScreen
         }
     },
     mounted () {
       this.$refs.sideWrap.style.height = document.documentElement.clientHeight + 'px'
+
+      this.$store.commit('UPDATE_DIVISCREEN', this.isChecked)
     },
     methods: {
       selectIcon (ev) {
         if(ev.target.nodeName.toLowerCase() === 'span'){
-          console.log(this.$refs.sideWrap)
+          // console.log(this.$refs.sideWrap)
           Array.prototype.slice.call(this.$refs.sideWrap.children).forEach((item) => {
             item.firstElementChild.style.color = 'white'
           })
+          
           ev.target.toggleClick = !ev.target.toggleClick  
           if(ev.target.toggleClick) {
+            if(ev.target.className === 'icon-cog') {
+              this.$refs.menuControl.style.display = 'block'
+            }
             ev.target.style.color = 'yellow'
           }else {
+
+            this.$refs.menuControl.style.display = 'none'
             ev.target.style.color = 'white'
+
           }
 
         }
-        
+      },
+      toggleChecked () {
+        this.$store.commit('UPDATE_DIVISCREEN', this.isChecked)
       }
     }
   }
@@ -78,4 +95,16 @@
     margin-left: auto;
     margin-bottom: 80px;
   }
+  .side .cog section {
+    position: absolute;
+    left: 0;
+    top: -150%;
+    z-index: 999;
+    width: 100px;
+    font-size: 16px;
+    color: #fff;
+    /*white-space: nowrap;*/
+    display: none;
+  }
+  
 </style>

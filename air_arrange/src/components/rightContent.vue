@@ -59,10 +59,24 @@
                 }
                 //this.$store.commit('DEL_RIGHT_CONTENT', this.undoArr)
                 if(this.undoArr.length === 3) {
-                    document.querySelector('.contentWrap').style.width = '80%'
-                    document.querySelector('.rightWrap').style.width = 'calc(20% - 10px)'
+                    if(!this.$store.state.isDiviScreen) {
+                        // $scrollBar.widthScale('tab', this)
+                        document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
+                        document.querySelector('.contentWrap').style.width = '80%'
+                        document.querySelector('.rightWrap').style.width = '20%'
+                    }else {
 
-                    $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
+                        document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
+                        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
+                            item.style.width = '80%'
+                        });
+                        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.rightWrap')).forEach(item => {
+                            item.style.width = '20%'
+                        })
+                        
+                    }
+                    
+                    //$scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
                 }
             },
             undo(ev, item) {    // 撤销   数据驱动
@@ -82,7 +96,8 @@
     .right_message {
         position: absolute;
         right: 0;
-        width: calc(15% - 11px);
+        top: 0;
+        width: calc(15% - 15px);
         /*height: 100%;*/
         display: flex;
         flex-direction: column;

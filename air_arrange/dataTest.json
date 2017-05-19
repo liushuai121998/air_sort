@@ -34,6 +34,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
@@ -69,13 +76,18 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
-
             "departed": {
                 "isRealFlight": "false"
             }
-
         }, {
             "date": "12/21",
             "spot": "-",
@@ -100,12 +112,22 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
                 "departed": {
                     "isRealFlight": "false",
                     "urgingBoarding": "true"
+                },
+                "arrival": {
+
                 }
             }
         }, {
@@ -132,12 +154,22 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
                 "departed": {
                     "isRealFlight": "true",
                     "boardingEnd": "true"
+                },
+                "arrival": {
+
                 }
             }
         }, {
@@ -164,6 +196,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
@@ -199,6 +238,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "departed": {
@@ -229,6 +275,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
@@ -263,6 +316,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "continue": {
@@ -297,6 +357,13 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
+        }, {
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }],
         [{
             "arrival": {
@@ -327,512 +394,14 @@
             "race3": "02R/",
             "race4": "02R/",
             "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isRealFlight": "false",
-                    "time": 30
-                },
-                "arrival": {
-                    "isRealCome": "false"
-                }
-            }
         }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "101",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2000",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isRealFlight": "false"
-                },
-                "arrival": {
-                    "isRealCome": "false",
-                    "isFlighted": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "1930",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-
-            "departed": {
-                "isRealFlight": "false"
-            }
-
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "1900",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isRealFlight": "false",
-                    "urgingBoarding": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2130",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isRealFlight": "true",
-                    "boardingEnd": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2140",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isRealFlight": "false",
-                    "isDelay": "true"
-                },
-                "arrival": {
-                    "isDelay": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2110",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "departed": {
-                "isRealFlight": "false",
-                "isDelay": "true"
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2200",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "isFlighted": "true"
-                },
-                "arrival": {
-                    "isFlighted": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "2310",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "continue": {
-                "departed": {
-                    "cancelledFlight": "true"
-                },
-                "arrival": {
-                    "cancelledFlight": "true"
-                }
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "1800",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "arrival": {
-                "isRealCome": "false",
-                "isFlighted": "true"
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "1830",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
-        }],
-        [{
-            "arrival": {
-                "isRealCome": "true",
-                "isFlighted": "true"
-            }
-        }, {
-            "date": "12/21",
-            "spot": "-",
-            "mainFlightNum": "MU5444",
-            "shareFlightNum": "MU3464/5435",
-            "airplaneNum": "B6966",
-            "type": "国内",
-            "airType": "333",
-            "task": "正班",
-            "flightState": "到达/无",
-            "flightRoute": "沪-蓉-沪",
-            "airPos": "141",
-            "boardingGate": "136",
-            "calCome": "2100",
-            "calLeave": "1830",
-            "preLeave": "2100",
-            "relLeave": "-",
-            "prePos": "-",
-            "race": "02R/",
-            "race1": "02R/",
-            "race2": "02R/",
-            "race3": "02R/",
-            "race4": "02R/",
-            "race5": "02R/"
+            "enterStart": "1118",
+            "enterFinish": "1118",
+            "enterRemove1": "1118",
+            "enterRemove2": "1225",
+            "makeFinish1": "1118",
+            "makeFinish2": "-"
         }]
-    ],
-    "fixData": [{
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }, {
-        "enterStart": "1118",
-        "enterFinish": "1118",
-        "enterRemove1": "1118",
-        "enterRemove2": "1225",
-        "makeFinish1": "1118",
-        "makeFinish2": "-"
-    }]
+
+    ]
 }

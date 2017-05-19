@@ -337,7 +337,6 @@ export default {
      * @param {*} state 
      */
     FLY_CONTROL_SORT(state, vm) {
-        //console.log(state.data.contentData.length)
         // 第一类
         let arr1 = []
             // 第二类
@@ -372,8 +371,6 @@ export default {
                 } else {
                     arr6.push(item)
                 }
-
-
 
             })
             // console.log(arr1, arr2, arr3, arr4, arr5, arr7, arr8, arr6)
@@ -433,14 +430,18 @@ export default {
         arr8.forEach((item) => {
             item[0].id = 8
         })
-        console.log(vm, 'vm')
+
         arr1.push(...arr2, ...arr3, ...arr4, ...arr5, ...arr6, ...arr7, ...arr8)
 
         arr1.forEach((item, index) => {
-            // state.data.contentData[index] = item
-            vm.set(state.data.contentData, index, item)
+            // 使用vm.$set()改变数组的值才能触发页面更新
+
+            vm.$set(state.data.contentData, index, item)
 
         })
-        console.log(state.data.contentData, '---------------------')
+    },
+    // 更新是否分屏显示的状态
+    UPDATE_DIVISCREEN(state, val) {
+        state.isDiviScreen = val
     }
 }

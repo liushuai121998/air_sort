@@ -1,6 +1,8 @@
 <template>
   <div class='wrap'>
-    <div class='contentWrap'>
+    <div class='merge_wrap' v-show='!isDiviScreen' ref='mergeWrap'> 
+      <div class='merge_title'>到离港</div>
+      <div class='contentWrap'>
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul id='tab'><!--
@@ -14,28 +16,101 @@
             </ul>
           </div>
         </div>
-    </div>
-    <div class='rightWrap'>
-      <div class='theadWrap'>
-        <ul>
-          <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
-        </ul>
       </div>
-      <div class='tbodyWrap scrollTbody'>
-        <ul v-for='(item, index) in fixData' :key='index'>
-          <li v-for='(str, key, i) in item' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
-        </ul>
+      <div class='rightWrap'>
+        <div class='theadWrap'>
+          <ul>
+            <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
+          </ul>
+        </div>
+        <div class='tbodyWrap scrollTbody'>
+          <ul v-for='(item, index) in tdData' :key='index'>
+            <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
+          </ul>
+        </div>
+        <div class='fixed-x-bar' ref='fixedBar'></div>
       </div>
-      <div class='fixed-x-bar' ref='fixedBar'></div>
+      <scroll-bar></scroll-bar>
+      <scroll-x-bar></scroll-x-bar>
+      <right-content></right-content>
     </div>
-    <scroll-bar></scroll-bar>
-    <scroll-x-bar></scroll-x-bar>
-    <right-content></right-content>
+    <div class='divi_wrap' v-show='isDiviScreen'>
+      <div class='divi_content1' ref='diviContent1'>
+          <div class='title_come'>到港</div>
+          <div class='contentWrap'>
+            <div class='main_content'>
+              <div class='theadWrap  scrollX' ref='theadWrap'>
+              <ul id='tab'><!--
+                    --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index)'><span>{{item.title}}</span><div class='ww'></div></li>
+              </ul>
+              </div>
+              <div class='tbodyWrap  scrollX' ref='tbodyWrap'>
+                <ul v-for='(tdItem, index) in comeData' @click='selectTr($event,index)' :key='index'>
+                      <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
+                      --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'>{{str}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class='rightWrap'>
+            <div class='theadWrap'>
+              <ul>
+                <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
+              </ul>
+            </div>
+            <div class='tbodyWrap scrollTbody'>
+              <ul v-for='(item, index) in comeData' :key='index'>
+                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
+              </ul>
+            </div>
+            <div class='fixed-x-bar' ref='fixedBar'></div>
+          </div>
+          <div class='scroll_bar'>
+            <span class='scroll_bar_child'></span>
+          </div>
+          <scroll-x-bar></scroll-x-bar>
+      </div>
+      <div class='divi_content2' ref='diviContent2'>
+          <div class='title_leave'>离港</div>
+          <div class='contentWrap'>
+            <div class='main_content'>
+              <div class='theadWrap scrollX' ref='theadWrap'>
+              <ul id='tab'><!--
+                    --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index)'><span>{{item.title}}</span><div class='ww'></div></li>
+              </ul>
+              </div>
+              <div class='tbodyWrap  scrollX' ref='tbodyWrap'>
+                <ul v-for='(tdItem, index) in leaveData' @click='selectTr($event,index)' :key='index'>
+                      <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
+                      --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'>{{str}}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class='rightWrap'>
+            <div class='theadWrap'>
+              <ul>
+                <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
+              </ul>
+            </div>
+            <div class='tbodyWrap scrollTbody'>
+              <ul v-for='(item, index) in leaveData' :key='index'>
+                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
+              </ul>
+            </div>
+            <div class='fixed-x-bar' ref='fixedBar'></div>
+          </div>
+          <div class='scroll_bar'>
+            <span class='scroll_bar_child'></span>
+          </div>
+          <scroll-x-bar></scroll-x-bar>
+      </div>
+      <right-content></right-content>
+    </div>
   </div>
   
 </template>
 <script>
-  import Vue from 'vue'
   import scrollBar from './scrollBar'
   import scrollXBar from './scrollXBar'
   import rightContent from './rightContent'
@@ -71,18 +146,29 @@
 
       this.tdData = this.$store.state.data.contentData
       // 排序
-      this.$store.commit('FLY_CONTROL_SORT', Vue)
+      this.$store.commit('FLY_CONTROL_SORT', this)
     },
     mounted () {
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
-      $scrollBar.widthScale('tab', this)
-      // 航控排序
-      //this.tdData = this.$store.state.data.contentData
-      setTimeout(() => {
-         this.$set(this, 'tdData', this.$store.state.data.contentData)
-      }, 5000)
-      
+     
+     $scrollBar.widthScale('tab', this)
+     if(this.$store.state.isDiviScreen) {
+        this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
+        this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
+     }
+     $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+
+    },
+    updated () {
+      this.$nextTick(() => {
+        $scrollBar.widthScale('tab', this)
+        $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
+      })
+      if(this.$store.state.isDiviScreen) {
+        this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
+        this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
+      }
     },
     methods: {
       setInter () {
@@ -172,13 +258,10 @@
           }
           return this.temp
       },
-      
-      fixData () {
-        return this.$store.state.data.fixData
-      },
       thLeftData () {
 
         if(this.$store.state.isBai) {
+          this.$refs.mergeWrap.style.width = '100%'
           this.$refs.theadWrap.style.width = '100%'
           this.$refs.tbodyWrap.style.width = '100%'
         }
@@ -187,12 +270,61 @@
       },
       thRightData () {
         return this.$store.state.thRightData
+      },
+      isDiviScreen () {
+        return this.$store.state.isDiviScreen
+      },
+      // 到港数据
+      comeData () {
+        
+        return this.$store.state.data.contentData.filter((item) => {
+          return (item[0].continue && item[0].continue.arrival) || item[0].arrival
+        })
+      },
+      // 离港数据
+      leaveData () {
+        return this.$store.state.data.contentData.filter((item) => {
+          return (item[0].continue && item[0].continue.departed) || item[0].departed
+        })
       }
     },
     components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar, 'right-content': rightContent}
   }
 </script>
 <style>
+  .divi_wrap:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
+  .divi_wrap {
+    width: 85%;
+  }
+  .divi_wrap .divi_content1, .divi_wrap .divi_content2 {
+    position: relative;
+    width: 100%;
+    float: left;
+    /*border: 2px solid red;
+    box-sizing: border-box;*/
+  }
+  .divi_wrap .divi_content1 .contentWrap, .divi_wrap .divi_content2 .contentWrap {
+    width: 80%;
+  }
+  .divi_wrap .divi_content1 .rightWrap, .divi_wrap .divi_content2 .rightWrap {
+    width: 20%;
+  }
+
+  .divi_content1 .scroll_bar, .divi_content2 .scroll_bar {
+    position: absolute;
+    right: -15px;
+    top: 0;
+    width: 15px;
+    height: 100%;
+    background: #bfa;
+    border: 1px solid red;
+    box-sizing: border-box;
+  }
+
   .wrap{
     margin-left: 60px;
     width: calc(100% - 60px);
@@ -204,14 +336,33 @@
     display: block;
     clear: both;
   }
+  .merge_wrap {
+    width: 85%;
+    /*position:relative;*/
+  }
+  .merge_wrap:after {
+    content: '';
+    display: block;
+    clear: both;
+  }
   .contentWrap {
-    width: 70%;
+    width: 80%;
     float: left;
   }
   .contentWrap .main_content {
     width: 100%;
     overflow: hidden;
     white-space: nowrap;
+  }
+  .title_come {
+    background: #fff;
+  }
+  .title_leave {
+    background: #fff;
+  }
+
+  .merge_title {
+    background: #fff;
   }
 
   .contentWrap ul, .rightWrap ul{
@@ -223,6 +374,7 @@
   .contentWrap .main_content .tbodyWrap, .contentWrap .main_content .theadWrap {
     width: 120%;
   }
+
   .theadWrap{
     position: relative;
     z-index: 99;
@@ -252,7 +404,7 @@
   .rightWrap {
     position: relative;
     z-index: 88;
-    width: 15%;
+    width: 20%;
     float: left;
   }
   .rightWrap ul li {
