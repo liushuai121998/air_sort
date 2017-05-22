@@ -24,6 +24,8 @@ let thLeftData = [{ title: '-', width: '4%' }, { title: '月/日', width: '4%' }
     //     ]
 let cloneLeftData = JSON.parse(JSON.stringify(thLeftData))
 
+let cloneLeftData2 = JSON.parse(JSON.stringify(thLeftData))
+
 let thRightData = [
     { title: '进港桥载开始', width: '15%', col: 0 }, { title: '进港撤桥结束', width: '15%', col: 0 }, { title: '进港撤桥载', width: '35%', col: 2 }, { title: '上轮档(结束)', width: '35%', col: 2 }
 ]
@@ -34,6 +36,15 @@ export default {
     thLeftData,
     thRightData,
     cloneLeftData,
+    cloneLeftData2,
+    tabComeData: cloneLeftData,
+    tabLeaveData: cloneLeftData2,
+    comeData: data.contentData.filter((item) => {
+        return (item[0].continue && item[0].continue.arrival) || item[0].arrival
+    }),
+    leaveData: data.contentData.filter((item) => {
+        return (item[0].continue && item[0].continue.departed) || item[0].departed
+    }),
     arr,
     strRandomArr,
     // 搜索的索引

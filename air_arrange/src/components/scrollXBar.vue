@@ -2,7 +2,9 @@
     <div class='scrollXBarWrap'>
         <!--横向自定义滚动条-->
         <div class='scroll-x-bar'>
-            <span class='scroll-x'></span>
+            <span class='scroll-x'>
+            </span>
+            <div class='fixed-x-bar' ref='fixedBar'></div>
         </div>
         
     </div>
@@ -35,6 +37,17 @@
     border: 1px solid black;
     background-color: gray;
     border-radius: 5px;
+  }
+  .fixed-x-bar{
+    position: absolute;
+    z-index: 1001;
+    top: 0;
+    right: -100px;
+    /*width: 100%;*/
+    width: 100px;
+    height: 10px;
+    background: #Bfa;
+    border-radius: 0px 5px 5px 0;
   }
   
 </style>

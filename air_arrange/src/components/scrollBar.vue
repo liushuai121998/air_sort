@@ -9,9 +9,8 @@
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
     mounted () {
-        $scrollBar.scrollBar('.scroll', '.scrollTbody')
         $scrollBar.mouseScroll('.scroll', '.scrollTbody')
-        $scrollBar.resize('.scroll', '.scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
+        $scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
     }
   }
 </script>
@@ -20,9 +19,11 @@
     position: absolute;
     z-index: 999;
     left: 0;
+    /*top: 68px;
+    height: calc(100% - 68px);*/
     top: 0;
+    height: 100%;
     width: 15px;
-    height: calc(100% - 34px);
     background: #2a2a2a;
     border-radius: 5px;
   }

@@ -107,23 +107,43 @@ export default {
      * 排序
      * @param {*} state 
      */
-    SORT_TABLE(state, param) {
+    SORT_TABLE(state, { param, str, target }) {
 
         if (Object.is(Number(state.data.contentData[0][1][param]), NaN)) {
-
-            state.data.contentData.sort(function(a, b) {
-                // 字母数字排序
-                return state.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-            })
+            if (str === 'leave') {
+                state.leaveData.sort(function(a, b) {
+                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
+                })
+            } else if (str === 'come') {
+                state.comeData.sort(function(a, b) {
+                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
+                })
+            } else if (str === 'merge') {
+                state.data.contentData.sort(function(a, b) {
+                    // 字母数字排序
+                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
+                })
+            }
 
         } else {
             // 数字排序 
-            state.data.contentData.sort(function(a, b) {
-                return state.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-            })
+            if (str === 'leave') {
+                state.leaveData.sort(function(a, b) {
+                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+                })
+            } else if (str === 'come') {
+                state.comeData.sort(function(a, b) {
+                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+                })
+            } else if (str === 'merge') {
+                state.data.contentData.sort(function(a, b) {
+                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+                })
+            }
+
         }
 
-        state.sort = !state.sort
+        target.sort = !target.sort
 
     },
 
@@ -251,20 +271,22 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, { index, widthArr, parentNode, cal, $scroll, parentWidth }) {
+    CHANGE_TH_WIDTH(state, { index, widthArr, parentNode, cal, $scroll, parentWidth, id }) {
         //state.thLeftData[index]['width'] = width
         widthArr.forEach((item, i) => {
+                if (id === 'tabCome') {
+                    state.tabComeData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
+                } else if (id === 'tabLeave') {
+                    state.tabLeaveData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
+                } else if (id === 'tab') {
+                    state.thLeftData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
+                }
 
-                state.thLeftData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
-                    // state.thLeftData[i]['width'] = item + 'px'
             })
             //parentNode.style.width = cal + parentNode.offsetWidth + 'px'
             //console.log(parentNode.parentNode.nextElementSibling)
         parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
         parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
-            // console.log(parentNode.parentNode.offsetWidth)
-        $scroll.scrollXBar('.scroll-x', '.scrollX')
-
     },
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
