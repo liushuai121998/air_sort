@@ -9,8 +9,8 @@
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
     mounted () {
-        $scrollBar.mouseScroll('.scroll', '.scrollTbody')
-        $scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap')
+        // $scrollBar.mouseScroll('.scroll', '.scrollTbody')
+        
     }
   }
 </script>

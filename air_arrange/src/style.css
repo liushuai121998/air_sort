@@ -1,50 +1,56 @@
 @font-face {
-    font-family: 'icomoon';
-    src: url('fonts/icomoon.eot?y1xd0z');
-    src: url('fonts/icomoon.eot?y1xd0z#iefix') format('embedded-opentype'), url('fonts/icomoon.ttf?y1xd0z') format('truetype'), url('fonts/icomoon.woff?y1xd0z') format('woff'), url('../src/fonts/icomoon.svg?y1xd0z#icomoon') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?ftl6tn');
+  src:  url('fonts/icomoon.eot?ftl6tn#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?ftl6tn') format('truetype'),
+    url('fonts/icomoon.woff?ftl6tn') format('woff'),
+    url('fonts/icomoon.svg?ftl6tn#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
-[class^="icon-"],
-[class*=" icon-"] {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'icomoon' !important;
-    speak: none;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .icon-compass:before {
-    content: "\e949";
+  content: "\e949";
 }
-
 .icon-bubble2:before {
-    content: "\e96e";
+  content: "\e96e";
 }
-
 .icon-search:before {
-    content: "\e986";
+  content: "\e986";
 }
-
 .icon-cog:before {
-    content: "\e994";
+  content: "\e994";
 }
-
 .icon-pie-chart:before {
-    content: "\e99a";
+  content: "\e99a";
 }
-
 .icon-eye:before {
-    content: "\e9ce";
+  content: "\e9ce";
 }
-
 .icon-plus:before {
-    content: "\ea0a";
+  content: "\ea0a";
+}
+.icon-minus:before {
+  content: "\ea0b";
+}
+.icon-cross:before {
+  content: "\ea0f";
+}
+.icon-checkbox-unchecked:before {
+  content: "\ea53";
 }

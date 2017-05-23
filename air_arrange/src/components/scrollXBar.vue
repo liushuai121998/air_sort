@@ -13,7 +13,7 @@
     import $scrollXBar from '../js/jqueryScrollBar'
     export default {
         mounted () {
-           
+            
         }
     }    
 </script>
@@ -46,7 +46,7 @@
     /*width: 100%;*/
     width: 100px;
     height: 10px;
-    background: #Bfa;
+    background: #2a2a2a;
     border-radius: 0px 5px 5px 0;
   }
   

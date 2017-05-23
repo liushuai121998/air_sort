@@ -19,7 +19,7 @@
       <span class="icon-cog"></span>
       <section ref='menuControl'>
         <span @click='toggleChecked()'><input type="checkbox" id='merge' v-model='isChecked'/><label for='merge'>到离港合并</label></span>
-        <input type="checkbox" id='flight-sort'/><label for='flight-sort'>航控排序</label>
+        <span @click='flyControlSort'><input type="checkbox" id='flight-sort' v-model='isSorted'/><label for='flight-sort'>航控排序</label></span>
       </section>
     </div>
   </div>
@@ -33,7 +33,8 @@
               height: window.innerHeight + 'px',
               
           },
-          isChecked: this.$store.state.isDiviScreen
+          isChecked: this.$store.state.isDiviScreen,
+          isSorted: false
         }
     },
     mounted () {
@@ -66,6 +67,11 @@
       },
       toggleChecked () {
         this.$store.commit('UPDATE_DIVISCREEN', this.isChecked)
+      },
+      flyControlSort () {
+        if(this.isSorted) {
+          this.$store.commit('FLY_CONTROL_SORT', this) 
+        }
       }
     }
   }
@@ -99,12 +105,14 @@
     position: absolute;
     left: 0;
     top: -150%;
-    z-index: 999;
+    z-index: 99999;
     width: 100px;
-    font-size: 16px;
+    font-size: 12px;
     color: #fff;
-    /*white-space: nowrap;*/
     display: none;
+  }
+  .side .cog section span {
+    float: left;
   }
   
 </style>

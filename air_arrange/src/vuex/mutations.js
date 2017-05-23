@@ -465,5 +465,32 @@ export default {
     // 更新是否分屏显示的状态
     UPDATE_DIVISCREEN(state, val) {
         state.isDiviScreen = val
+    },
+    ADD_CLASS(state, { data, index, key }) {
+        if (data === state.comeData) {
+            state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+        } else if (data === state.leaveData) {
+            console.log('hhhhhh')
+            state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+        } else if (data === state.data.contentData) {
+            state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+        }
+    },
+    REMOVE_CLASS(state) {
+        state.comeData.forEach(item => {
+            if (item[3]) {
+                item.splice(3, 1)
+            }
+        })
+        state.leaveData.forEach(item => {
+            if (item[3]) {
+                item.splice(3, 1)
+            }
+        })
+        state.data.contentData.forEach(item => {
+            if (item[3]) {
+                item.splice(3, 1)
+            }
+        })
     }
 }

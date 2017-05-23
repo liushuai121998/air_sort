@@ -147,3 +147,10 @@ body {
     -ms-user-select: none;
     user-select: none;
 }
+
+input[type='text'] {
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    -moz-appearance: none;
+}

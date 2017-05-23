@@ -1,7 +1,7 @@
 <template>
     <div class="header">
       <!--v-model 双向数据绑定-->
-      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange'>
+      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange' id='search'><label for='search' class='search_label'><span class='icon-search'></span></label>
       <select @change='selectValue($event)'>
         <option>请选择搜索类型</option>
         <option selected>按机位搜索</option>
@@ -35,14 +35,18 @@
           </li>
         </ul>
       </section>
-      <input type='button' value='航控排序' @click='flyControlSort()'>
-      <span>标准时间</span>
+      <span class='show_time'>标准时间: {{time | formatDate}}</span>
+      <div class='control_wrap'>
+        <span class="icon-minus"></span>
+        <span class="icon-checkbox-unchecked"></span>
+        <span class="icon-cross"></span>
+      </div>
     </div>
 </template>
 <script>
 
 // let data = require('../../data.json')
-// 自定义过滤器 filters
+import {formatDate} from '../utils/time_format'
 export default {
     data () {
         return {
@@ -55,7 +59,8 @@ export default {
           placeHolderValue: '按机位搜索',
           toggle: false,
           showData: [{value: 'eq', text: '全部显示', isChecked: false}],
-          logFlag: false
+          logFlag: false,
+          time: Date.now()
         }
     },
     created () {
@@ -211,10 +216,12 @@ export default {
             return
           }
           this.toggle = !this.toggle
-        },
-        flyControlSort () {
-
-          this.$store.commit('FLY_CONTROL_SORT', this) 
+        }
+    },
+    filters: {
+        formatDate(time) {
+            var date = new Date(time);
+            return formatDate(date, ' hh:mm yyyy-MM-dd');
         }
     }
 }
@@ -226,27 +233,50 @@ export default {
     position: relative;
     z-index: 888;
     height: 30px;
-    background-color: gray;
+    background-color: #4e4e4e;
     line-height: 30px;
     margin-left: 60px;
   }
   .search{
     margin-left: 30px;
+    border: 1px solid #4e4e4e;
+    height: 20px;
+    box-sizing: border-box;
+    border-right: none;
   }
+  .search_label {
+    display: inline-block;
+    width: 25px;
+    height: 20px;
+    border: 1px solid #4e4e4e;
+    border-left: none;
+    background: #02bdf2;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 20px;
+    box-sizing: border-box;
+    color: #fff;
+    font-size: 12px;
+  }
+
   .showInfo {
     position: relative;
     display: inline-block;
     width: 100px;
     height: 20px;
-    background: #bfa;
+    /*background: #bfa;*/
+    background: #fff;
     text-align: center;
     line-height: 20px;
     cursor: pointer;
     border-radius: 5px;
+    vertical-align: middle;
+    margin-left: 10px;
   }
   .showInfo .inputWrap {
     position: absolute;
     left: 100%;
+    z-index: 1000;
     top: 20px;
     box-sizing: border-box;
     background: #fff;
@@ -261,5 +291,47 @@ export default {
     /*text-overflow: ellipsis;
     overflow: hidden;*/
     white-space: nowrap;
+  }
+  select {
+    vertical-align: middle;
+    /*-moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;*/
+    outline: none;
+    height: 20px;
+    border: 1px solid #4e4e4e;
+    box-sizing: border-box;
+    width: 120px;
+    border-radius: 4px;
+    margin-left: 10px;
+  }
+  input[type='button'] {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+    border: 1px solid #4e4e4e;
+    vertical-align: middle;
+    background: #fff;
+    margin-left: 10px;
+  }
+  .show_time {
+    float: right;
+    vertical-align: middle;
+    color: #fff;
+    font-weight: bold;
+    margin-right: 15%;
+  }
+
+  .control_wrap {
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 20px;
+  }
+  .control_wrap span {
+    margin-right: 10px;
+    color: #fff;
+    font-size: 12px;
   }
 </style>

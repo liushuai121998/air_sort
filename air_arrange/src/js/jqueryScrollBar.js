@@ -5,53 +5,98 @@ export default {
      * @param {*} el 
      * @param {*} tal 
      */
-    resize(el, tal, el2, el3, el4) {
-        let dom = document.querySelector(el)
-        let dom2 = document.querySelector(el2)
-        let dom3 = document.querySelectorAll(el3)
-        let dom4 = document.querySelector(el4)
-            // 表格的dom tbody
-        let tableDom = document.querySelectorAll(tal)
-        let leftValue = 0
-        for (var i = 0, len = tableDom.length; i < len; i++) {
-            leftValue += tableDom[i].parentNode.offsetWidth
-        }
-        css(dom.parentNode, 'translateX', leftValue)
-        dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
+    // resize(el, tal, el2, el3, el4, isDiviScreen) {
+    //     let dom = document.querySelector(el)
+    //     let dom2 = document.querySelector(el2)
+    //     let dom3 = document.querySelectorAll(el3)
+    //     let dom4 = document.querySelector(el4)
+    //         // 表格的dom tbody
+    //     let tableDom = document.querySelectorAll(tal)
+    //     let leftValue = 0
+    //     for (var i = 0, len = tableDom.length; i < len; i++) {
+    //         leftValue += tableDom[i].parentNode.offsetWidth
+    //         console.log(tableDom[i].parentNode.offsetWidth)
+    //     }
+    //     css(dom.parentNode, 'translateX', leftValue)
+    //     dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
 
-        dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
-        dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-            // console.log(dom3)
-        setTimeout(function() {
-            dom3.forEach(item => {
-                // console.log(document.querySelectorAll('.rightWrap .theadWrap')[0].offsetWidth)
-                item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-                item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-            })
-        }, 200)
-        dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
+    //     dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
+    //     dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+    //         // console.log(dom3)
+    //     setTimeout(function() {
+
+    //         dom3.forEach(item => {
+    //             //console.log(document.querySelectorAll('.rightWrap')[1].offsetWidth)
+    //             if (isDiviScreen) {
+    //                 item.style.width = document.querySelectorAll('.rightWrap')[1].offsetWidth + 'px'
+    //                 item.style.right = -document.querySelectorAll('.rightWrap')[1].offsetWidth + 'px'
+    //             } else {
+    //                 item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
+    //                 item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
+    //             }
+    //         })
+
+    //     }, 200)
+    //     dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
+
+    //     window.onresize = function() {
+
+    //         let leftValue = 0
+    //         for (var i = 0, len = tableDom.length; i < len; i++) {
+    //             leftValue += tableDom[i].parentNode.offsetWidth
+    //         }
+    //         css(dom.parentNode, 'translateX', leftValue)
+    //         dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
+
+    //         dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
+    //         dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+    //             // console.log(dom3)
+    //         setTimeout(function() {
+    //             dom3.forEach(item => {
+
+    //                 item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
+    //                 item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
+    //             })
+    //         }, 200)
+
+    //         dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
+    //     }
+
+
+    // },
+    resize(scrollx, fixedBar, scroll, { merge, divi1, divi2 }, { content, right }, isDiviScreen) {
+        function resizeWrap() {
+            let divi1Dom = document.querySelector(divi1)
+            let divi2Dom = document.querySelector(divi2)
+            let mergeDom = document.querySelector(merge)
+            if (isDiviScreen) {
+                let scrollXDom1 = divi1Dom.querySelector(scrollx)
+                scrollXDom1.parentNode.style.width = divi1Dom.querySelector(content).offsetWidth + 'px'
+                let scrollXDom2 = divi2Dom.querySelector(scrollx)
+                scrollXDom2.parentNode.style.width = divi2Dom.querySelector(content).offsetWidth + 'px'
+
+                let fixedBar1 = divi1Dom.querySelector(fixedBar)
+                fixedBar1.style.width = divi1Dom.querySelector(right).offsetWidth + 'px'
+                fixedBar1.style.right = -divi1Dom.querySelector(right).offsetWidth + 'px'
+
+                let fixedBar2 = divi2Dom.querySelector(fixedBar)
+                fixedBar2.style.width = divi2Dom.querySelector(right).offsetWidth + 'px'
+                fixedBar2.style.right = -divi2Dom.querySelector(right).offsetWidth + 'px'
+            } else {
+                let mergeScrollx = mergeDom.querySelector(scrollx)
+                mergeScrollx.parentNode.style.width = mergeDom.querySelector(content).offsetWidth + 'px'
+                let mergeFixedBar = mergeDom.querySelector(fixedBar)
+                mergeFixedBar.style.width = mergeDom.querySelector(right).offsetWidth + 'px'
+                mergeFixedBar.style.right = -mergeDom.querySelector(right).offsetWidth + 'px'
+
+                let mergeScroll = mergeDom.querySelector(scroll)
+                css(mergeScroll.parentNode, 'translateX', mergeDom.querySelector(right).offsetWidth + mergeDom.querySelector(content).offsetWidth)
+            }
+        }
+        resizeWrap()
 
         window.onresize = function() {
-
-            let leftValue = 0
-            for (var i = 0, len = tableDom.length; i < len; i++) {
-                leftValue += tableDom[i].parentNode.offsetWidth
-            }
-            css(dom.parentNode, 'translateX', leftValue)
-            dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
-
-            dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
-            dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-                // console.log(dom3)
-            setTimeout(function() {
-                dom3.forEach(item => {
-
-                    item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-                    item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-                })
-            }, 200)
-
-            dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
+            resizeWrap()
         }
     },
     scrollBar(el, tal, { mergeWrap, diviContent1, diviContent2 }) {
@@ -83,10 +128,11 @@ export default {
                 // 表格的dom tbody
             let tableDom = parent.querySelectorAll(tal)
                 // 滚动条的位置
-            if (tableDom[0].offsetHeight <= dom.parentNode.offsetHeight) {
-                dom.style.height = dom.parentNode.offsetHeight + 'px'
-                return
-            }
+                // if (tableDom[0].offsetHeight <= dom.parentNode.offsetHeight) {
+
+            //     dom.style.height = dom.parentNode.offsetHeight + 'px'
+            //     return
+            // }
             // 滚动条的高度
             setTimeout(function() {
                 dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / (tableDom[0].offsetHeight) + 'px'
@@ -136,102 +182,113 @@ export default {
      * @param {*} el 
      * @param {*} tal 
      */
-    mouseScroll(el, tal) {
-        // 滚动条的dom
-        let dom = document.querySelector(el)
-            // 表格的dom tbody
-        let tableDom = document.querySelectorAll(tal)
-
-        /**
-         * 
-         * @param {*事件对象} obj 
-         * @param {*事件类型} type 
-         * @param {*回调函数} fn 
-         */
-        function addEvent(obj, type, fn) {
-            if (obj.attachEvent) {
-                // IE
-                obj.attachEvent('on' + type, fn)
-            } else {
-                // chrome和fireFox
-                obj.addEventListener(type, fn, false)
-            }
+    mouseScroll(el, tal, { mergeWrap, diviContent1, diviContent2 }) {
+        if (mergeWrap) {
+            mouseMove(mergeWrap)
+        } else {
+            mouseMove(diviContent1)
+            mouseMove(diviContent2)
         }
-        // chrome IE
-        addEvent(document.body, 'mousewheel', function(ev) {
-                // console.log(tableDom, 'tableDom')
+
+
+        function mouseMove(parent) {
+            // 滚动条的dom
+            let dom = parent.querySelector(el)
+                // 表格的dom tbody
+            let tableDom = parent.querySelectorAll(tal)
+
+            /**
+             * 
+             * @param {*事件对象} obj 
+             * @param {*事件类型} type 
+             * @param {*回调函数} fn 
+             */
+            function addEvent(obj, type, fn) {
+                if (obj.attachEvent) {
+                    // IE
+                    obj.attachEvent('on' + type, fn)
+                } else {
+                    // chrome和fireFox
+                    obj.addEventListener(type, fn, false)
+                }
+            }
+            // chrome IE
+            addEvent(parent, 'mousewheel', function(ev) {
+                    // console.log(tableDom, 'tableDom')
+                    ev = ev || event
+                        //console.log(ev.wheelDelta, ev)
+                        // ev.whellDelta 为正 鼠标向上滚 (120)
+                        // ev.wheelDelta 为负 鼠标向下滚 (-120)
+
+                    const maxT = dom.parentNode.offsetHeight - dom.clientHeight
+                    let top = 0
+                    let tableMaxT = tableDom[0].offsetHeight - (dom.parentNode.offsetHeight - 68)
+                        // if (tableDom[0].offsetHeight < document.documentElement.clientHeight) {
+                        //     return
+                        // }
+                    const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
+                    if (ev.wheelDelta > 0) {
+                        // 鼠标向上滚 滚动条向上滚
+                        // top = dom.offsetTop - 30
+                        top += css(dom, 'translateY') - 30
+                        if (top < 0) {
+                            top = 0
+                        }
+
+                    } else if (ev.wheelDelta < 0) {
+                        // 向下滚 滚动条向下滚
+                        // top = dom.offsetTop + 30
+                        top += css(dom, 'translateY') + 30
+                        if (top > maxT) {
+                            top = maxT
+                        }
+                    }
+                    // dom.style.top = top + 'px'
+                    css(dom, 'translateY', top)
+                        //css(dom, 'translateZ')
+                    for (var i = 0, len = tableDom.length; i < len; i++) {
+                        // tableDom[i].style.top = -top * scale + 'px'
+                        css(tableDom[i], 'translateY', -top * scale)
+                            //css(tableDom[i], 'translateZ')
+                    }
+                })
+                // fireFox
+            addEvent(parent, 'DOMMouseScroll', function(ev) {
                 ev = ev || event
-                    //console.log(ev.wheelDelta, ev)
-                    // ev.whellDelta 为正 鼠标向上滚 (120)
-                    // ev.wheelDelta 为负 鼠标向下滚 (-120)
+                    //console.log(ev.detail, 'ev______________________')
+                    // ev.detail 为负 鼠标向上滚 (-3)
+                    // ev.detail 为正 鼠标向下滚 (3)
                 const maxT = dom.parentNode.offsetHeight - dom.clientHeight
                 let top = 0
                 let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
-                if (tableDom[0].offsetHeight < document.documentElement.clientHeight) {
-                    return
-                }
                 const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
-                if (ev.wheelDelta > 0) {
-                    // 鼠标向上滚 滚动条向上滚
-                    // top = dom.offsetTop - 30
-                    top += css(dom, 'translateY') - 30
-                    if (top < 0) {
-                        top = 0
-                    }
-
-                } else if (ev.wheelDelta < 0) {
-                    // 向下滚 滚动条向下滚
-                    // top = dom.offsetTop + 30
-                    top += css(dom, 'translateY') + 30
+                if (ev.detail > 0) {
+                    // 向上滚
+                    // top += dom.offsetTop + 20
+                    top += css(dom, 'translateY') + 20
                     if (top > maxT) {
                         top = maxT
+                    }
+
+                } else if (ev.detail < 0) {
+                    // 向下滚
+                    // top += dom.offsetTop - 20
+                    top += css(dom, 'translateY') - 20
+                    if (top < 0) {
+                        top = 0
                     }
                 }
                 // dom.style.top = top + 'px'
                 css(dom, 'translateY', top)
                     //css(dom, 'translateZ')
                 for (var i = 0, len = tableDom.length; i < len; i++) {
-                    // tableDom[i].style.top = -top * scale + 'px'
+                    //tableDom[i].style.top = -top * scale + 'px'
                     css(tableDom[i], 'translateY', -top * scale)
-                        //css(tableDom[i], 'translateZ')
+                        // css(tableDom[i], 'translateZ', 1)
                 }
             })
-            // fireFox
-        addEvent(document.body, 'DOMMouseScroll', function(ev) {
-            ev = ev || event
-                //console.log(ev.detail, 'ev______________________')
-                // ev.detail 为负 鼠标向上滚 (-3)
-                // ev.detail 为正 鼠标向下滚 (3)
-            const maxT = dom.parentNode.offsetHeight - dom.clientHeight
-            let top = 0
-            let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
-            const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
-            if (ev.detail > 0) {
-                // 向上滚
-                // top += dom.offsetTop + 20
-                top += css(dom, 'translateY') + 20
-                if (top > maxT) {
-                    top = maxT
-                }
 
-            } else if (ev.detail < 0) {
-                // 向下滚
-                // top += dom.offsetTop - 20
-                top += css(dom, 'translateY') - 20
-                if (top < 0) {
-                    top = 0
-                }
-            }
-            // dom.style.top = top + 'px'
-            css(dom, 'translateY', top)
-                //css(dom, 'translateZ')
-            for (var i = 0, len = tableDom.length; i < len; i++) {
-                //tableDom[i].style.top = -top * scale + 'px'
-                css(tableDom[i], 'translateY', -top * scale)
-                    // css(tableDom[i], 'translateZ', 1)
-            }
-        })
-
+        }
     },
     /**
      * 水平滚动条
@@ -259,12 +316,12 @@ export default {
                 }
                 // 滚动条的dom
             let dom = parent.querySelector(el)
-
+                // console.log(dom)
 
             // 表格的dom tbody
             let tableDom = parent.querySelectorAll(tal)
                 // console.log(dom.parentNode)
-            dom.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
+            dom.parentNode.style.width = tableDom[0].parentNode.getBoundingClientRect().width + 'px'
 
             const maxL = dom.parentNode.offsetWidth - dom.offsetWidth
 
@@ -283,9 +340,9 @@ export default {
                 elementPoint.left = css(this, 'translateX')
                     // elementPoint.left = this.offsetLeft
                 startPoint.left = ev.clientX
-                let tableMaxL = tableDom[0].offsetWidth - tableDom[0].parentNode.offsetWidth
+                let tableMaxL = tableDom[0].getBoundingClientRect().width - tableDom[0].parentNode.getBoundingClientRect().width
                     // console.log(tableDom[0].offsetWidth, 'tableDom[0].offsetWidth')
-                const scale = tableMaxL / (dom.parentNode.offsetWidth - dom.clientWidth)
+                const scale = tableMaxL / (dom.parentNode.getBoundingClientRect().width - dom.clientWidth)
                 document.onmousemove = function(ev) {
                     ev = ev || event
                     movePoint.left = ev.clientX
@@ -438,7 +495,7 @@ export default {
             document.addEventListener('mouseup', upCallback)
 
             function upCallback() {
-                console.log(movePoint.top - startPoint.top)
+                // console.log(movePoint.top - startPoint.top)
                 document.removeEventListener('mousemove', moveCallback)
                 document.removeEventListener('mouseup', upCallback)
             }
