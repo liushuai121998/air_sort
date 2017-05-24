@@ -1,7 +1,7 @@
 <template>
     <div class="header">
       <!--v-model 双向数据绑定-->
-      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange' id='search'><label for='search' class='search_label'><span class='icon-search'></span></label>
+      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
       <select @change='selectValue($event)'>
         <option>请选择搜索类型</option>
         <option selected>按机位搜索</option>
@@ -173,7 +173,7 @@ export default {
         },
         // 搜索框输入检索相关的列表
         textChange (ev) {
-          // this.$store.commit('UPDATE_TD',this.inputValue)
+          this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this})
         },
         selectValue (ev) {
           

@@ -5,14 +5,14 @@
       <div class='contentWrap'>
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
-           <ul id='tab'><!--
+           <ul class='tab'><!--
                 --><li v-for='(item,index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem[1]['task'] === '补班', delay: tdItem[1]['flightState'] === '到达/延误', preFlight: tdItem[1]['flightState'] === '前起/无', firstClass: tdItem[0]['id'] === 1, secondClass: tdItem[0]['id'] === 2, thirdClass: tdItem[0]['id'] === 3, forthClass: tdItem[0]['id'] === 4, fifthClass: tdItem[0]['id'] === 5, sixClass: tdItem[0]['id'] === 6, sevenClass: tdItem[0]['id'] === 7, eightClass: tdItem[0]['id'] === 8}"  @click='selectTr($event,index, tdData)' :key='index'>
+            <ul v-for='(tdItem, index) in tdData' :class="{active: tdItem[1]['task'] === '补班', delay: tdItem[1]['flightState'] === '到达/延误', preFlight: tdItem[1]['flightState'] === '前起/无', firstClass: tdItem[0]['id'] === 1, secondClass: tdItem[0]['id'] === 2, thirdClass: tdItem[0]['id'] === 3, forthClass: tdItem[0]['id'] === 4, fifthClass: tdItem[0]['id'] === 5, sixClass: tdItem[0]['id'] === 6, sevenClass: tdItem[0]['id'] === 7, eightClass: tdItem[0]['id'] === 8, selectTr: tdItem[3]&& tdItem[3].classParent === 'selectTr'}" :key='index'>
                   <li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li><!--
-                  --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState"}'>{{str}}</li>
+                  --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>
             </ul>
           </div>
         </div>
@@ -39,11 +39,11 @@
           <div class='contentWrap'>
             <div class='main_content'>
               <div class='theadWrap  scrollX' ref='theadWrap'>
-              <ul id='tabCome'><!--
+              <ul class='tab'><!--
                     --><li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>
               </div>
-              <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
+              <div class='tbodyWrap scrollX scrollTbody'  ref='divi1TbodyWrap'>
                 <ul v-for='(tdItem, index) in comeData' :key='index' :class='{selectTr: tdItem[3]&& tdItem[3].classParent === "selectTr"}'>
                       <li :style='{width: tabComeData[0]["width"]}'>{{index + 1}}</li><!--
                       --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backComeData[key]}' @click='selectTr($event,index, key, comeData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
@@ -74,12 +74,12 @@
           <div class='title_leave'><span>离港</span><div class='divi_height_scale'></div></div>
           <div class='contentWrap'>
             <div class='main_content'>
-              <div class='theadWrap scrollX' ref='theadWrap'>
-              <ul id='tabLeave'><!--
+              <div class='theadWrap scrollX'>
+              <ul class='tab'><!--
                     --><li v-for='(item,index) in tabLeaveData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabLeaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>
               </div>
-              <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
+              <div class='tbodyWrap scrollX scrollTbody' ref='divi2TbodyWrap'>
                 <ul v-for='(tdItem, index) in leaveData' :key='index' :class='{selectTr: tdItem[3]&& tdItem[3].classParent === "selectTr"}'>
                       <li :style='{width: tabLeaveData[0]["width"]}'>{{index + 1}}</li><!--
                       --><li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backLeaveData[key]}' @click='selectTr($event,index,key, leaveData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
@@ -160,8 +160,8 @@
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
 
-        $scrollBar.widthScale('tabCome', this)
-        $scrollBar.widthScale('tabLeave', this)
+        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
+        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
@@ -173,7 +173,7 @@
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-        $scrollBar.widthScale('tab', this)
+        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
         $scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
@@ -188,8 +188,8 @@
         this.isMergeFirstUpdate = false
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
-        $scrollBar.widthScale('tabCome', this)
-        $scrollBar.widthScale('tabLeave', this)
+        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
+        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
         // 鼠标滚动
@@ -202,7 +202,7 @@
         this.isMergeFirstUpdate = true
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.widthScale('tab', this)
+        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
         $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         // 鼠标滚动
@@ -214,7 +214,6 @@
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
         //$scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap', this.$store.state.isDiviScreen)
-
     },
     methods: {
       setInter () {
@@ -284,13 +283,25 @@
       // },
       selectTr(ev, index,key, data) {
         // 数据驱动
-        
         if(this.selectTarget === ev.target) {
-
+          
         }else {
+          // 添加class之前将之前的class都清掉
           this.$store.commit('REMOVE_CLASS')
           this.$store.commit('ADD_CLASS', {data, index, key})
           this.selectTarget = ev.target
+          // console.log(ev.target.parentNode.offsetParent)
+          if(data === this.$store.state.comeData && this.$store.state.leaveData.indexOf(this.$store.state.comeData[index]) >= 0) {
+            let targetIndex = this.$store.state.leaveData.indexOf(this.$store.state.comeData[index])
+            // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
+            let targetDom = this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex]
+            $scrollBar.targetMove(targetDom, this.$refs.diviContent2)
+          } else if(data === this.$store.state.leaveData && this.$store.state.comeData.indexOf(this.$store.state.leaveData[index]) >= 0) {
+            let targetIndex = this.$store.state.comeData.indexOf(this.$store.state.leaveData[index])
+            // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
+            let targetDom = this.$refs.divi1TbodyWrap.getElementsByTagName('ul')[targetIndex]
+            $scrollBar.targetMove(targetDom, this.$refs.diviContent1)
+          }
         }
         
       },
@@ -501,7 +512,8 @@
     cursor: pointer;
   }
   .contentWrap .main_content .tbodyWrap, .contentWrap .main_content .theadWrap {
-    width: 120%;
+    /*width: 150%;*/
+    float: left;
   }
 
   .theadWrap{

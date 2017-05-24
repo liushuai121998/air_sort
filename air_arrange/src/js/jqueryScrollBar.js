@@ -230,7 +230,7 @@ export default {
                     if (ev.wheelDelta > 0) {
                         // 鼠标向上滚 滚动条向上滚
                         // top = dom.offsetTop - 30
-                        top += css(dom, 'translateY') - 30
+                        top += css(dom, 'translateY') - 10
                         if (top < 0) {
                             top = 0
                         }
@@ -238,7 +238,7 @@ export default {
                     } else if (ev.wheelDelta < 0) {
                         // 向下滚 滚动条向下滚
                         // top = dom.offsetTop + 30
-                        top += css(dom, 'translateY') + 30
+                        top += css(dom, 'translateY') + 10
                         if (top > maxT) {
                             top = maxT
                         }
@@ -265,7 +265,7 @@ export default {
                 if (ev.detail > 0) {
                     // 向上滚
                     // top += dom.offsetTop + 20
-                    top += css(dom, 'translateY') + 20
+                    top += css(dom, 'translateY') + 10
                     if (top > maxT) {
                         top = maxT
                     }
@@ -273,10 +273,11 @@ export default {
                 } else if (ev.detail < 0) {
                     // 向下滚
                     // top += dom.offsetTop - 20
-                    top += css(dom, 'translateY') - 20
+                    top += css(dom, 'translateY') - 10
                     if (top < 0) {
                         top = 0
                     }
+
                 }
                 // dom.style.top = top + 'px'
                 css(dom, 'translateY', top)
@@ -370,57 +371,78 @@ export default {
         }
     },
     /**
-     * 表格宽度拉伸
+     * 宽度拉伸优化，操作dom，不是通过数据tdLeftData中width数据来改变，影响性能
+     * 
+     * @param {*} el 
+     * @param {*} param1 
+     * @param {*} vm 
      */
-    widthScale(el, vm) {
-        let _this = this
-        let elDom = document.getElementById(el);
-        let divs = elDom.getElementsByTagName('div');
-        let divArr = [].slice.call(divs)
-        let widthArr = []
-        console.log(divArr.length)
-        divArr.forEach((divDom, index) => {
-            // 将之前的数据width百分比都转化为px
-            widthArr.push(divDom.parentNode.offsetWidth)
-            divDom.addEventListener('mousedown', function(ev) {
-                let id = ev.target.parentNode.parentNode.id
-                console.log('hello world')
-                ev.preventDefault();
-                // 阻止事件冒泡
-                ev.stopPropagation();
-                let that = this
-                that.startPointX = ev.clientX
-                that.width = that.parentNode.offsetWidth
-                that.parentWidth = that.parentNode.parentNode.offsetWidth
-                document.addEventListener('mousemove', callback)
+    widthScale(el, { mergeWrap, diviContent1, diviContent2 }, vm) {
+        //let _this = this
+        //let widthArr = []
+        if (mergeWrap) {
+            scale(mergeWrap)
+        } else {
+            scale(diviContent1)
+            scale(diviContent2)
+        }
 
-                function callback(ev) {
+        function scale(parent) {
+            let elDom = parent.querySelector(el);
+            let divs = elDom.getElementsByTagName('div');
+            let divArr = [].slice.call(divs)
+            let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
+            let dom = parent.querySelector('.scroll-x')
+            divArr.forEach((divDom, index) => {
+                // widthArr.push(divDom.parentNode.offsetWidth)
+                divDom.addEventListener('mousedown', function(ev) {
+                    this.parentNode.parentNode
+                    let targetIndex = divArr.indexOf(this)
+                    let id = ev.target.parentNode.parentNode.id
+                    ev.preventDefault();
+                    // 阻止事件冒泡
+                    ev.stopPropagation();
+                    let that = this
+                    that.startPointX = ev.clientX
+                    that.width = that.parentNode.offsetWidth
+                    that.parentWidth = that.parentNode.parentNode.offsetWidth
 
-                    that.movePointX = ev.clientX
-                    let width = that.width + that.movePointX - that.startPointX + 'px'
+                    document.addEventListener('mousemove', callback)
 
-                    widthArr[index] = that.width + that.movePointX - that.startPointX
+                    function callback(ev) {
 
-                    // that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
+                        that.movePointX = ev.clientX
+                            //let width = that.width + that.movePointX - that.startPointX + 'px'
+                        let width = that.width + that.movePointX - that.startPointX
 
-                    // that.parentWidth = that.parentWidth + that.movePointX - that.startPointX
+                        //widthArr[index] = that.width + that.movePointX - that.startPointX
 
-                    // vm.$store.commit('CHANGE_TH_WIDTH', { widthArr, parentWidth: this.parentWidth })
-                    vm.$store.commit('CHANGE_TH_WIDTH', { index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, $scroll: _this, parentWidth: that.parentWidth, id })
-                        // 更新scroll-x 滚动条的宽度
-                    document.addEventListener('mouseup', mouseUpEnd)
+                        that.parentNode.style.width = width + 'px'
+                        that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px';
 
-                    function mouseUpEnd() {
-                        document.removeEventListener('mousemove', callback)
-                        document.removeEventListener('mouseup', mouseUpEnd)
+                        [].slice.call(ulDoms).forEach((ulDom) => {
+                            ulDom.children[targetIndex].style.width = width + 'px'
+                        })
+                        ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
+
+                        dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / ulDoms[0].parentNode.offsetWidth + 'px'
+
+                        // vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, $scroll: _this, parentWidth: that.parentWidth, id, vm })
+
+                        document.addEventListener('mouseup', mouseUpEnd)
+
+                        function mouseUpEnd() {
+                            document.removeEventListener('mousemove', callback)
+                            document.removeEventListener('mouseup', mouseUpEnd)
+                        }
                     }
-                }
+
+
+                })
 
 
             })
-
-
-        })
+        }
 
     },
     /**
@@ -500,5 +522,38 @@ export default {
                 document.removeEventListener('mouseup', upCallback)
             }
         }
+    },
+    /**
+     * 选中的目标移动到视口之内
+     * @param {*} targetDom 
+     * @param {*} divi 
+     */
+    targetMove(targetDom, divi) {
+        //console.log(targetDom.offsetParent)
+        if ((targetDom.getBoundingClientRect().top - divi.getBoundingClientRect().top) >= divi.offsetHeight) {
+            let top = -((targetDom.getBoundingClientRect().top - divi.getBoundingClientRect().top) - divi.offsetHeight + targetDom.offsetHeight)
+
+            move(top)
+        } else if (targetDom.getBoundingClientRect().top < divi.getBoundingClientRect().top) {
+            let top = divi.getBoundingClientRect().top - targetDom.getBoundingClientRect().top + divi.offsetHeight - targetDom.offsetHeight
+            move(top)
+        }
+
+        function move(top) {
+
+            let tableDom = divi.querySelectorAll('.scrollTbody')
+            let dom = divi.querySelector('.scroll_bar_child')
+            let currentTop = css(tableDom[0], 'translateY')
+            top = top + currentTop
+            let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight + 68
+            const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
+            css(dom, 'translateY', -top / scale)
+
+            for (var i = 0, len = tableDom.length; i < len; i++) {
+                css(tableDom[i], 'translateY', top)
+            }
+
+        }
+
     }
 }

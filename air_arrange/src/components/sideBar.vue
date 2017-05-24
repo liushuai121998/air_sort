@@ -16,7 +16,7 @@
       <span class="icon-plus"></span>
     </div>
     <div class='cog'>
-      <span class="icon-cog"></span>
+      <span class="icon-cog" ref='iconCog'></span>
       <section ref='menuControl'>
         <span @click='toggleChecked()'><input type="checkbox" id='merge' v-model='isChecked'/><label for='merge'>到离港合并</label></span>
         <span @click='flyControlSort'><input type="checkbox" id='flight-sort' v-model='isSorted'/><label for='flight-sort'>航控排序</label></span>
@@ -66,9 +66,13 @@
         }
       },
       toggleChecked () {
+        this.$refs.menuControl.style.display = 'none'
+        this.$refs.iconCog.style.color = '#fff'
         this.$store.commit('UPDATE_DIVISCREEN', this.isChecked)
       },
       flyControlSort () {
+        this.$refs.menuControl.style.display = 'none'
+        this.$refs.iconCog.style.color = '#fff'
         if(this.isSorted) {
           this.$store.commit('FLY_CONTROL_SORT', this) 
         }

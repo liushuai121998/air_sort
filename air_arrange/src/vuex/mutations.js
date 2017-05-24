@@ -150,22 +150,29 @@ export default {
     /**
      * 根据输入框输入的内容重新排序
      */
-    UPDATE_TD(state, inputValue) {
-        state.searchData = []
+    UPDATE_TD(state, { inputValue, vm }) {
+        // state.searchData = []
+        state.data.contentData.forEach((item, index) => {
+            vm.$set(item, index, state.cloneData.contentData[index])
+        })
         var arrIndex = []
         state.data.contentData.forEach(function(item, index) {
-            if (item.airPos.search(inputValue) === 0) {
-                arrIndex.push(index)
+            if (item[1].airPos.search(inputValue) === 0) {
+                arrIndex.push(item)
             }
         })
         arrIndex.forEach(function(item) {
-                // arr.splice(start, end) 返回一个数组保存的是删除的项
-                // arr.unshift() 在数组的最前面添加
-                // 把删除的项放到最前面
-                state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
-                state.searchData.unshift(state.data.contentData[0])
-            })
-            // console.log(state.searchData)
+            // arr.splice(start, end) 返回一个数组保存的是删除的项
+            // arr.unshift() 在数组的最前面添加
+            // 把删除的项放到最前面
+            // state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
+            // state.searchData.unshift(state.data.contentData[0])
+        })
+        state.data.contentData.forEach((item, index) => {
+            vm.$set(item, index, arrIndex[index])
+        })
+
+        // console.log(state.searchData)
         state.inputValue = inputValue
     },
     /**
@@ -177,7 +184,7 @@ export default {
             getIndexArr(val, param) {
                 let indexArr = []
                 state.data.contentData.forEach((item, index) => {
-                    if (item[param] != val[0]) {
+                    if (item[1][param] != val[0]) {
                         indexArr.push(index)
                     }
                 })
@@ -187,8 +194,6 @@ export default {
                 let flag = 0
                 indexArr.forEach((item) => {
                     state.data.contentData.splice(item - flag, 1)
-
-                    state.data.fixData.splice(item - flag, 1)
                     flag++
                 })
             }
@@ -200,14 +205,14 @@ export default {
                         searchInfo.val.splice(searchInfo.val.indexOf('-'), 1)
                         let indexArr = []
                         state.data.contentData.forEach((item, index) => {
-                            if (item['airPos'] < searchInfo.val[0] || item['airPos'] > searchInfo.val[1]) {
+                            if (item[1]['airPos'] < searchInfo.val[0] || item[1]['airPos'] > searchInfo.val[1]) {
                                 indexArr.push(index)
                             }
                         })
                         utilSearch.spliceData(indexArr)
                             // 检索到之后排序
                         state.data.contentData.sort((a, b) => {
-                            return a['airPos'] - b['airPos']
+                            return a[1]['airPos'] - b[1]['airPos']
                         })
 
 
@@ -215,7 +220,7 @@ export default {
                         let indexArr = []
                         console.log(searchInfo.val)
                         state.data.contentData.forEach((item, index) => {
-                            if (item['airPos'] != searchInfo.val[0] || item['airPos'] != searchInfo.val[1]) {
+                            if (item[1]['airPos'] != searchInfo.val[0] || item[1]['airPos'] != searchInfo.val[1]) {
                                 indexArr.push(index)
                             }
                         })
@@ -225,7 +230,7 @@ export default {
                         let indexArr = []
                         console.log(searchInfo.val)
                         state.data.contentData.forEach((item, index) => {
-                            if (item['airPos'] != searchInfo.val[0]) {
+                            if (item[1]['airPos'] != searchInfo.val[0]) {
                                 indexArr.push(index)
                             }
                         })
@@ -237,19 +242,19 @@ export default {
                         searchInfo.val.splice(searchInfo.val.indexOf('-'), 1)
                         let indexArr = []
                         state.data.contentData.forEach((item, index) => {
-                            if (item['calCome'] < searchInfo.val[0].split(':').join('') || item['calCome'] > searchInfo.val[1].split(':').join('')) {
+                            if (item[1]['calCome'] < searchInfo.val[0].split(':').join('') || item[1]['calCome'] > searchInfo.val[1].split(':').join('')) {
                                 indexArr.push(index)
                             }
                         })
                         utilSearch.spliceData(indexArr)
                             // 检索到之后排序
                         state.data.contentData.sort((a, b) => {
-                            return a['calCome'] - b['calCome']
+                            return a[1]['calCome'] - b[1]['calCome']
                         })
                     } else {
                         let indexArr = []
                         state.data.contentData.forEach((item, index) => {
-                            if (item['calCome'] != searchInfo.val[0].split(':').join('')) {
+                            if (item[1]['calCome'] != searchInfo.val[0].split(':').join('')) {
                                 indexArr.push(index)
                             }
                         })
@@ -271,22 +276,29 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, { index, widthArr, parentNode, cal, $scroll, parentWidth, id }) {
-        //state.thLeftData[index]['width'] = width
-        widthArr.forEach((item, i) => {
-                if (id === 'tabCome') {
-                    state.tabComeData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
-                } else if (id === 'tabLeave') {
-                    state.tabLeaveData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
-                } else if (id === 'tab') {
-                    state.thLeftData[i]['width'] = (item / (parentWidth + cal)) * 100 + '%'
-                }
+    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, $scroll, parentWidth, id, vm }) {
+        // widthArr.forEach((item, i) => {
+        //         // let width = (item / (parentWidth + cal)) * 100 + '%'
+        //         let width = item + 'px'
+        //         switch (id) {
+        //             case 'tabCome':
+        //                 vm.$set(state.tabComeData[i], 'width', width)
+        //                 break
+        //             case 'tabLeave':
+        //                 vm.$set(state.tabLeaveData[i], 'width', width)
+        //                 break
+        //             case 'tab':
+        //                 vm.$set(state.thLeftData[i], 'width', width)
+        //                 break
+        //         }
 
-            })
-            //parentNode.style.width = cal + parentNode.offsetWidth + 'px'
-            //console.log(parentNode.parentNode.nextElementSibling)
-        parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
-        parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+        //     })
+        // parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+        // parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+
+        vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
+        parentNode.parentNode.style.width = parentWidth + cal + 'px'
+
     },
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
@@ -467,14 +479,19 @@ export default {
         state.isDiviScreen = val
     },
     ADD_CLASS(state, { data, index, key }) {
-        if (data === state.comeData) {
-            state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-        } else if (data === state.leaveData) {
-            console.log('hhhhhh')
-            state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-        } else if (data === state.data.contentData) {
-            state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+
+        switch (data) {
+            case state.comeData:
+                state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+                break
+            case state.leaveData:
+                state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+                break
+            case state.data.contentData:
+                state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+                break
         }
+
     },
     REMOVE_CLASS(state) {
         state.comeData.forEach(item => {
