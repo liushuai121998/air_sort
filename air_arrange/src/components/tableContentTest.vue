@@ -38,7 +38,7 @@
           <div class='title_come'>到港</div>
           <div class='contentWrap'>
             <div class='main_content'>
-              <div class='theadWrap  scrollX' ref='theadWrap'>
+              <div class='theadWrap  scrollX' ref='divi1TheadWrap'>
               <ul class='tab'><!--
                     --><li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>
@@ -74,7 +74,7 @@
           <div class='title_leave'><span>离港</span><div class='divi_height_scale'></div></div>
           <div class='contentWrap'>
             <div class='main_content'>
-              <div class='theadWrap scrollX'>
+              <div class='theadWrap scrollX' ref='divi2TheadWrap'>
               <ul class='tab'><!--
                     --><li v-for='(item,index) in tabLeaveData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabLeaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>
@@ -179,9 +179,17 @@
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
      $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
-
+     
     },
     updated () {
+      if(!this.$store.state.isDiviScreen) {
+                let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
+                this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
+            } else {
+                let rightContent = document.querySelector('.divi_wrap').querySelector('.right_message')
+                this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
+                console.log(rightContent)
+          }
       if(this.$store.state.isDiviScreen && !this.isFirstUpdate) {
         // 第一次进入
         this.isFirstUpdate = true
@@ -191,7 +199,6 @@
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-
         // 鼠标滚动
         $scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
@@ -211,6 +218,7 @@
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
       }
+        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
         //$scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap', this.$store.state.isDiviScreen)
@@ -352,11 +360,12 @@
           return this.leaveTemp
       },
       thLeftData () {
-
+       
         if(this.$store.state.isBai) {
-          this.$refs.mergeWrap.style.width = '100%'
+          // this.$refs.mergeWrap.style.width = '100%'
           this.$refs.theadWrap.style.width = '100%'
           this.$refs.tbodyWrap.style.width = '100%'
+          this.isFirst = true
         }
 
         return this.$store.state.thLeftData
@@ -607,7 +616,7 @@
     /*background: red;*/
     cursor: e-resize;
   }       
-  .tbodyWrap .firstClass li {
+  /*.tbodyWrap .firstClass li {
     background: #31849B;
   }
   .tbodyWrap .secondClass li {
@@ -627,7 +636,7 @@
   }
   .tbodyWrap .sevenClass li {
     background: #538ED5;
-  }
+  }*/
   .contentWrap .tbodyWrap ul .selectLi {
     background: #3b3b3b;
     border: 2px solid blue;

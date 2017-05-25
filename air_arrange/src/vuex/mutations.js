@@ -15,16 +15,26 @@ export default {
      * @param {*} state 
      * @param {*} str 
      */
-    ADD_DATA(state) {
+    ADD_DATA(state, vm) {
         let length = state.data.contentData.length
-        let contentStr = state.data.contentData[Math.round(Math.random() * (length - 1))]
-
+        let randomIndex = Math.round(Math.random() * (length - 1))
+        let contentStr = state.data.contentData[randomIndex]
+            //let cloneContentStr = state.cloneData.contentData[randomIndex]
         state.data.contentData.push(contentStr)
-    },
-    ADD_FIX_DATA(state) {
-        let length = state.data.contentData.length
-        let fixStr = state.data.fixData[Math.round(Math.random() * (length - 1))]
-        state.data.fixData.push(fixStr)
+        state.cloneData.contentData.push(contentStr)
+
+        // let comeData = state.data.contentData.filter((item) => {
+        //     return (item[0].continue && item[0].continue.arrival) || item[0].arrival
+        // })
+        // comeData.forEach((item, index) => {
+        //     vm.$set(state.comeData, index, item)
+        // })
+        // let leaveData = state.data.contentData.filter((item) => {
+        //     return (item[0].continue && item[0].continue.departed) || item[0].departed
+        // })
+        // leaveData.forEach((item, index) => {
+        //     vm.$set(state.leaveData, index, item)
+        // })
     },
 
     /**
@@ -51,44 +61,65 @@ export default {
      * @param {*} state 
      * @param {*} arr 
      */
-    DELETE_DATA(state) {
-        // 将检索到的数据删除
-        let flag = 0
-        let cloneData = [].concat(state.data.contentData)
-        let cloneIndex = [].concat(state.selectIndexArr)
-        let selectData = []
-        let isClick = true
+    // DELETE_DATA(state) {
+    //     // 将检索到的数据删除
+    //     let flag = 0
+    //     let cloneData = [].concat(state.data.contentData)
+    //     let cloneIndex = [].concat(state.selectIndexArr)
+    //     let selectData = []
+    //     let isClick = true
 
-        cloneIndex.forEach((item, index) => {
-            selectData.push(state.data.contentData[item])
-        })
+    //     cloneIndex.forEach((item, index) => {
+    //         selectData.push(state.data.contentData[item])
+    //     })
 
-        state.searchData.forEach((item, index) => {
-            // 检索并选中该tr才删除
-            if (selectData.indexOf(item) >= 0) {
-                isClick = false
-                state.data.contentData.splice(cloneData.indexOf(item) - flag, 1)
-                flag++
-            }
-        })
+    //     state.searchData.forEach((item, index) => {
+    //         // 检索并选中该tr才删除
+    //         if (selectData.indexOf(item) >= 0) {
+    //             isClick = false
+    //             state.data.contentData.splice(cloneData.indexOf(item) - flag, 1)
+    //             flag++
+    //         }
+    //     })
 
-        // 将选中tr的删除 删除之后selectTr这个类名还在
-        state.selectTrArr.forEach((item, index) => {
-            item.classList.remove('selectTr')
-        })
-        let indexFlag = 0
-            // console.log(state.selectIndexArr)
-            // 将索引进行排序state.selectIndexArr.sort()
-        state.selectIndexArr.sort().forEach(function(item, index) {
-            if (isClick) {
-                state.data.contentData.splice(item - indexFlag, 1)
-                console.log(item, "++", index)
-                indexFlag++
-            }
-        });
-        // 点击删除按钮之后将selectIndexArr 置为空数组
-        state.selectIndexArr = []
-        state.selectTrArr = []
+    //     // 将选中tr的删除 删除之后selectTr这个类名还在
+    //     state.selectTrArr.forEach((item, index) => {
+    //         item.classList.remove('selectTr')
+    //     })
+    //     let indexFlag = 0
+    //         // console.log(state.selectIndexArr)
+    //         // 将索引进行排序state.selectIndexArr.sort()
+    //     state.selectIndexArr.sort().forEach(function(item, index) {
+    //         if (isClick) {
+    //             state.data.contentData.splice(item - indexFlag, 1)
+    //             console.log(item, "++", index)
+    //             indexFlag++
+    //         }
+    //     });
+    //     // 点击删除按钮之后将selectIndexArr 置为空数组
+    //     state.selectIndexArr = []
+    //     state.selectTrArr = []
+    // },
+    DELETE_DATA(state, vm) {
+        let length = state.data.contentData.length
+        let randomIndex = Math.round(Math.random() * (length - 1))
+        state.data.contentData.splice(randomIndex, 1)
+        state.cloneData.contentData.splice(randomIndex, 1)
+
+        // let comeData = state.data.contentData.filter((item) => {
+        //     return (item[0].continue && item[0].continue.arrival) || item[0].arrival
+        // })
+        // comeData.forEach((item, index) => {
+        //     vm.$set(state.comeData, index, item)
+        //     vm.$set(state.cloneComeData, index, item)
+        // })
+        // let leaveData = state.data.contentData.filter((item) => {
+        //     return (item[0].continue && item[0].continue.departed) || item[0].departed
+        // })
+        // leaveData.forEach((item, index) => {
+        //     vm.$set(state.leaveData, index, item)
+        //     vm.$set(state.cloneLeaveData, index, item)
+        // })
     },
     /**
      * 保存选中的tr的索引进行修改和删除
@@ -150,29 +181,60 @@ export default {
     /**
      * 根据输入框输入的内容重新排序
      */
-    UPDATE_TD(state, { inputValue, vm }) {
+    UPDATE_TD(state, { inputValue, vm, placeHolderValue }) {
         // state.searchData = []
-        state.data.contentData.forEach((item, index) => {
-            vm.$set(item, index, state.cloneData.contentData[index])
-        })
-        var arrIndex = []
-        state.data.contentData.forEach(function(item, index) {
-            if (item[1].airPos.search(inputValue) === 0) {
-                arrIndex.push(item)
-            }
-        })
-        arrIndex.forEach(function(item) {
-            // arr.splice(start, end) 返回一个数组保存的是删除的项
-            // arr.unshift() 在数组的最前面添加
-            // 把删除的项放到最前面
-            // state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
-            // state.searchData.unshift(state.data.contentData[0])
-        })
-        state.data.contentData.forEach((item, index) => {
-            vm.$set(item, index, arrIndex[index])
-        })
+        if (!state.isDiviScreen) {
+            dataChange(state.cloneData.contentData, state.data.contentData)
+        } else {
 
-        // console.log(state.searchData)
+            dataChange(state.cloneComeData, state.comeData)
+            dataChange(state.cloneLeaveData, state.leaveData)
+        }
+
+        function dataChange(cloneData, data) {
+            cloneData.forEach((item, index) => {
+                vm.$set(data, index, item)
+            })
+            let arrIndex = []
+            let param = ''
+                // console.log(inputValue.toUpperCase())
+            inputValue = inputValue.toUpperCase()
+            data.forEach(function(item, index) {
+                if (placeHolderValue.search('机位') > 0) {
+                    param = 'airPos'
+                } else if (placeHolderValue.search('时间') > 0) {
+                    param = 'calLeave'
+                } else if (placeHolderValue.search('航班') > 0) {
+                    param = 'mainFlightNum'
+                } else if (placeHolderValue.search('状态') > 0) {
+                    param = 'flightState'
+                } else if (placeHolderValue.search('航线') > 0) {
+                    param = 'flightRoute'
+                } else if (placeHolderValue.search('机号') > 0) {
+                    param = 'airplaneNum'
+                }
+
+                if (item[1][param].search(inputValue) >= 0) {
+                    arrIndex.push(item)
+                }
+            })
+
+            arrIndex.forEach(function(item) {
+                // arr.splice(start, end) 返回一个数组保存的是删除的项
+                // arr.unshift() 在数组的最前面添加
+                // 把删除的项放到最前面
+                // state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
+                // state.searchData.unshift(state.data.contentData[0])
+            })
+            data.forEach((item, index, arr) => {
+                if (index <= arrIndex.length - 1) {
+                    vm.$set(arr, index, arrIndex[index])
+                } else {
+                    arr.splice(index)
+                }
+            })
+        }
+
         state.inputValue = inputValue
     },
     /**
@@ -276,7 +338,7 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, $scroll, parentWidth, id, vm }) {
+    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, id, vm, parent }) {
         // widthArr.forEach((item, i) => {
         //         // let width = (item / (parentWidth + cal)) * 100 + '%'
         //         let width = item + 'px'
@@ -295,10 +357,20 @@ export default {
         //     })
         // parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
         // parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
-
-        vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
-        parentNode.parentNode.style.width = parentWidth + cal + 'px'
-
+        if (!state.isDiviScreen) {
+            vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
+            parentNode.parentNode.style.width = parentWidth + cal + 'px'
+        } else {
+            console.log(parent.className)
+            if (parent.className === 'divi_content1') {
+                vm.$set(state.tabComeData[targetIndex], 'width', `${widthArr[index]}px`)
+                parentNode.parentNode.style.width = parentWidth + cal + 'px'
+            }
+            if (parent.className === 'divi_content2') {
+                vm.$set(state.tabLeaveData[targetIndex], 'width', `${widthArr[index]}px`)
+                parentNode.parentNode.style.width = parentWidth + cal + 'px'
+            }
+        }
     },
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
@@ -308,18 +380,30 @@ export default {
      * @param {*} state 
      * @param {*} param1 
      */
-    SHOW_DATA(state, { showData }) {
+    SHOW_DATA(state, { showData, vm }) {
+        // 重置数据
+        state.cloneLeftData.forEach((item, index) => {
+            vm.$set(state.thLeftData, index, item)
+        })
 
         if (showData[0].isChecked) {
             state.isBai = false
-
+            state.cloneLeftData.forEach((item, index) => {
+                    vm.$set(state.thLeftData, index, item)
+                })
+                // state.cloneData.contentData.forEach((item, index) => {
+                //     vm.$set(state.data.contentData, index, item)
+                // })
+            return
         } else {
             let valueArr = []
             let textArr = []
             showData.forEach((item) => {
                 if (item.isChecked) {
+
                     valueArr.push(item.value)
                     textArr.push(item.text)
+
                 }
             })
             if (valueArr.length === 0) {
@@ -335,35 +419,24 @@ export default {
             if (arr.length <= 15) {
                 state.isBai = true
             }
-            arr.forEach((item) => {
+            arr.forEach((item, index) => {
                 item.width = (100 / (arr.length)) + '%'
             })
             state.thLeftData = arr
+            console.log(valueArr)
+            const obj = JSON.parse(JSON.stringify(state.cloneData.contentData[0][1]))
 
-            state.data.contentData.forEach((item, index) => {
-                    const obj = JSON.parse(JSON.stringify(item[1]))
-                    state.data.contentData[index][1] = {}
-                    for (let i = 0, len = valueArr.length; i < len; i++) {
-                        if (obj.hasOwnProperty(valueArr[i])) {
-                            state.data.contentData[index][1][valueArr[i]] = obj[valueArr[i]]
-                        }
+            state.data.contentData.forEach((item, index, arr) => {
+                //state.data.contentData[index][1] = {}
+                vm.$set(arr[index], 1, {})
+                for (let i = 0, len = valueArr.length; i < len; i++) {
+                    if (obj.hasOwnProperty(valueArr[i])) {
+                        state.data.contentData[index][1][valueArr[i]] = obj[valueArr[i]]
                     }
-                })
-                // console.log(state.thLeftData, state.data.contentData)
-        }
+                }
+            })
 
-    },
-    /**
-     * 重置数据
-     * @param {*} state 
-     */
-    RESET_DATA(state) {
-
-        state.data = {
-            contentData: JSON.parse(JSON.stringify(state.cloneData.contentData)),
-            fixData: JSON.parse(JSON.stringify(state.cloneData.fixData))
         }
-        state.thLeftData = state.cloneLeftData
 
     },
     /**
@@ -478,6 +551,11 @@ export default {
     UPDATE_DIVISCREEN(state, val) {
         state.isDiviScreen = val
     },
+    /**
+     * 添加class
+     * @param {*} state 
+     * @param {*} param1 
+     */
     ADD_CLASS(state, { data, index, key }) {
 
         switch (data) {
@@ -493,6 +571,10 @@ export default {
         }
 
     },
+    /**
+     * 删除class
+     * @param {*} state 
+     */
     REMOVE_CLASS(state) {
         state.comeData.forEach(item => {
             if (item[3]) {
@@ -509,5 +591,16 @@ export default {
                 item.splice(3, 1)
             }
         })
+    },
+    /**
+     * 显示/隐藏rightContent
+     * @param {*} state 
+     * @param {*} isShowRight 
+     */
+    SHOW_HIDDEN_RIGHT(state, isShowRight) {
+        state.isShowRight = isShowRight
+    },
+    RIGHT_CONTENT(state, { vm, rightContent }) {
+        state.rightContent = rightContent
     }
 }

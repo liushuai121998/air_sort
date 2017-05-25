@@ -6,7 +6,7 @@ for (let i = 0; i < 150; i++) {
 let strRandomArr = ['1225', '1118', '-']
 
 let data = require('../../dataTest.json')
-
+    //let cloneData = require('../../dataTest.json')
 let cloneData = JSON.parse(JSON.stringify(data))
     // console.log(Object.getOwnPropertyDescriptor(cloneData, 'contentData'))
     // let thLeftData = [{ title: '-', width: '44px' }, { title: '月/日', width: '69px' }, { title: '标记', width: '42px' }, { title: '主航班号', width: '85px' },
@@ -34,6 +34,14 @@ let cloneLeftData2 = JSON.parse(JSON.stringify(thLeftData))
 let thRightData = [
     { title: '进港桥载开始', width: '15%' }, { title: '进港撤桥结束', width: '15%' }, { title: '进港撤桥载', width: '35%' }, { title: '上轮档(结束)', width: '35%' }
 ]
+let comeData = data.contentData.filter((item) => {
+    return (item[0].continue && item[0].continue.arrival) || item[0].arrival
+})
+let cloneComeData = JSON.parse(JSON.stringify(comeData))
+let leaveData = data.contentData.filter((item) => {
+    return (item[0].continue && item[0].continue.departed) || item[0].departed
+})
+let cloneLeaveData = JSON.parse(JSON.stringify(leaveData))
 export default {
     data: Object.freeze(data),
     inputValue: "",
@@ -44,12 +52,10 @@ export default {
     cloneLeftData2,
     tabComeData: cloneLeftData,
     tabLeaveData: cloneLeftData2,
-    comeData: data.contentData.filter((item) => {
-        return (item[0].continue && item[0].continue.arrival) || item[0].arrival
-    }),
-    leaveData: data.contentData.filter((item) => {
-        return (item[0].continue && item[0].continue.departed) || item[0].departed
-    }),
+    comeData,
+    leaveData,
+    cloneComeData,
+    cloneLeaveData,
     arr,
     strRandomArr,
     // 搜索的索引
@@ -69,5 +75,8 @@ export default {
     isFirst: true,
     isBai: false,
     // 是否分屏显示
-    isDiviScreen: false
+    isDiviScreen: false,
+    // 是否显示右侧边栏
+    isShowRight: true,
+    rightContent: null
 }

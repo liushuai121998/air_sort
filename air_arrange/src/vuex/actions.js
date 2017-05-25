@@ -8,8 +8,5 @@ export default {
         setTimeout(() => {
             commit('CHANGE_TH_WIDTH', thInfo)
         }, 10)
-    },
-    RESET_DATA({ commit }) {
-        commit('RESET_DATA')
     }
 }

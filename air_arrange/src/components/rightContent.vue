@@ -36,6 +36,13 @@
         },
         mounted () {
             this.$refs.sideContent.style.height = document.documentElement.clientHeight - 30 + 'px'
+            if(!this.$store.state.isDiviScreen) {
+                let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
+                this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
+            } else {
+                let rightContent = document.querySelector('.divi_wrap').querySelector('.right_message')
+                this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
+            }
         },
         methods: {
             hiddenSection (ev, ref) {
@@ -67,7 +74,6 @@
                         document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
                         document.querySelector('.contentWrap').style.width = '80%'
                         document.querySelector('.rightWrap').style.width = '20%'
-
                     }else {
                         // 分屏
                         let content = []

@@ -20,11 +20,13 @@
       <section ref='menuControl'>
         <span @click='toggleChecked()'><input type="checkbox" id='merge' v-model='isChecked'/><label for='merge'>到离港合并</label></span>
         <span @click='flyControlSort'><input type="checkbox" id='flight-sort' v-model='isSorted'/><label for='flight-sort'>航控排序</label></span>
+        <span @click='showRightContent'><input type="checkbox" v-model='isShowRight' id='showRight'/><label for='showRight'>显示右侧边栏</label></span>
       </section>
     </div>
   </div>
 </template>
 <script>
+  import $scrollBar from '../js/jqueryScrollBar.js'
   export default {
     data () {
         
@@ -34,7 +36,9 @@
               
           },
           isChecked: this.$store.state.isDiviScreen,
-          isSorted: false
+          isSorted: false,
+          isReverse: false,
+          isShowRight: this.$store.state.isShowRight
         }
     },
     mounted () {
@@ -49,8 +53,11 @@
           Array.prototype.slice.call(this.$refs.sideWrap.children).forEach((item) => {
             item.firstElementChild.style.color = 'white'
           })
-          
           ev.target.toggleClick = !ev.target.toggleClick  
+          if(this.isReverse) {
+            ev.target.toggleClick = !ev.target.toggleClick  
+            this.isReverse = false
+          }
           if(ev.target.toggleClick) {
             if(ev.target.className === 'icon-cog') {
               this.$refs.menuControl.style.display = 'block'
@@ -59,7 +66,7 @@
           }else {
 
             this.$refs.menuControl.style.display = 'none'
-            ev.target.style.color = 'white'
+            ev.target.style.color = '#fff'
 
           }
 
@@ -68,14 +75,52 @@
       toggleChecked () {
         this.$refs.menuControl.style.display = 'none'
         this.$refs.iconCog.style.color = '#fff'
+        this.isReverse = true
         this.$store.commit('UPDATE_DIVISCREEN', this.isChecked)
       },
       flyControlSort () {
         this.$refs.menuControl.style.display = 'none'
         this.$refs.iconCog.style.color = '#fff'
+        this.isReverse = true
+
         if(this.isSorted) {
           this.$store.commit('FLY_CONTROL_SORT', this) 
         }
+      },
+      showRightContent () {
+        this.$refs.menuControl.style.display = 'none'
+        this.$refs.iconCog.style.color = '#fff'
+        this.isReverse = true
+
+        this.$store.commit('SHOW_HIDDEN_RIGHT', this.isShowRight)
+        //console.log(this.$store.state.rightContent)
+
+        if(this.isShowRight) {
+          this.$store.state.rightContent.style.display = 'flex'
+          document.querySelector('.divi_wrap').style.width = '85%';
+          if(!this.$store.state.isDiviScreen) {
+            document.querySelector('.merge_wrap').style.width = '85%'
+            document.querySelector('.contentWrap').style.width = '80%'
+            document.querySelector('.rightWrap').style.width = '20%'
+          }
+          
+        }else {
+          if(!this.$store.state.isDiviScreen) {
+            document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
+            document.querySelector('.contentWrap').style.width = '80%'
+            document.querySelector('.rightWrap').style.width = '20%'
+          }
+          this.$store.state.rightContent.style.display = 'none'
+          document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
+          
+        }
+        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
+                item.style.width = '80%'
+        });
+        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.rightWrap')).forEach(item => {
+                item.style.width = '20%'
+        });
+        $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
       }
     }
   }
@@ -108,12 +153,14 @@
   .side .cog section {
     position: absolute;
     left: 0;
-    top: -150%;
+    top: -200%;
     z-index: 99999;
     width: 100px;
     font-size: 12px;
-    color: #fff;
+    color: black;
     display: none;
+    background: #fff;
+    border: 1px solid #02BDF2;
   }
   .side .cog section span {
     float: left;

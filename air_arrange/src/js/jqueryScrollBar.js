@@ -128,11 +128,7 @@ export default {
                 // 表格的dom tbody
             let tableDom = parent.querySelectorAll(tal)
                 // 滚动条的位置
-                // if (tableDom[0].offsetHeight <= dom.parentNode.offsetHeight) {
 
-            //     dom.style.height = dom.parentNode.offsetHeight + 'px'
-            //     return
-            // }
             // 滚动条的高度
             setTimeout(function() {
                 dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / (tableDom[0].offsetHeight) + 'px'
@@ -141,6 +137,9 @@ export default {
 
             // 自定义滚动条
             dom.onmousedown = function(ev) {
+                if (tableDom[0].offsetHeight <= parent.offsetHeight) {
+                    return
+                }
                 ev = ev || event
                     // ev.preventDefault()
                     // elementPoint.top = this.offsetTop
@@ -215,6 +214,9 @@ export default {
             // chrome IE
             addEvent(parent, 'mousewheel', function(ev) {
                     // console.log(tableDom, 'tableDom')
+                    if (tableDom[0].offsetHeight <= parent.offsetHeight) {
+                        return
+                    }
                     ev = ev || event
                         //console.log(ev.wheelDelta, ev)
                         // ev.whellDelta 为正 鼠标向上滚 (120)
@@ -381,23 +383,30 @@ export default {
         //let _this = this
         //let widthArr = []
         if (mergeWrap) {
-            scale(mergeWrap)
+            vm.$nextTick(() => {
+                scale(mergeWrap)
+            })
         } else {
-            scale(diviContent1)
-            scale(diviContent2)
+            vm.$nextTick(() => {
+                scale(diviContent1)
+                scale(diviContent2)
+            })
         }
 
         function scale(parent) {
             let elDom = parent.querySelector(el);
             let divs = elDom.getElementsByTagName('div');
             let divArr = [].slice.call(divs)
-            let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
+                //let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
+            let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].getElementsByTagName('ul')
             let dom = parent.querySelector('.scroll-x')
+            let widthArr = []
+            let targetIndex
             divArr.forEach((divDom, index) => {
-                // widthArr.push(divDom.parentNode.offsetWidth)
+                widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
                     this.parentNode.parentNode
-                    let targetIndex = divArr.indexOf(this)
+                    targetIndex = divArr.indexOf(this)
                     let id = ev.target.parentNode.parentNode.id
                     ev.preventDefault();
                     // 阻止事件冒泡
@@ -415,7 +424,7 @@ export default {
                             //let width = that.width + that.movePointX - that.startPointX + 'px'
                         let width = that.width + that.movePointX - that.startPointX
 
-                        //widthArr[index] = that.width + that.movePointX - that.startPointX
+                        widthArr[index] = that.width + that.movePointX - that.startPointX
 
                         that.parentNode.style.width = width + 'px'
                         that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px';
@@ -427,11 +436,12 @@ export default {
 
                         dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / ulDoms[0].parentNode.offsetWidth + 'px'
 
-                        // vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, $scroll: _this, parentWidth: that.parentWidth, id, vm })
+
 
                         document.addEventListener('mouseup', mouseUpEnd)
 
                         function mouseUpEnd() {
+                            vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, id, vm, parent })
                             document.removeEventListener('mousemove', callback)
                             document.removeEventListener('mouseup', mouseUpEnd)
                         }

@@ -3,12 +3,13 @@
       <!--v-model 双向数据绑定-->
       <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
       <select @change='selectValue($event)'>
-        <option>请选择搜索类型</option>
+        <option>请选择搜索类型(模糊搜索)</option>
         <option selected>按机位搜索</option>
         <option>按时间搜索</option>
         <option>按航班搜索</option>
         <option>按航线搜索</option>
         <option>按航班状态搜索</option>
+        <option>按机号搜索</option>
       </select>
       <!--操作数据-->
       <input type="button" value="新增" @click='addData'>
@@ -47,6 +48,7 @@
 
 // let data = require('../../data.json')
 import {formatDate} from '../utils/time_format'
+import $scrollBar from '../js/jqueryScrollBar.js'
 export default {
     data () {
         return {
@@ -138,9 +140,9 @@ export default {
         },
         addData (ev) {
           // 新增数据
-          this.$store.commit('ADD_DATA')
-          this.$store.commit('ADD_FIX_DATA')
+          this.$store.commit('ADD_DATA', this)
           this.$store.commit('FLY_CONTROL_SORT', this)
+
         },
         setData () {
           // 修改数据
@@ -151,16 +153,9 @@ export default {
         },
         deleteData (ev) {  
           if(confirm('确定要删除这些信息吗？')){
-            // 删除数据
-            // if(this.arr.length === 0){
-            //   console.log(this.arr, 'this.arr___________')
-            // }
-            this.getValue(this.inputValue)
-            // this.moveToDes(this.arr)
-            this.$store.commit('CHANGE_CLICK_STATE')
-            //this.$store.commit('DELETE_DATA', {j: this.showFirstIndex, text: this.inputValue})
-            this.$store.commit('DELETE_DATA', {j: this.showFirstIndex, text: this.inputValue})
-            ev.target.parentNode.firstChild.value = ''
+            // 删除数据 
+            // this.$store.commit('CHANGE_CLICK_STATE')
+            this.$store.commit('DELETE_DATA', this)
           }
           
         },
@@ -171,23 +166,30 @@ export default {
           this.$store.commit('SEARCH', this.searchInfo)
 
         },
+        
         // 搜索框输入检索相关的列表
         textChange (ev) {
-          this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this})
+          if(!this.$store.state.isDiviScreen){
+            $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
+          } else {
+            $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
+          }
+          
+          this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
+
         },
         selectValue (ev) {
           
           this.placeHolderValue = ev.target.value
           this.inputValue = ''
           this.searchInfo = {}
-          // console.log(ev.target.value)
+
         },
         toggleShow () {
           //this.toggle = !this.toggle
         },
         show (ev, val, index) {
           if(val === 'eq') {
-            // this.showData[index].isChecked
             this.showData.forEach((item, i) => {
               item.isChecked = this.showData[index].isChecked
             })
@@ -201,17 +203,12 @@ export default {
         },
         confirmShow(isShow) {
           if(this.logFlag) {
-            console.log(this.$store.state.cloneData.contentData)
-            // let contentData = this.$store.state.cloneData.contentData
-            // let thLeftData = this.$store.state.cloneLeftData
-            // this.$store.commit('RESET_DATA', {contentData, thLeftData})
-            this.$store.dispatch('RESET_DATA')
-            this.logFlag = false
+            // console.log(this.$store.state.cloneData.contentData)
+            //this.logFlag = false
           }
           if(isShow) {
-
-            this.$store.commit('SHOW_DATA', this)
-            this.logFlag = true
+            this.$store.commit('SHOW_DATA', {vm: this, showData: this.showData})
+            //this.logFlag = true
           }else {
             return
           }
@@ -280,7 +277,7 @@ export default {
     top: 20px;
     box-sizing: border-box;
     background: #fff;
-    border: 1px solid blue;
+    border: 1px solid #02BDF2;
     border-radius: 5px;
     /*height: 150px;
     overflow: auto;*/

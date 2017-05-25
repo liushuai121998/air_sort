@@ -27,6 +27,9 @@
                 leaveLength: this.$store.state.leaveData.length,
                 mergeLength: this.$store.state.data.contentData.length
             }
+        },
+        updated () {
+            this.mergeLength = this.$store.state.data.contentData.length
         }
     }
 </script>
