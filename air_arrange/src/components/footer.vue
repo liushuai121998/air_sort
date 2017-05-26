@@ -23,13 +23,13 @@
     export default {
         data () {
             return {
-                comeLength: this.$store.state.comeData.length,
-                leaveLength: this.$store.state.leaveData.length,
-                mergeLength: this.$store.state.data.contentData.length
+                comeLength: this.$store.state.newComeData.length,
+                leaveLength: this.$store.state.newLeaveData.length,
+                mergeLength: this.$store.state.initData.length
             }
         },
         updated () {
-            this.mergeLength = this.$store.state.data.contentData.length
+            this.mergeLength = this.$store.state.initData.length
         }
     }
 </script>

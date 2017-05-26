@@ -90,7 +90,7 @@ export default {
                 mergeFixedBar.style.right = -mergeDom.querySelector(right).offsetWidth + 'px'
 
                 let mergeScroll = mergeDom.querySelector(scroll)
-                css(mergeScroll.parentNode, 'translateX', mergeDom.querySelector(right).offsetWidth + mergeDom.querySelector(content).offsetWidth)
+                css(mergeScroll.parentNode, 'translateX', mergeDom.querySelector(content).offsetWidth)
             }
         }
         resizeWrap()

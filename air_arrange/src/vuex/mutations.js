@@ -602,5 +602,15 @@ export default {
     },
     RIGHT_CONTENT(state, { vm, rightContent }) {
         state.rightContent = rightContent
+    },
+    GET_INIT_DATA(state, data) {
+        state.initData = data
+    },
+    COME_DATA(state, data) {
+        state.newComeData = data
+
+    },
+    LEAVE_DATA(state, data) {
+        state.newLeaveData = data
     }
 }

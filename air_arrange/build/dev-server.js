@@ -30,14 +30,7 @@ apiRoutes.get('/data', function(req, res, next) {
     // 获取数据
     res.json({
         error: 0,
-        data: data.contentData
-    })
-})
-apiRoutes.get('/fix', function(req, res, next) {
-    // 获取数据
-    res.json({
-        error: 0,
-        data: data.fixData
+        data: data
     })
 })
 app.use('/api', apiRoutes)

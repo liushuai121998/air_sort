@@ -69,26 +69,26 @@
                 }
                 //this.$store.commit('DEL_RIGHT_CONTENT', this.undoArr)
                 if(this.undoArr.length === 3) {
-                    if(!this.$store.state.isDiviScreen) {
-                        // $scrollBar.widthScale('tab', this)
-                        document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
-                        document.querySelector('.contentWrap').style.width = '80%'
-                        document.querySelector('.rightWrap').style.width = '20%'
-                    }else {
-                        // 分屏
-                        let content = []
-                        let right = []
-                        document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
-                        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
-                            content.push(item)
-                            item.style.width = '80%'
-                        });
-                        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.rightWrap')).forEach(item => {
-                            right.push(item)
-                            item.style.width = '20%'
-                        })
+                    // if(!this.$store.state.isDiviScreen) {
+                    //     // $scrollBar.widthScale('tab', this)
+                    //     document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
+                    //     document.querySelector('.contentWrap').style.width = '80%'
+                    //     document.querySelector('.rightWrap').style.width = '20%'
+                    // }else {
+                    //     // 分屏
+                    //     let content = []
+                    //     let right = []
+                    //     document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
+                    //     [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
+                    //         content.push(item)
+                    //         item.style.width = '80%'
+                    //     });
+                    //     [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.rightWrap')).forEach(item => {
+                    //         right.push(item)
+                    //         item.style.width = '20%'
+                    //     })
                         
-                    }
+                    // }
                     // $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
                     // $scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap', this.$store.state.isDiviScreen)
