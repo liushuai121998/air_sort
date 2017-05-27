@@ -12,7 +12,7 @@
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)'  >
+            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)'>
                   <!--<li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
@@ -383,11 +383,11 @@
         }
         if(this.target != ev.target) {
           if(this.target.nodeName.toLowerCase() === 'li') {
-            //this.target.classList.remove('selectLi')
-            //this.target.parentNode.classList.remove('selectTr')
+            this.target.classList.remove('selectLi')
+            this.target.parentNode.classList.remove('selectTr')
           }else if(this.target.nodeName.toLowerCase() === 'span') {
-            //this.target.classList.remove('selectLi')
-           // this.target.parentNode.parentNode.classList.remove('selectTr')
+            this.target.classList.remove('selectLi')
+            this.target.parentNode.parentNode.classList.remove('selectTr')
           }
           this.target = ev.target
 
@@ -401,26 +401,30 @@
           //this.$store.commit('REMOVE_CLASS')
           //this.$store.commit('ADD_CLASS', {vm: this, liTargetIndex, index})
           //ev.target.classList.add('selectLi')
-          //ev.target.parentNode.classList.add('selectTr')
+          ev.target.parentNode.classList.add('selectTr')
+          
           //ev.target.parentNode.style.backgroundColor = '#bfa'
-           ev.target.parentNode.className="mytestclass";
+           //ev.target.parentNode.className="mytestclass";
              //console.log(ev.target.parentNode);
           //console.log(ev.target.parentNode.classList);
           console.log( this.tdData[index]["myclass"]);
           this.$store.commit('SAVE_INDEX', {index, targetIndex: liTargetIndex, vm: this})
 
-          this.tdData[index].myclass="selectTr";
+         //this.tdData[index].myclass="selectTr";
+          // let obj = this.tdData[index]
+         //  this.$set(this.tdData, index, obj)
           // this.tdData[index].myclass="selectTr";
           // let obj = this.tdData[index]
           // this.$set(this.tdData, index, obj)
         } else if(ev.target.nodeName.toLowerCase() === 'span') {
           // console.log(ev.target.parentNode)
-          //ev.target.classList.add('selectLi')
+         // ev.target.classList.add('selectLi')
          // ev.target.parentNode.parentNode.classList.add('selectTr')
-          // this.tdData[index].myclass="selectTr";
+          ev.target.parentNode.classList.add('selectTr')
+           //this.tdData[index].myclass="selectTr"; //排序可用
           // let obj = this.tdData[index]
           // this.$set(this.tdData, index, obj)
-          this.tdData[index].myclass="selectTr";
+          //this.tdData[index].myclass="selectTr";
             console.log(ev.target.parentNode);
           console.log(ev.target.parentNode.classList);
         }
@@ -459,27 +463,34 @@
         }else if(data === this.leaveData) {
           str = 'leave'
         }
+        // let ulNodes = document.querySelectorAll('.contentWrap .tbodyWrap ul')
+        // [].slice.call(ulNodes).forEach((item) => {
+        //   item.classList.remove()
+        // })
+       if(this.target) {
+          this.target.parentNode.classList.remove('selectTr')
+       }
 
         this.$store.commit('SORT_TABLE', {str, target: ev.target, param: this.$store.state.thLeftData[index]['name'], vm: this})
  
         // 解决v-for强制刷新列表 this.$forceUpdate()
          //this.$forceUpdate()
       },
-      classManage(st1) {
+//       classManage(st1) {
 
-        console.log(st1.myclass);
-      return "";
-// if(index==2)
-// {
-//    return "selectUl"
-// }
-//         console.log(1);
-//         if(st1 === this.classInfo['id']) {
-//           return "selectUl"
-//         }else {
-//           return ;
-//         }
-       }  
+//         console.log(st1.myclass);
+//       return st1.myclass;
+// // if(index==2)
+// // {
+// //    return "selectUl"
+// // }
+// //         console.log(1);
+// //         if(st1 === this.classInfo['id']) {
+// //           return "selectUl"
+// //         }else {
+// //           return ;
+// //         }
+//        }  
     },
     computed: {
       backData () {
