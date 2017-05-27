@@ -4,7 +4,7 @@
         <div class='scroll-x-bar'>
             <span class='scroll-x'>
             </span>
-            <div class='fixed-x-bar' ref='fixedBar'></div>
+            <!--<div class='fixed-x-bar' ref='fixedBar'></div>-->
         </div>
         
     </div>

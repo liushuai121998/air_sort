@@ -3,16 +3,16 @@
         <span>正在监控</span>
         <section>
             <span>
-                到港：{{comeLength}}班
+                到港：{{length.comeLength}}班
             </span>
             <span>
-                离港：{{leaveLength}}班
+                离港：{{length.leaveLength}}班
             </span>
             <span>
-                合并：{{mergeLength}}班
+                合并：{{length.mergeLength}}班
             </span>
             <span>
-                总数：{{comeLength + leaveLength}}班
+                总数：{{length.comeLength + length.leaveLength}}班
             </span>
             <span>Ctrl+S配置</span>
             <span>Ctrl+H颜色示例</span>
@@ -23,13 +23,11 @@
     export default {
         data () {
             return {
-                comeLength: this.$store.state.newComeData.length,
-                leaveLength: this.$store.state.newLeaveData.length,
-                mergeLength: this.$store.state.initData.length
+                length: this.$store.state.length
             }
         },
         updated () {
-            this.mergeLength = this.$store.state.initData.length
+            
         }
     }
 </script>

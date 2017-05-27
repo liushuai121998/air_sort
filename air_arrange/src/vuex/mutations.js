@@ -138,42 +138,65 @@ export default {
      * 排序
      * @param {*} state 
      */
-    SORT_TABLE(state, { param, str, target }) {
+    SORT_TABLE(state, { str, target, param, vm }) {
 
-        if (Object.is(Number(state.data.contentData[0][1][param]), NaN)) {
-            if (str === 'leave') {
-                state.leaveData.sort(function(a, b) {
-                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-                })
-            } else if (str === 'come') {
-                state.comeData.sort(function(a, b) {
-                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-                })
-            } else if (str === 'merge') {
-                state.data.contentData.sort(function(a, b) {
-                    // 字母数字排序
-                    return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-                })
-            }
+        // if (Object.is(Number(state.data.contentData[0][1][param]), NaN)) {
+        //     if (str === 'leave') {
+        //         state.leaveData.sort(function(a, b) {
+        //             return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
+        //         })
+        //     } else if (str === 'come') {
+        //         state.comeData.sort(function(a, b) {
+        //             return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
+        //         })
+        //     } else if (str === 'merge') {
 
-        } else {
-            // 数字排序 
-            if (str === 'leave') {
-                state.leaveData.sort(function(a, b) {
-                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-                })
-            } else if (str === 'come') {
-                state.comeData.sort(function(a, b) {
-                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-                })
-            } else if (str === 'merge') {
-                state.data.contentData.sort(function(a, b) {
-                    return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-                })
-            }
+        //     }
 
-        }
+        // } else {
+        //     // 数字排序 
+        //     if (str === 'leave') {
+        //         state.leaveData.sort(function(a, b) {
+        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+        //         })
+        //     } else if (str === 'come') {
+        //         state.comeData.sort(function(a, b) {
+        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+        //         })
+        //     } else if (str === 'merge') {
+        //         state.data.contentData.sort(function(a, b) {
+        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
+        //         })
+        //     }
 
+        // }
+
+        // if (param === 'sta') {
+        //     let sortData = []
+        //     let noSortData = []
+        //     state.initData.forEach(function(item, index) {
+        //         if (item[param]) {
+        //             sortData.push(item)
+        //         } else {
+        //             noSortData.push(item)
+        //         }
+        //     })
+        //     sortData.sort((a, b) => {
+        //             return target.sort ? a[param].slice(11, 16).split(':').join('') - b[param].slice(11, 16).split(':').join('') : b[param].slice(11, 16).split(':').join('') - a[param].slice(11, 16).split(':').join('')
+        //         })
+        //         // console.log(sortData)
+        //     target.sort ? noSortData.concat(sortData).forEach((item, index) => {
+        //         vm.$set(state.initData, index, item)
+        //     }) : sortData.concat(noSortData).forEach((item, index) => {
+        //         vm.$set(state.initData, index, item)
+        //     })
+        //     console.log(sortData)
+        // }
+
+        state.initData.sort(function(a, b) {
+
+            return target.sort ? a[param] - b[param] : b[param] - a[param]
+        })
         target.sort = !target.sort
 
     },
@@ -338,39 +361,36 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, id, vm, parent }) {
-        // widthArr.forEach((item, i) => {
-        //         // let width = (item / (parentWidth + cal)) * 100 + '%'
-        //         let width = item + 'px'
-        //         switch (id) {
-        //             case 'tabCome':
-        //                 vm.$set(state.tabComeData[i], 'width', width)
-        //                 break
-        //             case 'tabLeave':
-        //                 vm.$set(state.tabLeaveData[i], 'width', width)
-        //                 break
-        //             case 'tab':
-        //                 vm.$set(state.thLeftData[i], 'width', width)
-        //                 break
-        //         }
-
-        //     })
-        // parentNode.parentNode.nextElementSibling.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
-        // parentNode.parentNode.style.width = ((parentWidth + cal) / parentNode.parentNode.parentNode.offsetWidth) * 100 + '%'
+    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, id, vm, parent, targetClassName }) {
         if (!state.isDiviScreen) {
-            vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
+            if (targetClassName === 'qq') {
+                vm.$set(state.serviceWidth[targetIndex], 'width', `${widthArr[index]}px`)
+
+            } else {
+                vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
+            }
             parentNode.parentNode.style.width = parentWidth + cal + 'px'
         } else {
-            console.log(parent.className)
+
             if (parent.className === 'divi_content1') {
-                vm.$set(state.tabComeData[targetIndex], 'width', `${widthArr[index]}px`)
+
+                if (targetClassName === 'qq') {
+                    vm.$set(state.comeServiceWidth[targetIndex], 'width', `${widthArr[index]}px`)
+                } else {
+                    vm.$set(state.tabComeData[targetIndex], 'width', `${widthArr[index]}px`)
+                }
                 parentNode.parentNode.style.width = parentWidth + cal + 'px'
             }
             if (parent.className === 'divi_content2') {
-                vm.$set(state.tabLeaveData[targetIndex], 'width', `${widthArr[index]}px`)
+                if (targetClassName === 'qq') {
+                    vm.$set(state.leaveServiceWidth[targetIndex], 'width', `${widthArr[index]}px`)
+                } else {
+                    vm.$set(state.tabLeaveData[targetIndex], 'width', `${widthArr[index]}px`)
+                }
                 parentNode.parentNode.style.width = parentWidth + cal + 'px'
             }
         }
+
     },
     DEL_RIGHT_CONTENT(state, delArr) {
         state.delRightContent = delArr
@@ -556,39 +576,38 @@ export default {
      * @param {*} state 
      * @param {*} param1 
      */
-    ADD_CLASS(state, { data, index, key }) {
-
-        switch (data) {
-            case state.comeData:
-                state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-                break
-            case state.leaveData:
-                state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-                break
-            case state.data.contentData:
-                state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-                break
-        }
-
+    ADD_CLASS(state, { vm, liTargetIndex, index }) {
+        let obj = {}
+        obj = JSON.parse(JSON.stringify(state.thLeftData[liTargetIndex]))
+        obj.class = true
+            // state.thLeftData[liTargetIndex].class = true
+            // switch (data) {
+            //     case state.comeData:
+            //         state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+            //         break
+            //     case state.leaveData:
+            //         state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+            //         break
+            //     case state.data.contentData:
+            //         state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
+            //         break
+            // }
+        vm.$set(state.thLeftData, liTargetIndex, obj)
+        state.initData[index]['class'] = true
     },
     /**
      * 删除class
      * @param {*} state 
      */
     REMOVE_CLASS(state) {
-        state.comeData.forEach(item => {
-            if (item[3]) {
-                item.splice(3, 1)
+        state.thLeftData.forEach((item, index, arr) => {
+            if (item['class']) {
+                delete item['class']
             }
         })
-        state.leaveData.forEach(item => {
-            if (item[3]) {
-                item.splice(3, 1)
-            }
-        })
-        state.data.contentData.forEach(item => {
-            if (item[3]) {
-                item.splice(3, 1)
+        state.initData.forEach(item => {
+            if (item['class']) {
+                delete item['class']
             }
         })
     },
@@ -603,8 +622,41 @@ export default {
     RIGHT_CONTENT(state, { vm, rightContent }) {
         state.rightContent = rightContent
     },
-    GET_INIT_DATA(state, data) {
-        state.initData = data
+    GET_INIT_DATA(state, vm) {
+        vm.$http.get('/api/data').then((res) => {
+            res.data.data.d.flight.forEach((item, index) => {
+                    vm.$set(state.initData, index, item)
+                })
+                // 到港数据
+            let comeData = res.data.data.d.flight.filter((item) => {
+                return item.aOrD === 'A'
+            })
+            comeData.forEach((item, index) => {
+                    vm.$set(state.comeData, index, item)
+                })
+                // 离港数据
+            let leaveData = res.data.data.d.flight.filter((item) => {
+                return item.aOrD === 'D'
+            })
+            leaveData.forEach((item, index) => {
+                    vm.$set(state.leaveData, index, item)
+                })
+                // 服务型数据
+            res.data.data.d.flight.forEach(item => {
+                    state.serviceData.push(item['services'])
+                })
+                // 服务型数据的width
+            state.serviceData[0].forEach((item, index) => {
+                // console.log(item['detailName'])
+                state.serviceWidth.push({ width: '120px' })
+                state.comeServiceWidth.push({ width: '120px' })
+                state.leaveServiceWidth.push({ width: '120px' })
+            })
+
+            vm.$set(state.length, "comeLength", comeData.length)
+            vm.$set(state.length, 'leaveLength', leaveData.length)
+            vm.$set(state.length, 'mergeLength', state.initData.length)
+        })
     },
     COME_DATA(state, data) {
         state.newComeData = data
@@ -612,5 +664,12 @@ export default {
     },
     LEAVE_DATA(state, data) {
         state.newLeaveData = data
+    },
+    SAVE_INDEX(state, { index, targetIndex, vm }) {
+        // state.classId = state.initData[index]['flightId']
+        // state.classTargetIndex = targetIndex
+        vm.$set(state.classInfo, 'id', state.initData[index]['flightId'])
+        vm.$set(state.classInfo, 'targetIndex', targetIndex)
+            // console.log(state.classId)
     }
 }

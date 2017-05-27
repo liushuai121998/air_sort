@@ -64,7 +64,7 @@ export default {
 
 
     // },
-    resize(scrollx, fixedBar, scroll, { merge, divi1, divi2 }, { content, right }, isDiviScreen) {
+    resize(scrollx, scroll, { merge, divi1, divi2 }, { content, right }, isDiviScreen) {
         function resizeWrap() {
             let divi1Dom = document.querySelector(divi1)
             let divi2Dom = document.querySelector(divi2)
@@ -74,21 +74,9 @@ export default {
                 scrollXDom1.parentNode.style.width = divi1Dom.querySelector(content).offsetWidth + 'px'
                 let scrollXDom2 = divi2Dom.querySelector(scrollx)
                 scrollXDom2.parentNode.style.width = divi2Dom.querySelector(content).offsetWidth + 'px'
-
-                let fixedBar1 = divi1Dom.querySelector(fixedBar)
-                fixedBar1.style.width = divi1Dom.querySelector(right).offsetWidth + 'px'
-                fixedBar1.style.right = -divi1Dom.querySelector(right).offsetWidth + 'px'
-
-                let fixedBar2 = divi2Dom.querySelector(fixedBar)
-                fixedBar2.style.width = divi2Dom.querySelector(right).offsetWidth + 'px'
-                fixedBar2.style.right = -divi2Dom.querySelector(right).offsetWidth + 'px'
             } else {
                 let mergeScrollx = mergeDom.querySelector(scrollx)
                 mergeScrollx.parentNode.style.width = mergeDom.querySelector(content).offsetWidth + 'px'
-                let mergeFixedBar = mergeDom.querySelector(fixedBar)
-                mergeFixedBar.style.width = mergeDom.querySelector(right).offsetWidth + 'px'
-                mergeFixedBar.style.right = -mergeDom.querySelector(right).offsetWidth + 'px'
-
                 let mergeScroll = mergeDom.querySelector(scroll)
                 css(mergeScroll.parentNode, 'translateX', mergeDom.querySelector(content).offsetWidth)
             }
@@ -396,17 +384,27 @@ export default {
         function scale(parent) {
             let elDom = parent.querySelector(el);
             let divs = elDom.getElementsByTagName('div');
-            let divArr = [].slice.call(divs)
-                //let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
+            let wwDoms = elDom.querySelectorAll('div.ww')
+            let qqDoms = elDom.querySelectorAll('div.qq')
+            let qqArr = [].slice.call(qqDoms);
+            let divArr = [].slice.call(divs);
+            //let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
             let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].getElementsByTagName('ul')
             let dom = parent.querySelector('.scroll-x')
             let widthArr = []
             let targetIndex
+            let targetClassName
             divArr.forEach((divDom, index) => {
                 widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
+                    // console.log(divDom.className)
+                    targetClassName = this.className
+                    if (targetClassName === 'qq') {
+                        targetIndex = qqArr.indexOf(this)
+                    } else {
+                        targetIndex = divArr.indexOf(this)
+                    }
                     this.parentNode.parentNode
-                    targetIndex = divArr.indexOf(this)
                     let id = ev.target.parentNode.parentNode.id
                     ev.preventDefault();
                     // 阻止事件冒泡
@@ -430,7 +428,11 @@ export default {
                         that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px';
 
                         [].slice.call(ulDoms).forEach((ulDom) => {
-                            ulDom.children[targetIndex].style.width = width + 'px'
+                            if (targetClassName === 'qq') {
+                                ulDom.children[wwDoms.length + targetIndex].style.width = width + 'px'
+                            } else {
+                                ulDom.children[targetIndex].style.width = width + 'px'
+                            }
                         })
                         ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
 
@@ -441,7 +443,7 @@ export default {
                         document.addEventListener('mouseup', mouseUpEnd)
 
                         function mouseUpEnd() {
-                            vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, id, vm, parent })
+                            vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, id, vm, parent, targetClassName })
                             document.removeEventListener('mousemove', callback)
                             document.removeEventListener('mouseup', mouseUpEnd)
                         }

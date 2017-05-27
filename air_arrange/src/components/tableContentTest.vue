@@ -6,25 +6,25 @@
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul class='tab'>
-             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
-             <li v-for='(item, index) in serviceData[0]' :style='{width: thLeftData[2]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='ww'></div></li>
-             <li v-else-if='item.sorE === "E"' :style='{width: thLeftData[2]["width"]}'><span>{{item.detailName + '|'}}</span><div class='ww'></div></li>
+             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
+             <li v-for='(item, serIndex) in serviceData[0]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+             <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :key='index'>
+            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)'  >
                   <!--<li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
                   <li :style='{width: thLeftData[0]["width"]}'>{{index+1}}</li>
                   <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
-                  <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
-                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(14, 19).split(':').join('')}}</li>
+                  <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
+                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
-                  <li v-for='(serItem, serIndex) in serviceData[0]' :style='{width: thLeftData[2]["width"]}'>
+                  <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: serviceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{serviceData[index][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
             </ul>
           </div>
@@ -58,9 +58,9 @@
                 <li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>-->
               <ul class='tab'>
-                <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
-                <li v-for='(item, index) in serviceData[0]' :style='{width: thLeftData[2]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='ww'></div></li>
-                <li v-else-if='item.sorE === "E"' :style='{width: thLeftData[2]["width"]}'><span>{{item.detailName + '|'}}</span><div class='ww'></div></li>
+                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, comeData)'><span>{{item.title}}</span><div class='ww'></div></li>
+                <li v-for='(item, serIndex) in serviceData[0]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                <li v-else-if='item.sorE === "E"' :style='{width: comeServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
               </ul>
               </div>
               <div class='tbodyWrap scrollX scrollTbody'  ref='divi1TbodyWrap'>
@@ -69,15 +69,15 @@
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backComeData[key]}' @click='selectTr($event,index, key, comeData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
                 <ul v-for='(tdItem, index) in comeData' :key='index'>
-                  <li :style='{width: thLeftData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
+                  <li :style='{width: tabComeData[0]["width"]}'>{{index+1}}</li>
+                  <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
-                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(14, 19).split(':').join('')}}</li>
+                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
-                  <li v-for='(serItem, serIndex) in serviceData[0]' :style='{width: thLeftData[2]["width"]}'>
+                  <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{serviceData[index][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -111,9 +111,9 @@
                   <li v-for='(item,index) in tabLeaveData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabLeaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
                 </ul>-->
                 <ul class='tab'>
-                  <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
-                  <li v-for='(item, index) in serviceData[0]' :style='{width: thLeftData[2]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='ww'></div></li>
-                  <li v-else-if='item.sorE === "E"' :style='{width: thLeftData[2]["width"]}'><span>{{item.detailName + '|'}}</span><div class='ww'></div></li>
+                  <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
+                  <li v-for='(item, serIndex) in serviceData[0]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                  <li v-else-if='item.sorE === "E"' :style='{width: leaveServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
                 </ul>
               </div>
               <div class='tbodyWrap scrollX scrollTbody' ref='divi2TbodyWrap'>
@@ -122,15 +122,15 @@
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backLeaveData[key]}' @click='selectTr($event,index,key, leaveData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
                 <ul v-for='(tdItem, index) in leaveData' :key='index'>
-                  <li :style='{width: thLeftData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
+                  <li :style='{width: tabLeaveData[0]["width"]}'>{{index+1}}</li>
+                  <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
-                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(14, 19).split(':').join('')}}</li>
+                  <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
-                  <li v-for='(serItem, serIndex) in serviceData[0]' :style='{width: thLeftData[2]["width"]}'>
+                  <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{serviceData[index][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(thLeftData[2]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -138,15 +138,15 @@
           </div>
           <div class='rightWrap'>
             <div class='theadWrap'>
-              <ul>
+              <!--<ul>
                 <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
-              </ul>
+              </ul>-->
             </div>
             <div class='tbodyWrap scrollTbody'>
-              <ul v-for='(item, index) in leaveData' :key='index'>
-                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
+              <!--<ul v-for='(item, index) in leaveData' :key='index'>
+                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>-->
                 <!--<li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}'>{{str}}</li>-->
-              </ul>
+              <!--</ul>-->
             </div>
           </div>
           <div class='scroll_bar'>
@@ -185,15 +185,20 @@
         selectIndexArr: [],
         // 选中的tr
         selectTrArr: [],
-        tdData: [],
+        tdData: this.$store.state.initData,
         comeTemp: null,
         leaveTemp: null,
         isFirstUpdate: false,
         isMergeFirstUpdate: false,
         selectTarget: '',
-        serviceData: [], 
-        comeData: [],
-        leaveData: []
+        serviceData: this.$store.state.serviceData, 
+        comeData: this.$store.state.comeData,
+        leaveData: this.$store.state.leaveData,
+        serviceWidth: this.$store.state.serviceWidth,
+        comeServiceWidth: this.$store.state.comeServiceWidth,
+        leaveServiceWidth: this.$store.state.leaveServiceWidth,
+        target: null,
+        classInfo: this.$store.state.classInfo
       }
     },
     created () {
@@ -204,34 +209,35 @@
 
       // this.tdData = this.$store.state.data.contentData
       // 排序
+      
       // this.$store.commit('FLY_CONTROL_SORT', this)
       //this.$http.post('http://192.168.7.53:8080/getInitData', {"username": 'ghms_admin'}).then((res) => {
 
-      this.$http.get('/api/data').then((res) => {
-        console.log(res.data.data.d.flight)
-        this.tdData = res.data.data.d.flight
+      // this.$http.get('/api/data').then((res) => {
+      //   console.log(res.data.data.d.flight)
+      //   // this.tdData = res.data.data.d.flight
 
-        this.$store.commit('GET_INIT_DATA', res.data.data.d.flight)
-        res.data.data.d.flight.forEach(item => {
-        this.serviceData.push(item['services'])
-        })
-        // console.log(this.serviceData)
-        // console.log(this.tdData[0]['services'])
-        // 到港
-        this.comeData = this.tdData.filter((item) => {
-          return item.aOrD === 'A'
-        })
-        this.$store.commit('COME_DATA', this.comeData)
-        // 离港
-        this.leaveData = this.tdData.filter((item) => {
-          return item.aOrD === 'D'
-        })
+      //   // this.$store.commit('GET_INIT_DATA', res.data.data.d.flight)
+      //   res.data.data.d.flight.forEach(item => {
+      //   this.serviceData.push(item['services'])
+      //   })
+      //   // console.log(this.serviceData)
+      //   // console.log(this.tdData[0]['services'])
+      //   // 到港
+      //   this.comeData = this.tdData.filter((item) => {
+      //     return item.aOrD === 'A'
+      //   })
+      //   this.$store.commit('COME_DATA', this.comeData)
+      //   // 离港
+      //   this.leaveData = this.tdData.filter((item) => {
+      //     return item.aOrD === 'D'
+      //   })
 
-        this.$store.commit('LEAVE_DATA', this.leaveData)
-      }, (error) => {
-        console.log('error')
-      }) 
-      
+      //   this.$store.commit('LEAVE_DATA', this.leaveData)
+      // }, (error) => {
+      //   console.log('error')
+      // }) 
+      this.$store.commit('GET_INIT_DATA', this)
     },
     mounted () {
       
@@ -259,7 +265,7 @@
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
-     $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+     $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
      
     },
     updated () {
@@ -283,7 +289,7 @@
         // 鼠标滚动
         $scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
         $scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
         
       }else if(!this.$store.state.isDiviScreen && !this.isMergeFirstUpdate){
@@ -298,7 +304,7 @@
         $scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
       }
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
@@ -371,44 +377,109 @@
          
 
       // },
-      selectTr(ev, index,key, data) {
-        // 数据驱动
-        if(this.selectTarget === ev.target) {
-          
-        }else {
-          // 添加class之前将之前的class都清掉
-          this.$store.commit('REMOVE_CLASS')
-          this.$store.commit('ADD_CLASS', {data, index, key})
-          this.selectTarget = ev.target
-          // console.log(ev.target.parentNode.offsetParent)
-          if(data === this.$store.state.comeData && this.$store.state.leaveData.indexOf(this.$store.state.comeData[index]) >= 0) {
-            let targetIndex = this.$store.state.leaveData.indexOf(this.$store.state.comeData[index])
-            // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
-            let targetDom = this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex]
-            $scrollBar.targetMove(targetDom, this.$refs.diviContent2)
-          } else if(data === this.$store.state.leaveData && this.$store.state.comeData.indexOf(this.$store.state.leaveData[index]) >= 0) {
-            let targetIndex = this.$store.state.comeData.indexOf(this.$store.state.leaveData[index])
-            // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
-            let targetDom = this.$refs.divi1TbodyWrap.getElementsByTagName('ul')[targetIndex]
-            $scrollBar.targetMove(targetDom, this.$refs.diviContent1)
-          }
+      selectTr(ev, index) {
+        if(!this.target) {
+          this.target = ev.target
         }
+        if(this.target != ev.target) {
+          if(this.target.nodeName.toLowerCase() === 'li') {
+            //this.target.classList.remove('selectLi')
+            //this.target.parentNode.classList.remove('selectTr')
+          }else if(this.target.nodeName.toLowerCase() === 'span') {
+            //this.target.classList.remove('selectLi')
+           // this.target.parentNode.parentNode.classList.remove('selectTr')
+          }
+          this.target = ev.target
+
+        }
+       
+        if(ev.target.nodeName.toLowerCase() === 'li') {
+          // 保存当前数据的id
+          let liNodes = ev.target.parentNode.getElementsByTagName('li');
+          let liTargetIndex = [].slice.call(liNodes).indexOf(ev.target)
+          // console.log(liTargetIndex)
+          //this.$store.commit('REMOVE_CLASS')
+          //this.$store.commit('ADD_CLASS', {vm: this, liTargetIndex, index})
+          //ev.target.classList.add('selectLi')
+          //ev.target.parentNode.classList.add('selectTr')
+          //ev.target.parentNode.style.backgroundColor = '#bfa'
+           ev.target.parentNode.className="mytestclass";
+             //console.log(ev.target.parentNode);
+          //console.log(ev.target.parentNode.classList);
+          console.log( this.tdData[index]["myclass"]);
+          this.$store.commit('SAVE_INDEX', {index, targetIndex: liTargetIndex, vm: this})
+
+          this.tdData[index].myclass="selectTr";
+          // this.tdData[index].myclass="selectTr";
+          // let obj = this.tdData[index]
+          // this.$set(this.tdData, index, obj)
+        } else if(ev.target.nodeName.toLowerCase() === 'span') {
+          // console.log(ev.target.parentNode)
+          //ev.target.classList.add('selectLi')
+         // ev.target.parentNode.parentNode.classList.add('selectTr')
+          // this.tdData[index].myclass="selectTr";
+          // let obj = this.tdData[index]
+          // this.$set(this.tdData, index, obj)
+          this.tdData[index].myclass="selectTr";
+            console.log(ev.target.parentNode);
+          console.log(ev.target.parentNode.classList);
+        }
+        // 数据驱动
+        // if(this.selectTarget === ev.target) {
+          
+        // }else {
+        //   // 添加class之前将之前的class都清掉
+        //   this.$store.commit('REMOVE_CLASS')
+        //   this.$store.commit('ADD_CLASS', {data, index, key})
+        //   this.selectTarget = ev.target
+          // console.log(ev.target.parentNode.offsetParent)
+          // if(data === this.$store.state.comeData && this.$store.state.leaveData.indexOf(this.$store.state.comeData[index]) >= 0) {
+          //   let targetIndex = this.$store.state.leaveData.indexOf(this.$store.state.comeData[index])
+          //   // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
+          //   let targetDom = this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex]
+          //   $scrollBar.targetMove(targetDom, this.$refs.diviContent2)
+          // } else if(data === this.$store.state.leaveData && this.$store.state.comeData.indexOf(this.$store.state.leaveData[index]) >= 0) {
+          //   let targetIndex = this.$store.state.comeData.indexOf(this.$store.state.leaveData[index])
+          //   // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
+          //   let targetDom = this.$refs.divi1TbodyWrap.getElementsByTagName('ul')[targetIndex]
+          //   $scrollBar.targetMove(targetDom, this.$refs.diviContent1)
+          // }
+       // }
+
         
       },
       // 表格排序
       sortTable (ev,index, data) {
+
         let str = ''
         if(data === this.tdData) {
           str = 'merge'
-        }else if(data === this.tabComeData) {
+        }else if(data === this.comeData) {
           str = 'come'
-        }else if(data === this.tabLeaveData) {
+        }else if(data === this.leaveData) {
           str = 'leave'
         }
-        this.$store.commit('SORT_TABLE', {param: Object.keys(this.$store.state.data.contentData[0][1])[index-1], str, target: ev.target})
+
+        this.$store.commit('SORT_TABLE', {str, target: ev.target, param: this.$store.state.thLeftData[index]['name'], vm: this})
+ 
         // 解决v-for强制刷新列表 this.$forceUpdate()
          //this.$forceUpdate()
-      },  
+      },
+      classManage(st1) {
+
+        console.log(st1.myclass);
+      return "";
+// if(index==2)
+// {
+//    return "selectUl"
+// }
+//         console.log(1);
+//         if(st1 === this.classInfo['id']) {
+//           return "selectUl"
+//         }else {
+//           return ;
+//         }
+       }  
     },
     computed: {
       backData () {
@@ -448,8 +519,7 @@
           this.$refs.tbodyWrap.style.width = '100%'
           this.isFirst = true
         }
-
-        return this.$store.state.theadData
+        return this.$store.state.thLeftData
       },
       // 到港数据
       tabComeData () {
@@ -488,6 +558,13 @@
   }
 </script>
 <style>
+
+.mytestclass li  
+{
+  background-color: #b8ff3f !important;
+
+}
+
   .divi_wrap:after {
     content: '';
     display: block;
@@ -582,6 +659,8 @@
   .contentWrap {
     width: 100%;
     float: left;
+    box-sizing: border-box;
+    border-right: 1px solid black;
   }
   .contentWrap .main_content {
     width: 100%;
@@ -691,6 +770,9 @@
   .contentWrap .tbodyWrap  .selectTr li{
     background: #B8CF00;
   }
+  .contentWrap .tbodyWrap .selectUl li {
+    background: #B8CF00;
+  }
   .theadWrap li {
     position: relative;
   }
@@ -706,6 +788,18 @@
     /*background: red;*/
     cursor: e-resize;
   }       
+  .qq {     
+    /*float: right;*/
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    /*margin-right: -1px;*/
+    /*background:  #e8e8e8;         */
+    background: red;
+    cursor: e-resize;
+  }
   /*.tbodyWrap .firstClass li {
     background: #31849B;
   }
@@ -730,6 +824,7 @@
   .contentWrap .tbodyWrap ul .selectLi {
     background: #3b3b3b;
     border: 2px solid blue;
+    box-sizing: border-box;
   }
   .contentWrap .tbodyWrap .selectTr li:nth-child(5) {
 
