@@ -7,7 +7,7 @@ let strRandomArr = ['1225', '1118', '-']
 
 let data = require('../../dataTest.json')
     //let cloneData = require('../../dataTest.json')
-let cloneData = JSON.parse(JSON.stringify(data))
+    // let cloneData = JSON.parse(JSON.stringify(data))
     // console.log(Object.getOwnPropertyDescriptor(cloneData, 'contentData'))
     // let thLeftData = [{ title: '-', width: '44px' }, { title: '月/日', width: '69px' }, { title: '标记', width: '42px' }, { title: '主航班号', width: '85px' },
     //         { title: '共享航班号', width: '151px' }, { title: '机号', width: '65px' }, { title: '类型', width: '69px' }, { title: '机型', width: '75px' }, { title: '任务', width: '70px' },
@@ -48,18 +48,23 @@ let thRightData = [
     //     return (item[0].continue && item[0].continue.departed) || item[0].departed
     // })
     // let cloneLeaveData = JSON.parse(JSON.stringify(leaveData))
+let tabComeData = JSON.parse(JSON.stringify(cloneLeftData))
+let tabLeaveData = JSON.parse(JSON.stringify(cloneLeftData2))
 export default {
     data: Object.freeze(data),
     inputValue: "",
-    cloneData,
     thLeftData,
     thRightData,
     cloneLeftData,
     cloneLeftData2,
-    tabComeData: cloneLeftData,
-    tabLeaveData: cloneLeftData2,
+    tabComeData,
+    tabLeaveData,
+    cloneTabComeData: JSON.parse(JSON.stringify(tabComeData)),
+    cloneTabLeaveData: JSON.parse(JSON.stringify(tabLeaveData)),
     comeData: [],
     leaveData: [],
+    cloneComeData: [],
+    cloneLeaveData: [],
     serviceData: [],
     arr,
     strRandomArr,
@@ -85,6 +90,7 @@ export default {
     isShowRight: true,
     rightContent: null,
     initData: [],
+    cloneInitData: [],
     length: {
         comeLength: 0,
         leaveLength: 0,
@@ -98,5 +104,9 @@ export default {
     classInfo: {
         id: '',
         targetIndex: ''
-    }
+    },
+    /** 复制的服务数据
+     * 
+     */
+    cloneServiceData: []
 }

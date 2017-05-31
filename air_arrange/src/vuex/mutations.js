@@ -16,25 +16,32 @@ export default {
      * @param {*} str 
      */
     ADD_DATA(state, vm) {
-        let length = state.data.contentData.length
-        let randomIndex = Math.round(Math.random() * (length - 1))
-        let contentStr = state.data.contentData[randomIndex]
-            //let cloneContentStr = state.cloneData.contentData[randomIndex]
-        state.data.contentData.push(contentStr)
-        state.cloneData.contentData.push(contentStr)
 
-        // let comeData = state.data.contentData.filter((item) => {
-        //     return (item[0].continue && item[0].continue.arrival) || item[0].arrival
-        // })
-        // comeData.forEach((item, index) => {
-        //     vm.$set(state.comeData, index, item)
-        // })
-        // let leaveData = state.data.contentData.filter((item) => {
-        //     return (item[0].continue && item[0].continue.departed) || item[0].departed
-        // })
-        // leaveData.forEach((item, index) => {
-        //     vm.$set(state.leaveData, index, item)
-        // })
+        let length = state.initData.length
+        let randomIndex = Math.round(Math.random() * (length - 1))
+        let contentStr = state.cloneInitData[randomIndex]
+        state.initData.push(contentStr)
+        state.cloneInitData.push(contentStr)
+        state.serviceData.push(contentStr['services'])
+
+        // 到港数据
+        let comeData = state.initData.filter((item) => {
+            return item.aOrD === 'A'
+        })
+        comeData.forEach((item, index) => {
+            vm.$set(state.comeData, index, item)
+        })
+
+        // 离港数据
+        let leaveData = state.initData.filter((item) => {
+            return item.aOrD === 'D'
+        })
+        leaveData.forEach((item, index) => {
+            vm.$set(state.leaveData, index, item)
+        })
+        vm.$set(state.length, "comeLength", state.comeData.length)
+        vm.$set(state.length, 'leaveLength', state.leaveData.length)
+        vm.$set(state.length, 'mergeLength', state.initData.length)
     },
 
     /**
@@ -193,11 +200,33 @@ export default {
         //     console.log(sortData)
         // }
 
-        state.initData.sort(function(a, b) {
+        switch (str) {
+            case "merge":
+                sortData(state.initData)
+                break
+            case "come":
+                sortData(state.comeData)
+                break
+            case "leave":
+                sortData(state.leaveData)
+                break
+        }
 
-            return target.sort ? a[param] - b[param] : b[param] - a[param]
-        })
-        target.sort = !target.sort
+        function sortData(data) {
+            data.sort((a, b) => {
+                if (a[param] > b[param]) {
+                    return 1;
+                } else if (a[param] == b[param]) {
+
+                } else if (a[param] < b[param]) {
+                    return -1;
+                }
+            })
+            if (target.sort) {
+                data.reverse()
+            }
+            target.sort = !target.sort
+        }
 
     },
 
@@ -205,57 +234,71 @@ export default {
      * 根据输入框输入的内容重新排序
      */
     UPDATE_TD(state, { inputValue, vm, placeHolderValue }) {
-        // state.searchData = []
         if (!state.isDiviScreen) {
-            dataChange(state.cloneData.contentData, state.data.contentData)
+            dataChange(state.cloneInitData, state.initData, false)
         } else {
 
-            dataChange(state.cloneComeData, state.comeData)
-            dataChange(state.cloneLeaveData, state.leaveData)
+            dataChange(state.cloneComeData, state.comeData, true)
+            dataChange(state.cloneLeaveData, state.leaveData, true)
         }
 
-        function dataChange(cloneData, data) {
+        function dataChange(cloneData, data, isDivi) {
+            // 重置数据
+
             cloneData.forEach((item, index) => {
+                //console.log(item['std'])
                 vm.$set(data, index, item)
             })
+
             let arrIndex = []
             let param = ''
-                // console.log(inputValue.toUpperCase())
             inputValue = inputValue.toUpperCase()
             data.forEach(function(item, index) {
-                if (placeHolderValue.search('机位') > 0) {
-                    param = 'airPos'
+                if (placeHolderValue.search('机型') > 0) {
+                    param = 'airType'
                 } else if (placeHolderValue.search('时间') > 0) {
-                    param = 'calLeave'
+                    // 计离
+                    param = 'std'
+
+                    let str = item[param]
+                    if (!str || str && str.slice(11, 16).split(':').join('').search(inputValue) >= 0) {
+                        arrIndex.push(item)
+                    }
+
                 } else if (placeHolderValue.search('航班') > 0) {
-                    param = 'mainFlightNum'
+                    param = 'flightNo'
                 } else if (placeHolderValue.search('状态') > 0) {
-                    param = 'flightState'
+                    param = 'status'
                 } else if (placeHolderValue.search('航线') > 0) {
-                    param = 'flightRoute'
+                    param = 'line'
                 } else if (placeHolderValue.search('机号') > 0) {
-                    param = 'airplaneNum'
+                    param = 'regNo'
                 }
 
-                if (item[1][param].search(inputValue) >= 0) {
+                if (param != 'std' && item[param] && item[param].search(inputValue) >= 0) {
                     arrIndex.push(item)
                 }
+
             })
 
-            arrIndex.forEach(function(item) {
-                // arr.splice(start, end) 返回一个数组保存的是删除的项
-                // arr.unshift() 在数组的最前面添加
-                // 把删除的项放到最前面
-                // state.data.contentData.unshift(state.data.contentData.splice(item, 1)[0])
-                // state.searchData.unshift(state.data.contentData[0])
-            })
             data.forEach((item, index, arr) => {
-                if (index <= arrIndex.length - 1) {
-                    vm.$set(arr, index, arrIndex[index])
-                } else {
-                    arr.splice(index)
-                }
-            })
+
+                    if (index <= arrIndex.length - 1) {
+                        vm.$set(arr, index, arrIndex[index])
+                    } else {
+                        arr.splice(index)
+                    }
+
+
+                })
+                // 判断是否分屏, 更新数量
+            if (isDivi) {
+                vm.$set(state.length, "comeLength", state.comeData.length)
+                vm.$set(state.length, 'leaveLength', state.leaveData.length)
+            } else {
+                vm.$set(state.length, 'mergeLength', state.initData.length)
+            }
+
         }
 
         state.inputValue = inputValue
@@ -401,62 +444,81 @@ export default {
      * @param {*} param1 
      */
     SHOW_DATA(state, { showData, vm }) {
-        // 重置数据
-        state.cloneLeftData.forEach((item, index) => {
-            vm.$set(state.thLeftData, index, item)
-        })
 
-        if (showData[0].isChecked) {
-            state.isBai = false
-            state.cloneLeftData.forEach((item, index) => {
-                    vm.$set(state.thLeftData, index, item)
-                })
-                // state.cloneData.contentData.forEach((item, index) => {
-                //     vm.$set(state.data.contentData, index, item)
-                // })
-            return
+        if (!state.isDiviScreen) {
+            // 分屏
+            showDataDetail(state.cloneInitData, state.initData, state.cloneLeftData, state.thLeftData)
         } else {
-            let valueArr = []
-            let textArr = []
-            showData.forEach((item) => {
-                if (item.isChecked) {
-
-                    valueArr.push(item.value)
-                    textArr.push(item.text)
-
-                }
-            })
-            if (valueArr.length === 0) {
-                return
-            }
-
-            let arr = []
-            state.thLeftData.forEach(item => {
-                if (textArr.indexOf(item.title) >= 0 || item.title === '-') {
-                    arr.push(item)
-                }
-            })
-            if (arr.length <= 15) {
-                state.isBai = true
-            }
-            arr.forEach((item, index) => {
-                item.width = (100 / (arr.length)) + '%'
-            })
-            state.thLeftData = arr
-            console.log(valueArr)
-            const obj = JSON.parse(JSON.stringify(state.cloneData.contentData[0][1]))
-
-            state.data.contentData.forEach((item, index, arr) => {
-                //state.data.contentData[index][1] = {}
-                vm.$set(arr[index], 1, {})
-                for (let i = 0, len = valueArr.length; i < len; i++) {
-                    if (obj.hasOwnProperty(valueArr[i])) {
-                        state.data.contentData[index][1][valueArr[i]] = obj[valueArr[i]]
-                    }
-                }
-            })
-
+            showDataDetail(state.cloneComeData, state.comeData, state.cloneTabComeData, state.tabComeData)
+            showDataDetail(state.cloneLeaveData, state.leaveData, state.cloneTabLeaveData, state.tabLeaveData)
         }
+
+        /**
+         * 根据需要显示数据
+         * @param {*} cloneData 复制的内容区数据
+         * @param {*} data 内容区数据
+         * @param {*} cloneLeftData 复制的头部数据 
+         * @param {*} leftData 头部数据
+         */
+        function showDataDetail(cloneData, data, cloneLeftData, leftData) {
+            // 重置数据
+            cloneLeftData.forEach((item, index) => {
+                vm.$set(leftData, index, item)
+            })
+
+            if (showData[0].isChecked) {
+                cloneLeftData.forEach((item, index) => {
+                    vm.$set(leftData, index, item)
+                })
+                cloneData.forEach((item, index) => {
+                    vm.$set(data, index, item)
+                })
+                return
+            } else {
+                let valueArr = []
+                let textArr = []
+                showData.forEach((item) => {
+                    if (item.isChecked) {
+
+                        valueArr.push(item.value)
+                        textArr.push(item.text)
+
+                    }
+                })
+                if (valueArr.length === 0) {
+                    return
+                }
+
+                let arr = []
+                leftData.forEach(item => {
+                        if (textArr.indexOf(item.title) >= 0 || item.title === '序号') {
+                            arr.push(item)
+                        }
+                    })
+                    // 隐式丢失
+                    //leftData = arr
+                leftData.forEach((item, index, leftDataArr) => {
+                        if (index <= arr.length - 1) {
+                            vm.$set(leftData, index, arr[index])
+                        } else {
+                            leftDataArr.splice(index)
+                        }
+                    })
+                    // console.log(valueArr, leftData)
+                const obj = JSON.parse(JSON.stringify(cloneData[0]))
+
+                data.forEach((item, index, arr) => {
+                    //state.data.contentData[index][1] = {}
+                    vm.$set(arr, index, { flightId: cloneData[index]['flightId'], services: data[index]['services'] })
+                    for (let i = 0, len = valueArr.length; i < len; i++) {
+                        if (obj.hasOwnProperty(valueArr[i])) {
+                            data[index][valueArr[i]] = obj[valueArr[i]]
+                        }
+                    }
+                })
+            }
+        }
+
 
     },
     /**
@@ -622,48 +684,60 @@ export default {
     RIGHT_CONTENT(state, { vm, rightContent }) {
         state.rightContent = rightContent
     },
+    /**
+     * 获取初始化数据
+     * @param {*} state 
+     * @param {*} vm 
+     */
     GET_INIT_DATA(state, vm) {
         vm.$http.get('/api/data').then((res) => {
             res.data.data.d.flight.forEach((item, index) => {
                     vm.$set(state.initData, index, item)
                 })
                 // 到港数据
-            let comeData = res.data.data.d.flight.filter((item) => {
+            let comeData = state.initData.filter((item) => {
                 return item.aOrD === 'A'
             })
             comeData.forEach((item, index) => {
-                    vm.$set(state.comeData, index, item)
-                })
-                // 离港数据
-            let leaveData = res.data.data.d.flight.filter((item) => {
+                vm.$set(state.comeData, index, item)
+            })
+
+            // 离港数据
+            let leaveData = state.initData.filter((item) => {
                 return item.aOrD === 'D'
             })
             leaveData.forEach((item, index) => {
-                    vm.$set(state.leaveData, index, item)
-                })
-                // 服务型数据
-            res.data.data.d.flight.forEach(item => {
-                    state.serviceData.push(item['services'])
+                vm.$set(state.leaveData, index, item)
+            })
+
+            // 服务型数据
+            state.initData.forEach((item, index) => {
+                    // state.serviceData.push(item['services'])
+                    vm.$set(state.serviceData, index, item['services'])
                 })
                 // 服务型数据的width
             state.serviceData[0].forEach((item, index) => {
-                // console.log(item['detailName'])
-                state.serviceWidth.push({ width: '120px' })
-                state.comeServiceWidth.push({ width: '120px' })
-                state.leaveServiceWidth.push({ width: '120px' })
-            })
-
+                    // console.log(item['detailName'])
+                    state.serviceWidth.push({ width: '120px' })
+                    state.comeServiceWidth.push({ width: '120px' })
+                    state.leaveServiceWidth.push({ width: '120px' })
+                })
+                // 监控到港离港，到离港的数据
             vm.$set(state.length, "comeLength", comeData.length)
             vm.$set(state.length, 'leaveLength', leaveData.length)
             vm.$set(state.length, 'mergeLength', state.initData.length)
-        })
-    },
-    COME_DATA(state, data) {
-        state.newComeData = data
 
-    },
-    LEAVE_DATA(state, data) {
-        state.newLeaveData = data
+            // 复制一份初始化数据 
+            state.cloneInitData = JSON.parse(JSON.stringify(state.initData))
+
+            // 复制一份到港数据
+            state.cloneComeData = JSON.parse(JSON.stringify(state.comeData))
+                // 复制一份离港数据
+            state.cloneLeaveData = JSON.parse(JSON.stringify(state.leaveData))
+
+            // 复制一份服务数据
+            state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
+        })
     },
     SAVE_INDEX(state, { index, targetIndex, vm }) {
         // state.classId = state.initData[index]['flightId']
@@ -671,5 +745,61 @@ export default {
         vm.$set(state.classInfo, 'id', state.initData[index]['flightId'])
         vm.$set(state.classInfo, 'targetIndex', targetIndex)
             // console.log(state.classId)
+    },
+    /**
+     * 服务数据的按需显示
+     * @param {*} state 
+     * @param {*} param1 
+     */
+    SHOW_SERVICE_DATA(state, { serviceDataInfo, vm }) {
+        if (!state.isDiviScreen) {
+            console.log('不分屏')
+                // 不分屏
+                // console.log(state.cloneInitData, state.initData)
+            showServiceDataDetail(state.cloneInitData, state.initData)
+        } else {
+            showServiceDataDetail(state.cloneComeData, state.comeData)
+            showServiceDataDetail(state.cloneLeaveData, state.leaveData)
+        }
+
+        function showServiceDataDetail(cloneInitData, initData) {
+            console.log(cloneInitData, initData)
+            cloneInitData.forEach((item, index) => {
+                vm.$set(initData[index], 'services', item['services'])
+            })
+
+            if (serviceDataInfo[0].isServiceChecked) {
+                cloneInitData.forEach((item, index) => {
+                    vm.$set(initData[index], 'services', item['services'])
+                })
+                return
+            } else {
+                let valueArr = []
+                let textArr = []
+                serviceDataInfo.forEach((item) => {
+                    if (item.isServiceChecked) {
+                        textArr.push(item.text)
+                    }
+                })
+                if (textArr.length === 0) {
+                    return
+                }
+                let arrChild = []
+                initData[0]['services'].forEach(item => {
+                    // if (textArr.indexOf(item.title) >= 0) {
+                    //     arr.push(item)
+                    // }
+                    if (textArr.indexOf(item['detailName']) >= 0) {
+                        arrChild.push(item)
+                    }
+
+                })
+
+                initData.forEach((item, index, arr) => {
+                    vm.$set(item, 'services', arrChild)
+                })
+
+            }
+        }
     }
 }

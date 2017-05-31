@@ -6,13 +6,13 @@
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul class='tab'>
-             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, tdData)'><span>{{item.title}}</span><div class='ww'></div></li>
-             <li v-for='(item, serIndex) in serviceData[0]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, tdData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+             <li v-for='(item, serIndex) in tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
              <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)'>
+            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)' :class=''>
                   <!--<li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
@@ -23,8 +23,8 @@
                   <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: serviceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
+                    --><span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", height: "100%"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
             </ul>
           </div>
@@ -58,8 +58,8 @@
                 <li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>-->
               <ul class='tab'>
-                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, comeData)'><span>{{item.title}}</span><div class='ww'></div></li>
-                <li v-for='(item, serIndex) in serviceData[0]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, comeData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                <li v-for='(item, serIndex) in comeData[0]["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                 <li v-else-if='item.sorE === "E"' :style='{width: comeServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
               </ul>
               </div>
@@ -68,7 +68,7 @@
                       <li :style='{width: tabComeData[0]["width"]}'>{{index + 1}}</li>
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backComeData[key]}' @click='selectTr($event,index, key, comeData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
-                <ul v-for='(tdItem, index) in comeData' :key='index'>
+                <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)'>
                   <li :style='{width: tabComeData[0]["width"]}'>{{index+1}}</li>
                   <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
@@ -76,8 +76,8 @@
                   <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
+                    --><span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -111,8 +111,8 @@
                   <li v-for='(item,index) in tabLeaveData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabLeaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
                 </ul>-->
                 <ul class='tab'>
-                  <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
-                  <li v-for='(item, serIndex) in serviceData[0]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                  <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                  <li v-for='(item, serIndex) in leaveData[0]["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                   <li v-else-if='item.sorE === "E"' :style='{width: leaveServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
                 </ul>
               </div>
@@ -121,7 +121,7 @@
                       <li :style='{width: tabLeaveData[0]["width"]}'>{{index + 1}}</li>
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backLeaveData[key]}' @click='selectTr($event,index,key, leaveData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
-                <ul v-for='(tdItem, index) in leaveData' :key='index'>
+                <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)'>
                   <li :style='{width: tabLeaveData[0]["width"]}'>{{index+1}}</li>
                   <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
@@ -129,8 +129,8 @@
                   <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
-                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%", textAlign: "center"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
+                    --><span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -400,15 +400,14 @@
           // console.log(liTargetIndex)
           //this.$store.commit('REMOVE_CLASS')
           //this.$store.commit('ADD_CLASS', {vm: this, liTargetIndex, index})
-          //ev.target.classList.add('selectLi')
+          ev.target.classList.add('selectLi')
           ev.target.parentNode.classList.add('selectTr')
           
           //ev.target.parentNode.style.backgroundColor = '#bfa'
            //ev.target.parentNode.className="mytestclass";
              //console.log(ev.target.parentNode);
           //console.log(ev.target.parentNode.classList);
-          console.log( this.tdData[index]["myclass"]);
-          this.$store.commit('SAVE_INDEX', {index, targetIndex: liTargetIndex, vm: this})
+          //this.$store.commit('SAVE_INDEX', {index, targetIndex: liTargetIndex, vm: this})
 
          //this.tdData[index].myclass="selectTr";
           // let obj = this.tdData[index]
@@ -418,15 +417,14 @@
           // this.$set(this.tdData, index, obj)
         } else if(ev.target.nodeName.toLowerCase() === 'span') {
           // console.log(ev.target.parentNode)
-         // ev.target.classList.add('selectLi')
-         // ev.target.parentNode.parentNode.classList.add('selectTr')
-          ev.target.parentNode.classList.add('selectTr')
+         ev.target.classList.add('selectLi')
+         ev.target.parentNode.parentNode.classList.add('selectTr')
            //this.tdData[index].myclass="selectTr"; //排序可用
           // let obj = this.tdData[index]
           // this.$set(this.tdData, index, obj)
           //this.tdData[index].myclass="selectTr";
-            console.log(ev.target.parentNode);
-          console.log(ev.target.parentNode.classList);
+          //   console.log(ev.target.parentNode);
+          // console.log(ev.target.parentNode.classList);
         }
         // 数据驱动
         // if(this.selectTarget === ev.target) {
@@ -454,27 +452,53 @@
       },
       // 表格排序
       sortTable (ev,index, data) {
-
         let str = ''
+        let arrowNodes
         if(data === this.tdData) {
           str = 'merge'
+          arrowNodes = document.querySelector('.merge_wrap').querySelectorAll('.arrow');
         }else if(data === this.comeData) {
           str = 'come'
+          arrowNodes = document.querySelector('.divi_content1').querySelectorAll('.arrow');
         }else if(data === this.leaveData) {
           str = 'leave'
+          arrowNodes = document.querySelector('.divi_content2').querySelectorAll('.arrow');
         }
-        // let ulNodes = document.querySelectorAll('.contentWrap .tbodyWrap ul')
-        // [].slice.call(ulNodes).forEach((item) => {
-        //   item.classList.remove()
-        // })
+        [].slice.call(arrowNodes).forEach((item) => {
+          item.style.display = 'none'
+        })
+        
+       
+
        if(this.target) {
           this.target.parentNode.classList.remove('selectTr')
+          this.target.classList.remove('selectLi')
+       }
+       // console.log(ev.target.sort)
+       
+
+       let arrow
+       if(ev.target.nodeName.toLowerCase() === 'li') {
+         arrow = ev.target.querySelector('.arrow')
+       }else {
+         arrow = ev.target.parentNode.querySelector('.arrow')
        }
 
-        this.$store.commit('SORT_TABLE', {str, target: ev.target, param: this.$store.state.thLeftData[index]['name'], vm: this})
+       if(ev.target.sort) {
+         arrow.style.display = 'block'
+         arrow.style.borderBottomColor = 'red' 
+         arrow.style.borderTopColor = 'transparent'
+       }else{
+         arrow.style.display = 'block'
+         arrow.style.borderBottomColor = 'transparent'
+         arrow.style.borderTopColor = 'red'
+       }
+
+       this.$store.commit('SORT_TABLE', {str, target: ev.target, param: this.$store.state.thLeftData[index]['name'], vm: this})
  
         // 解决v-for强制刷新列表 this.$forceUpdate()
          //this.$forceUpdate()
+         
       },
 //       classManage(st1) {
 
@@ -840,5 +864,16 @@
   .contentWrap .tbodyWrap .selectTr li:nth-child(5) {
 
     border: 2px solid blue;
+  }
+  /*排序箭头*/
+  .wrap li.sort_li .arrow {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border: 4px solid transparent;
+    /*border-top-color: red;*/
+    display: none;
   }
 </style>

@@ -1,10 +1,10 @@
 <template>
     <div class="header">
       <!--v-model 双向数据绑定-->
-      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @input='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
+      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @keyup='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
       <select @change='selectValue($event)'>
         <option>请选择搜索类型(模糊搜索)</option>
-        <option selected>按机位搜索</option>
+        <option selected>按机型搜索</option>
         <option>按时间搜索</option>
         <option>按航班搜索</option>
         <option>按航线搜索</option>
@@ -36,6 +36,19 @@
           </li>
         </ul>
       </section>
+      <section class='serviceInfo'>
+        <span @click='serviceToggle(isServiceShow = !isServiceShow)'>服务显示状态</span>
+        <ul class='service_show' v-show='isServiceShow'>
+          <li>
+            <input type='button' value='确定' @click='confirmServiceShow(true)'>
+            <input type='button' value='取消' @click='confirmServiceShow(false)'>
+          </li></br>
+          <li v-for='(item, index) in serviceDataInfo'>
+            <input type='checkbox' :id='index' v-model='item.isServiceChecked' @click='showService($event, item, index)'>
+            <label :for='index' v-text='item.text'></label>
+          </li>
+        </ul>
+      </section>
       <span class='show_time'>标准时间: {{time | formatDate}}</span>
       <div class='control_wrap'>
         <span class="icon-minus"></span>
@@ -58,95 +71,53 @@ export default {
           isFlightClick: false,
           isInputChange: true,
           showFirstIndex: 0,
-          placeHolderValue: '按机位搜索',
+          placeHolderValue: '按机型搜索',
           toggle: false,
           showData: [{value: 'eq', text: '全部显示', isChecked: false}],
           logFlag: false,
-          time: Date.now()
+          time: Date.now(),
+          /*服务数据的显示*/
+          serviceDataInfo: [{text: '全部显示', isServiceChecked: false}],
+          isServiceShow: false
         }
     },
     created () {
-      let arr = [].concat(this.$store.state.thLeftData)
-      arr.splice(0, 1)
-      let obj = this.$store.state.data.contentData[0][1]
-      let count = 0
-      for(let key in obj) {
-        if(key != 'spot') {
-          this.showData.push({
-            value: key,
-            text: arr[count]['title'],
-            isChecked: false
-          })
-        }
-        count++
-      }
     },
     mounted () {
-      
+      // 定时器，数据加载回来
+      setTimeout(() => {
+        let arr = [].concat(this.$store.state.thLeftData)
+        arr.splice(0, 1)
+        let obj = this.$store.state.initData[0]
+        arr.forEach((item, index) => {
+          this.showData.push({
+            value: item['name'],
+            text: item['title'],
+            isChecked: false
+          })
+        })
+
+        let serviceArr = [].concat(this.$store.state.serviceData[0])
+        serviceArr.forEach((item, index) => {
+          this.serviceDataInfo.push({
+            text: item['detailName'], 
+            isServiceChecked: false
+          })
+        })
+        
+      }, 1000)
+
     },
     methods: {
 
-        /**
-         * 获取输入的数据
-        */
-        getValue (val) {
-          val = val.trim()
-          if(!val){
-              return
-          }
-          switch (this.placeHolderValue) {
-            case '按机位搜索':
-              this.searchInfo.name = 'airPos'
-              if(val.indexOf(' ') > 0){
-                val = val.split(' ')  
-              }else if(val.indexOf(',') > 0){
-                val = val.split(',')
-              }else if(val.indexOf(', ') > 0) {
-                val = val.split(', ')
-              }else if(val.indexOf('-') > 0 && val.indexOf(':') < 0){
-                val = val.split('-')
-                val.push('-')
-              }else {
-                val = [val]
-              }
-              this.searchInfo.val = val
-              break
-            case '按时间搜索':
-              this.searchInfo.name = 'calCome'
-              if(val.indexOf(':') > 0) {
-                  if(val.indexOf('-') > 0) {
-                    val = val.split('-')
-                    val.push('-')
-                  }else {
-                    val = [val]
-                  }
-              }
-              
-              this.searchInfo.val = val
-              break
-            case '按航班搜索':
-              this.searchInfo.name = 'mainFlightNum'
-              this.searchInfo.val = [val]
-              break
-            case '按航线搜索':
-              this.searchInfo.name = 'flightRoute'
-              this.searchInfo.val = [val]
-              break
-            case '按航班状态搜索':
-              this.searchInfo.name = 'flightState'
-              this.searchInfo.val = [val]
-              break  
-          }
-        },
         addData (ev) {
           // 新增数据
           this.$store.commit('ADD_DATA', this)
-          this.$store.commit('FLY_CONTROL_SORT', this)
+          // this.$store.commit('FLY_CONTROL_SORT', this)
 
         },
         setData () {
           // 修改数据
-          this.getValue(this.inputValue)
           this.$store.commit('SET_DATA')
           // console.info(ev.target.parentNode.firstChild)
           this.inputValue = ''
@@ -160,8 +131,6 @@ export default {
           
         },
         search (ev) {
-
-          this.getValue(this.inputValue)
           ev.target.value = ''
           this.$store.commit('SEARCH', this.searchInfo)
 
@@ -171,15 +140,16 @@ export default {
         textChange (ev) {
           if(!this.$store.state.isDiviScreen){
             $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
+
           } else {
+
             $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
+
           }
-          
           this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
 
         },
-        selectValue (ev) {
-          
+        selectValue (ev) { 
           this.placeHolderValue = ev.target.value
           this.inputValue = ''
           this.searchInfo = {}
@@ -187,6 +157,9 @@ export default {
         },
         toggleShow () {
           //this.toggle = !this.toggle
+          if(this.toggle) {
+            this.isServiceShow = false
+          }
         },
         show (ev, val, index) {
           if(val === 'eq') {
@@ -210,17 +183,46 @@ export default {
             this.$store.commit('SHOW_DATA', {vm: this, showData: this.showData})
             //this.logFlag = true
           }else {
+            this.toggle = !this.toggle
             return
           }
           this.toggle = !this.toggle
+        },
+        /*服务信息的显示
+
+          */
+        serviceToggle () {
+          if(this.isServiceShow) {
+            this.toggle = false
+          }
+        },
+        showService (ev, item, index) {
+          if(item.text === '全部显示') {
+            this.serviceDataInfo.forEach((item, i) => {
+              item.isServiceChecked = this.serviceDataInfo[index].isServiceChecked
+            })
+
+          }else {
+            let arr = [].concat(this.serviceDataInfo)
+            arr.splice(0, 1)
+            this.serviceDataInfo[0].isServiceChecked = JSON.stringify(arr).search('false') >= 0 ? false : true
+          }
+        },
+        confirmServiceShow (isConfirm) {
+          if(isConfirm) {
+            this.$store.commit('SHOW_SERVICE_DATA', {serviceDataInfo: this.serviceDataInfo, vm: this})
+          }
+
+          this.isServiceShow = !this.isServiceShow
         }
-    },
+    },   
+    /*时间过滤*/
     filters: {
         formatDate(time) {
             var date = new Date(time);
             return formatDate(date, ' hh:mm yyyy-MM-dd');
         }
-    }
+    } 
 }
 </script>
 
@@ -330,5 +332,34 @@ export default {
     margin-right: 10px;
     color: #fff;
     font-size: 12px;
+  }
+
+  /*服务信息
+  */
+  .serviceInfo {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background: #fff;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 5px;
+    padding: 0 15px;
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  .serviceInfo .service_show {
+    position: absolute;
+    right: -100%;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #02BDF2;
+    border-radius: 5px;
+  }
+  .service_show li {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
   }
 </style>
