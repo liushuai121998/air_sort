@@ -695,7 +695,7 @@ export default {
                     vm.$set(state.initData, index, item)
                 })
                 // 到港数据
-            let comeData = state.initData.filter((item) => {
+            let comeData = JSON.parse(JSON.stringify(res.data.data.d.flight)).filter((item) => {
                 return item.aOrD === 'A'
             })
             comeData.forEach((item, index) => {
@@ -703,7 +703,7 @@ export default {
             })
 
             // 离港数据
-            let leaveData = state.initData.filter((item) => {
+            let leaveData = JSON.parse(JSON.stringify(res.data.data.d.flight)).filter((item) => {
                 return item.aOrD === 'D'
             })
             leaveData.forEach((item, index) => {
@@ -801,5 +801,6 @@ export default {
 
             }
         }
+        console.log(state.comeData[0]['services'])
     }
 }
