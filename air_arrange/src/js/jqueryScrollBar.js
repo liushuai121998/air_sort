@@ -5,66 +5,7 @@ export default {
      * @param {*} el 
      * @param {*} tal 
      */
-    // resize(el, tal, el2, el3, el4, isDiviScreen) {
-    //     let dom = document.querySelector(el)
-    //     let dom2 = document.querySelector(el2)
-    //     let dom3 = document.querySelectorAll(el3)
-    //     let dom4 = document.querySelector(el4)
-    //         // 表格的dom tbody
-    //     let tableDom = document.querySelectorAll(tal)
-    //     let leftValue = 0
-    //     for (var i = 0, len = tableDom.length; i < len; i++) {
-    //         leftValue += tableDom[i].parentNode.offsetWidth
-    //         console.log(tableDom[i].parentNode.offsetWidth)
-    //     }
-    //     css(dom.parentNode, 'translateX', leftValue)
-    //     dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
-
-    //     dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
-    //     dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-    //         // console.log(dom3)
-    //     setTimeout(function() {
-
-    //         dom3.forEach(item => {
-    //             //console.log(document.querySelectorAll('.rightWrap')[1].offsetWidth)
-    //             if (isDiviScreen) {
-    //                 item.style.width = document.querySelectorAll('.rightWrap')[1].offsetWidth + 'px'
-    //                 item.style.right = -document.querySelectorAll('.rightWrap')[1].offsetWidth + 'px'
-    //             } else {
-    //                 item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-    //                 item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-    //             }
-    //         })
-
-    //     }, 200)
-    //     dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
-
-    //     window.onresize = function() {
-
-    //         let leftValue = 0
-    //         for (var i = 0, len = tableDom.length; i < len; i++) {
-    //             leftValue += tableDom[i].parentNode.offsetWidth
-    //         }
-    //         css(dom.parentNode, 'translateX', leftValue)
-    //         dom.style.height = ((dom.parentNode.offsetHeight) * (dom.parentNode.offsetHeight)) / tableDom[0].offsetHeight + 'px'
-
-    //         dom2.parentNode.style.width = tableDom[0].parentNode.offsetWidth + 'px'
-    //         dom2.style.width = ((dom2.parentNode.offsetWidth) * (dom2.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-    //             // console.log(dom3)
-    //         setTimeout(function() {
-    //             dom3.forEach(item => {
-
-    //                 item.style.width = document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-    //                 item.style.right = -document.querySelectorAll('.rightWrap')[0].offsetWidth + 'px'
-    //             })
-    //         }, 200)
-
-    //         dom4.style.height = document.documentElement.clientHeight - 60 + 'px'
-    //     }
-
-
-    // },
-    resize(scrollx, scroll, { merge, divi1, divi2 }, { content, right }, isDiviScreen) {
+    resize(scrollx, scroll, { merge, divi1, divi2 }, { content }, isDiviScreen) {
         function resizeWrap() {
             let divi1Dom = document.querySelector(divi1)
             let divi2Dom = document.querySelector(divi2)
@@ -316,12 +257,26 @@ export default {
 
             const maxL = dom.parentNode.offsetWidth - dom.offsetWidth
 
-            dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-                // console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px')
-                // 滚动条的宽度
-            setTimeout(function() {
+
+
+            // console.log(((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px')
+            // 滚动条的宽度
+            // setTimeout(function() {
+            //     dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+            // }, 20)
+            if (dom.parentNode.offsetWidth > tableDom[0].offsetWidth) {
+
+                dom.style.width = dom.parentNode.offserWidth + 'px'
+                setTimeout(function() {
+                    dom.style.width = dom.parentNode.getBoundingClientRect().width + 'px'
+                }, 20);
+                return
+            } else {
                 dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
-            }, 20)
+                setTimeout(function() {
+                    dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
+                }, 20);
+            }
 
 
             // 自定义滚动条
@@ -397,7 +352,8 @@ export default {
             divArr.forEach((divDom, index) => {
                 widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
-                    // console.log(divDom.className)
+                    vm.$store.commit('UPDATE_IS_SORT', false)
+                        // console.log(divDom.className)
                     targetClassName = this.className
                     if (targetClassName === 'qq') {
                         targetIndex = qqArr.indexOf(this)
@@ -428,11 +384,14 @@ export default {
                         that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px';
 
                         [].slice.call(ulDoms).forEach((ulDom) => {
+
                             if (targetClassName === 'qq') {
                                 ulDom.children[wwDoms.length + targetIndex].style.width = width + 'px'
+
                             } else {
                                 ulDom.children[targetIndex].style.width = width + 'px'
                             }
+
                         })
                         ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
 
@@ -443,6 +402,7 @@ export default {
                         document.addEventListener('mouseup', mouseUpEnd)
 
                         function mouseUpEnd() {
+                            // vm.$store.commit('UPDATE_IS_SORT', true)
                             vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, id, vm, parent, targetClassName })
                             document.removeEventListener('mousemove', callback)
                             document.removeEventListener('mouseup', mouseUpEnd)

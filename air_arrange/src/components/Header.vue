@@ -209,7 +209,9 @@ export default {
           }
         },
         confirmServiceShow (isConfirm) {
+
           if(isConfirm) {
+            
             this.$store.commit('SHOW_SERVICE_DATA', {serviceDataInfo: this.serviceDataInfo, vm: this})
           }
 

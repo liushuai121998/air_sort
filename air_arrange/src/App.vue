@@ -1,9 +1,14 @@
 <template>
   <div id="app">
-    <v-header></v-header>
-    <side-bar></side-bar>
-    <table-content></table-content>
-    <v-footer></v-footer>
+    <div v-if='isContentShow.isShow'>
+      <v-header></v-header>
+      <side-bar></side-bar>
+      <table-content></table-content>
+      <v-footer></v-footer>
+    </div>
+    <div v-else>
+      <login></login>
+    </div>
   </div>
 </template>
 
@@ -12,12 +17,13 @@ import header from './components/Header'
 import sideBar from './components/sideBar'
 import tableContent from './components/tableContentTest'
 import footer from './components/footer'
+import login from './components/login'
 import Vue from 'vue'
 export default {
   name: 'app',
   data () {
     return {
-      
+      isContentShow: this.$store.state.isContentShow
     }
   },
   created () {
@@ -38,7 +44,7 @@ export default {
     //   return this.$store.state.initData
     // }
   }, 
-  components: {'v-header': header, 'side-bar': sideBar, 'table-content': tableContent, 'v-footer': footer}
+  components: {'v-header': header, 'side-bar': sideBar, 'table-content': tableContent, 'v-footer': footer, 'login': login}
 }
 </script>
 

@@ -98,29 +98,25 @@
         if(this.isShowRight) {
           this.$store.state.rightContent.style.display = 'flex'
           document.querySelector('.divi_wrap').style.width = '85%';
+
           if(!this.$store.state.isDiviScreen) {
             document.querySelector('.merge_wrap').style.width = '85%'
-            document.querySelector('.contentWrap').style.width = '80%'
-            document.querySelector('.rightWrap').style.width = '20%'
+            document.querySelector('.contentWrap').style.width = '100%'
           }
           
         }else {
           if(!this.$store.state.isDiviScreen) {
             document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
-            document.querySelector('.contentWrap').style.width = '80%'
-            document.querySelector('.rightWrap').style.width = '20%'
+            document.querySelector('.contentWrap').style.width = '100%'
           }
+
           this.$store.state.rightContent.style.display = 'none'
           document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
-          
         }
         [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
-                item.style.width = '80%'
+                item.style.width = '100%'
         });
-        [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.rightWrap')).forEach(item => {
-                item.style.width = '20%'
-        });
-        $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
       }
     }
   }

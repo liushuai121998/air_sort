@@ -7,7 +7,8 @@
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul class='tab'>
              <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, tdData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
-             <li v-for='(item, serIndex) in tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+             <!--服务数据头部-->
+             <li v-for='(item, serIndex) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
              <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
            </ul>
           </div> 
@@ -59,7 +60,7 @@
               </ul>-->
               <ul class='tab'>
                 <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, comeData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
-                <li v-for='(item, serIndex) in comeData[0]["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                <li v-for='(item, serIndex) in comeData[0] && comeData[0]["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                 <li v-else-if='item.sorE === "E"' :style='{width: comeServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
               </ul>
               </div>
@@ -112,7 +113,7 @@
                 </ul>-->
                 <ul class='tab'>
                   <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
-                  <li v-for='(item, serIndex) in leaveData[0]["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                  <li v-for='(item, serIndex) in leaveData[0] && leaveData[0]["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                   <li v-else-if='item.sorE === "E"' :style='{width: leaveServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
                 </ul>
               </div>
@@ -202,6 +203,16 @@
       }
     },
     created () {
+      // this.$http.post("192.168.7.53:8080/submitService", {
+      //       "flightId": "3U8925",
+      //       "time": "0004",
+      //       "isCancel": "0",
+      //       "detailNO": "0113",
+      //       "sore": "E",
+      //       "username": "ghms_admin"
+      //   }).then((res) => {
+      //       console.log(res.data)
+      //   })
       // Object.prototype.hasOwnProperty()
       this.randomIndexArr = this.$store.state.arr 
       
@@ -240,7 +251,6 @@
       this.$store.commit('GET_INIT_DATA', this)
     },
     mounted () {
-      
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
      if(this.$store.state.isDiviScreen) {
@@ -265,17 +275,18 @@
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
-     $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+     $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
      
     },
     updated () {
+      console.log('hh')
       if(!this.$store.state.isDiviScreen) {
                 let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
                 this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
             } else {
                 let rightContent = document.querySelector('.divi_wrap').querySelector('.right_message')
                 this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
-                console.log(rightContent)
+                // console.log(rightContent)
           }
       if(this.$store.state.isDiviScreen && !this.isFirstUpdate) {
         // 第一次进入
@@ -289,7 +300,7 @@
         // 鼠标滚动
         $scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
         $scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
         
       }else if(!this.$store.state.isDiviScreen && !this.isMergeFirstUpdate){
@@ -304,12 +315,10 @@
         $scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
+        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
       }
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-
-        //$scrollBar.resize('.scroll', '.merge_wrap .scrollTbody', '.scroll-x', '.fixed-x-bar', '.wrap', this.$store.state.isDiviScreen)
     },
     methods: {
       setInter () {
@@ -452,6 +461,9 @@
       },
       // 表格排序
       sortTable (ev,index, data) {
+        if(!this.$store.state.isSort) {
+          return
+        }
         let str = ''
         let arrowNodes
         if(data === this.tdData) {
@@ -594,12 +606,6 @@
 </script>
 <style>
 
-.mytestclass li  
-{
-  background-color: #b8ff3f !important;
-
-}
-
   .divi_wrap:after {
     content: '';
     display: block;
@@ -721,9 +727,19 @@
     font-size: 0;
     cursor: pointer;
   }
+  .contentWrap {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+  }
   .contentWrap .main_content .tbodyWrap, .contentWrap .main_content .theadWrap {
-    /*width: 150%;*/
-    float: left;
+    /*float: left;*/
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .contentWrap .main_content .tbodyWrap {
+    top: 34px;
   }
 
   .theadWrap{
@@ -863,7 +879,7 @@
   }
   .contentWrap .tbodyWrap .selectTr li:nth-child(5) {
 
-    border: 2px solid blue;
+    /*border: 2px solid blue;*/
   }
   /*排序箭头*/
   .wrap li.sort_li .arrow {
@@ -875,5 +891,12 @@
     border: 4px solid transparent;
     /*border-top-color: red;*/
     display: none;
+  }
+  .divi_content1 .contentWrap {
+    height: 100%;
+  }
+  .divi_content1 .main_content{
+    height: calc(100% - 32px);
+    overflow: hidden;
   }
 </style>

@@ -19,9 +19,9 @@ export default {
 
         let length = state.initData.length
         let randomIndex = Math.round(Math.random() * (length - 1))
-        let contentStr = state.cloneInitData[randomIndex]
+        let contentStr = state.cloneMergeData[randomIndex]
         state.initData.push(contentStr)
-        state.cloneInitData.push(contentStr)
+        state.cloneMergeData.push(contentStr)
         state.serviceData.push(contentStr['services'])
 
         // 到港数据
@@ -235,7 +235,7 @@ export default {
      */
     UPDATE_TD(state, { inputValue, vm, placeHolderValue }) {
         if (!state.isDiviScreen) {
-            dataChange(state.cloneInitData, state.initData, false)
+            dataChange(state.cloneMergeData, state.initData, false)
         } else {
 
             dataChange(state.cloneComeData, state.comeData, true)
@@ -447,7 +447,7 @@ export default {
 
         if (!state.isDiviScreen) {
             // 分屏
-            showDataDetail(state.cloneInitData, state.initData, state.cloneLeftData, state.thLeftData)
+            showDataDetail(state.cloneMergeData, state.initData, state.cloneLeftData, state.thLeftData)
         } else {
             showDataDetail(state.cloneComeData, state.comeData, state.cloneTabComeData, state.tabComeData)
             showDataDetail(state.cloneLeaveData, state.leaveData, state.cloneTabLeaveData, state.tabLeaveData)
@@ -690,12 +690,63 @@ export default {
      * @param {*} vm 
      */
     GET_INIT_DATA(state, vm) {
-        vm.$http.get('/api/data').then((res) => {
-            res.data.data.d.flight.forEach((item, index) => {
-                    vm.$set(state.initData, index, item)
+        vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
+            //vm.$http.get('/api/data').then((res) => {
+            res.data.d.flight.forEach((item, index) => {
+                vm.$set(state.initData, index, item)
+            })
+            console.log(state.wsUrl)
+                // 复制一份初始化数据 
+            state.cloneInitData = JSON.parse(JSON.stringify(res.data.d.flight))
+
+            // 到离港合并的数据
+            let flightNoArr = [] //航班号 
+            state.initData.forEach((item, index) => {
+                flightNoArr.push(item['flightNo'])
+            })
+
+            // 到港离港的数据
+            let mergeData = []
+            let saveIndexArr = []
+            state.initData.forEach((item, index, arr) => {
+                    // console.log(item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10))
+                    if (item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10) && item['brother'] != '/') {
+
+                        if (flightNoArr.indexOf(item['brother']) >= 0) {
+
+                            let _index = flightNoArr.indexOf(item['brother'])
+                                // 连班
+                            saveIndexArr.push(index)
+                            if (saveIndexArr.indexOf(_index) < 0) {
+                                mergeData.push({ index, _index })
+                            }
+
+                        } else {
+                            //vm.$set(item, 'flightNo', item["flightNo"] + " / " + item["brother"])
+                        }
+                    }
+
                 })
-                // 到港数据
-            let comeData = JSON.parse(JSON.stringify(res.data.data.d.flight)).filter((item) => {
+                // 整合连班航班数据
+            mergeData.forEach((item) => {
+
+                vm.$set(state.initData[item["index"]], 'flightNo', state.initData[item["index"]]['flightNo'] + "/" + state.cloneInitData[item["_index"]]['flightNo'])
+
+            })
+
+            let flagCount = 0
+                // 合并
+            mergeData.forEach((item, index, arr) => {
+                state.initData.splice(item["_index"] - flagCount, 1)
+                flagCount++
+            })
+
+            // 克隆一份合屏的数据
+            state.cloneMergeData = JSON.parse(JSON.stringify(state.initData))
+
+
+            // 到港数据
+            let comeData = JSON.parse(JSON.stringify(state.cloneInitData)).filter((item) => {
                 return item.aOrD === 'A'
             })
             comeData.forEach((item, index) => {
@@ -703,7 +754,7 @@ export default {
             })
 
             // 离港数据
-            let leaveData = JSON.parse(JSON.stringify(res.data.data.d.flight)).filter((item) => {
+            let leaveData = JSON.parse(JSON.stringify(state.cloneInitData)).filter((item) => {
                 return item.aOrD === 'D'
             })
             leaveData.forEach((item, index) => {
@@ -727,8 +778,7 @@ export default {
             vm.$set(state.length, 'leaveLength', leaveData.length)
             vm.$set(state.length, 'mergeLength', state.initData.length)
 
-            // 复制一份初始化数据 
-            state.cloneInitData = JSON.parse(JSON.stringify(state.initData))
+
 
             // 复制一份到港数据
             state.cloneComeData = JSON.parse(JSON.stringify(state.comeData))
@@ -753,26 +803,25 @@ export default {
      */
     SHOW_SERVICE_DATA(state, { serviceDataInfo, vm }) {
         if (!state.isDiviScreen) {
-            console.log('不分屏')
-                // 不分屏
-                // console.log(state.cloneInitData, state.initData)
-            showServiceDataDetail(state.cloneInitData, state.initData)
+            // 不分屏
+            showServiceDataDetail(state.cloneMergeData, state.initData)
         } else {
             showServiceDataDetail(state.cloneComeData, state.comeData)
             showServiceDataDetail(state.cloneLeaveData, state.leaveData)
         }
 
         function showServiceDataDetail(cloneInitData, initData) {
-            console.log(cloneInitData, initData)
             cloneInitData.forEach((item, index) => {
                 vm.$set(initData[index], 'services', item['services'])
             })
 
             if (serviceDataInfo[0].isServiceChecked) {
+
                 cloneInitData.forEach((item, index) => {
                     vm.$set(initData[index], 'services', item['services'])
                 })
                 return
+
             } else {
                 let valueArr = []
                 let textArr = []
@@ -786,9 +835,7 @@ export default {
                 }
                 let arrChild = []
                 initData[0]['services'].forEach(item => {
-                    // if (textArr.indexOf(item.title) >= 0) {
-                    //     arr.push(item)
-                    // }
+
                     if (textArr.indexOf(item['detailName']) >= 0) {
                         arrChild.push(item)
                     }
@@ -801,6 +848,44 @@ export default {
 
             }
         }
-        console.log(state.comeData[0]['services'])
+        // console.log(state.comeData[0]['services'])
+    },
+    /**
+     * 避免宽度拉伸与排序冲突
+     * @param {*} state 
+     * @param {*} isSort 
+     */
+    UPDATE_IS_SORT(state, isSort) {
+        state.isSort = isSort
+        console.log(state.isSort)
+    },
+
+    /**
+     * 展现数据
+     */
+    SHOW_CONTENT(state, { val, vm }) {
+        vm.$set(state.isContentShow, 'isShow', true)
+        vm.$http.post('http://192.168.7.53:8080/login', { "username": val }).then((res) => {
+            // console.log(res.data.d.wsUrl, res.data.d.token)
+            vm.$set(state.wsUrl, 'val', res.data.d.wsUrl)
+            vm.$set(state.wsUrl, 'token', res.data.d.token)
+
+            // 获得初始化数据之后进行websocket连接
+            //ws://ip:port /ws?dev=web&token=token
+            if (state.wsUrl.val) {
+                let ws = new WebSocket('ws://' + state.wsUrl.val + '/ws?dev=web&token=' + state.wsUrl.token)
+                    //let ws = new WebSocket('ws://172.168.7.53:13')
+                ws.onopen = function() {
+                    console.log('opening......')
+                }
+
+                ws.onmessage = function(e) {
+                    //console.log(e)
+                    alert('eee')
+                };
+            }
+
+        })
+
     }
 }

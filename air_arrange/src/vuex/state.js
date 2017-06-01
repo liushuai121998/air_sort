@@ -108,5 +108,26 @@ export default {
     /** 复制的服务数据
      * 
      */
-    cloneServiceData: []
+    cloneServiceData: [],
+    /*是否排序
+     */
+    isSort: true,
+    /** 克隆一份合屏的数据
+     * 
+     */
+    cloneMergeData: [],
+
+    /** 内容区是否显示
+     * 
+     */
+    isContentShow: {
+        isShow: false
+    },
+    /**wsUrl websocket地址
+     * 
+     */
+    wsUrl: {
+        val: '',
+        token: ''
+    }
 }
