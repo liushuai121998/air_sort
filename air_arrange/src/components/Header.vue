@@ -75,13 +75,14 @@ export default {
           toggle: false,
           showData: [{value: 'eq', text: '全部显示', isChecked: false}],
           logFlag: false,
-          time: Date.now(),
+          time: '000000',
           /*服务数据的显示*/
           serviceDataInfo: [{text: '全部显示', isServiceChecked: false}],
           isServiceShow: false
         }
     },
     created () {
+      this.time = Date.now()
     },
     mounted () {
       // 定时器，数据加载回来
@@ -105,6 +106,18 @@ export default {
           })
         })
         
+      }, 1000)
+      let count = 0
+      setInterval(() => {  
+
+        this.time = Date.now()
+        count++
+        if((count % 10 === 0)) {
+          // alert(this.time)
+          this.time = Date.now()
+          // console.log(this.time)
+        }
+
       }, 1000)
 
     },
@@ -222,7 +235,7 @@ export default {
     filters: {
         formatDate(time) {
             var date = new Date(time);
-            return formatDate(date, ' hh:mm yyyy-MM-dd');
+            return formatDate(date, ' hh:mm:ss yyyy-MM-dd');
         }
     } 
 }

@@ -353,15 +353,12 @@ export default {
                 widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
                     vm.$store.commit('UPDATE_IS_SORT', false)
-                        // console.log(divDom.className)
                     targetClassName = this.className
                     if (targetClassName === 'qq') {
                         targetIndex = qqArr.indexOf(this)
                     } else {
                         targetIndex = divArr.indexOf(this)
                     }
-                    this.parentNode.parentNode
-                    let id = ev.target.parentNode.parentNode.id
                     ev.preventDefault();
                     // 阻止事件冒泡
                     ev.stopPropagation();
@@ -396,19 +393,16 @@ export default {
                         ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
 
                         dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / ulDoms[0].parentNode.offsetWidth + 'px'
-
-
-
-                        document.addEventListener('mouseup', mouseUpEnd)
-
-                        function mouseUpEnd() {
-                            // vm.$store.commit('UPDATE_IS_SORT', true)
-                            vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, id, vm, parent, targetClassName })
-                            document.removeEventListener('mousemove', callback)
-                            document.removeEventListener('mouseup', mouseUpEnd)
-                        }
                     }
+                    document.addEventListener('mouseup', mouseUpEnd)
 
+                    function mouseUpEnd() {
+                        console.log('hello')
+                        vm.$store.commit('UPDATE_IS_SORT', true)
+                        vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, vm, parent, targetClassName })
+                        document.removeEventListener('mousemove', callback)
+                        document.removeEventListener('mouseup', mouseUpEnd)
+                    }
 
                 })
 

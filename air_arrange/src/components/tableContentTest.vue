@@ -6,14 +6,14 @@
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul class='tab'>
-             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, tdData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
              <!--服务数据头部-->
              <li v-for='(item, serIndex) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
              <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :key='index' @click='selectTr($event,index)' :class=''>
+            <ul v-for='(tdItem, index) in tdData' :key='index' @mousedown='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>
                   <!--<li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
@@ -25,7 +25,7 @@
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: serviceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
                     <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", height: "100%"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    --><span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
             </ul>
           </div>
@@ -59,7 +59,7 @@
                 <li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
               </ul>-->
               <ul class='tab'>
-                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, comeData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, comeData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
                 <li v-for='(item, serIndex) in comeData[0] && comeData[0]["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                 <li v-else-if='item.sorE === "E"' :style='{width: comeServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
               </ul>
@@ -69,7 +69,7 @@
                       <li :style='{width: tabComeData[0]["width"]}'>{{index + 1}}</li>
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backComeData[key]}' @click='selectTr($event,index, key, comeData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
-                <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)'>
+                <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
                   <li :style='{width: tabComeData[0]["width"]}'>{{index+1}}</li>
                   <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
@@ -78,7 +78,7 @@
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
                     <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    --><span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -122,7 +122,7 @@
                       <li :style='{width: tabLeaveData[0]["width"]}'>{{index + 1}}</li>
                       <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backLeaveData[key]}' @click='selectTr($event,index,key, leaveData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
                 </ul>-->
-                <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)'>
+                <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
                   <li :style='{width: tabLeaveData[0]["width"]}'>{{index+1}}</li>
                   <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
@@ -131,7 +131,7 @@
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}'>
                     <!--{{serviceData[index][serIndex]['planTime']}}-->
                     <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%", textAlign: "center"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}'>{{serviceData[index][serIndex]['actualTime']}}</span>
+                    --><span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
                 </ul>
               </div>
@@ -157,8 +157,35 @@
       </div>
       <right-content></right-content>
     </div>
-  </div>
-  
+    <!--服务提交的dom-->
+    <div class='service_form' v-if='isShowSubmit'>
+      <p class='service_title'>服务的提交与取消</p>
+      <div class='service_sub'>
+        <input type='button' value='提交' @click='confirmSubmit(true)'>
+        <input type='button' value='不提交' @click='confirmSubmit(false)'>
+        <input type='button' value='取消发布的实际时间' @click='cancelActuTime'>
+      </div>
+    </div>
+    <!--取消时间-->
+    <div class='cancel_time' v-if='isShowCancelTime'>
+        <p class='cancel_title'>
+          确定取消发布的实际时间
+        </p>
+      <div class='cancel_form'>   
+        <input type='button' value='确定' @click='confirmCancelTime(true)'>
+        <input type='button' value='取消' @click='confirmCancelTime(false)'>
+      </div>
+    </div>
+    <!--航班信息
+    -->
+    <div class='flight_info' v-if='isShowFlightInfo'>
+      <p class='flight_title'>航班信息</p>
+      <div class='flight_form'>
+        <input type='button' value='确定' @click='confirmFlightInfo(true)'>
+        <input type='button' value='取消' @click='confirmFlightInfo(false)'>
+      </div>
+    </div>
+  </div> 
 </template>
 <script>
   import scrollBar from './scrollBar'
@@ -168,24 +195,6 @@
   export default {
     data () { 
       return {
-        temp: null,
-        fixTemp: null,
-        fixTdWidth: {
-          "enterStart": "15%",
-          "enterFinish": "15%",
-          "enterRemove1": "17%",
-          "enterRemove2": "18%",
-          "makeFinish1": "17%",
-          "makeFinish2": "18%"
-        },
-        localArr: [],
-        // fixData随机显示颜色的索引
-        randomIndexArr: [],
-        strRandomArr: [],
-        // 选中tr的indexArr
-        selectIndexArr: [],
-        // 选中的tr
-        selectTrArr: [],
         tdData: this.$store.state.initData,
         comeTemp: null,
         leaveTemp: null,
@@ -199,55 +208,20 @@
         comeServiceWidth: this.$store.state.comeServiceWidth,
         leaveServiceWidth: this.$store.state.leaveServiceWidth,
         target: null,
-        classInfo: this.$store.state.classInfo
+        /*服务提交与取消*/
+        isShowSubmit: false,
+        /*点击的服务数据*/
+        clickServiceData: null,
+        clickServiceIndex: 0,
+        /*实离时间的取消发布*/
+        isShowCancelTime: false,
+        saveIndex: 0,
+        isDiviScreenStr: '',
+        //航班信息发布的显示
+        isShowFlightInfo: false
       }
     },
     created () {
-      // this.$http.post("192.168.7.53:8080/submitService", {
-      //       "flightId": "3U8925",
-      //       "time": "0004",
-      //       "isCancel": "0",
-      //       "detailNO": "0113",
-      //       "sore": "E",
-      //       "username": "ghms_admin"
-      //   }).then((res) => {
-      //       console.log(res.data)
-      //   })
-      // Object.prototype.hasOwnProperty()
-      this.randomIndexArr = this.$store.state.arr 
-      
-      this.strRandomArr = this.$store.state.strRandomArr 
-
-      // this.tdData = this.$store.state.data.contentData
-      // 排序
-      
-      // this.$store.commit('FLY_CONTROL_SORT', this)
-      //this.$http.post('http://192.168.7.53:8080/getInitData', {"username": 'ghms_admin'}).then((res) => {
-
-      // this.$http.get('/api/data').then((res) => {
-      //   console.log(res.data.data.d.flight)
-      //   // this.tdData = res.data.data.d.flight
-
-      //   // this.$store.commit('GET_INIT_DATA', res.data.data.d.flight)
-      //   res.data.data.d.flight.forEach(item => {
-      //   this.serviceData.push(item['services'])
-      //   })
-      //   // console.log(this.serviceData)
-      //   // console.log(this.tdData[0]['services'])
-      //   // 到港
-      //   this.comeData = this.tdData.filter((item) => {
-      //     return item.aOrD === 'A'
-      //   })
-      //   this.$store.commit('COME_DATA', this.comeData)
-      //   // 离港
-      //   this.leaveData = this.tdData.filter((item) => {
-      //     return item.aOrD === 'D'
-      //   })
-
-      //   this.$store.commit('LEAVE_DATA', this.leaveData)
-      // }, (error) => {
-      //   console.log('error')
-      // }) 
       this.$store.commit('GET_INIT_DATA', this)
     },
     mounted () {
@@ -279,7 +253,6 @@
      
     },
     updated () {
-      console.log('hh')
       if(!this.$store.state.isDiviScreen) {
                 let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
                 this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
@@ -308,7 +281,7 @@
         this.isMergeFirstUpdate = true
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
+        // $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
         $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         // 鼠标滚动
@@ -317,7 +290,7 @@
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
       }
-        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
+        //$scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
     },
     methods: {
@@ -360,102 +333,39 @@
         }, 5000)
       },
       /*选中的tr*/
-      // selectTr (ev,index) {
-      //   ev = ev || event
-      //   if(this.$store.state.isClickDel) {
-      //     // 删除之后将this.selectIndexArr, this.selectTrArr 置为空数组
-      //     this.selectIndexArr = []
-      //     this.selectTrArr = []
-      //     this.$store.commit('CHANGE_CLICK_STATE')
-      //   }
-        
-      //   // classList属性 toggle()切换(添加返回true 删除返回false) add()添加 remove()删除
-      //    if(ev.target.parentNode.classList.toggle ('selectTr')){
-      //       this.selectIndexArr.push(index)
-      //       this.selectTrArr.push(ev.target.parentNode)
-      //    }else{
-      //       // this.selectIndexArr.indexOf(index) >= 0 && this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)
-      //       // this.selectTrArr.indexOf(ev.target.parentNode) >= 0 && this.selectTrArr.splice(this.selectTrArr.indexOf(ev.target.parentNode),1)
-      //       this.selectIndexArr.splice(this.selectIndexArr.indexOf(index),1)
-      //       this.selectTrArr.splice(this.selectTrArr.indexOf(ev.target.parentNode),1)
-
-      //    }
-      //    console.log(this.selectIndexArr, 'this.selectIndexArr')
-      //    //传过去
-      //    this.$store.commit('SELECT_TR_INDEX',{index: this.selectIndexArr, arr: this.selectTrArr})
-         
-
-      // },
       selectTr(ev, index) {
         if(!this.target) {
           this.target = ev.target
         }
+        
         if(this.target != ev.target) {
           if(this.target.nodeName.toLowerCase() === 'li') {
+
             this.target.classList.remove('selectLi')
             this.target.parentNode.classList.remove('selectTr')
+
           }else if(this.target.nodeName.toLowerCase() === 'span') {
+
             this.target.classList.remove('selectLi')
             this.target.parentNode.parentNode.classList.remove('selectTr')
+
           }
           this.target = ev.target
 
         }
        
         if(ev.target.nodeName.toLowerCase() === 'li') {
-          // 保存当前数据的id
+          console.log(ev.target)
           let liNodes = ev.target.parentNode.getElementsByTagName('li');
           let liTargetIndex = [].slice.call(liNodes).indexOf(ev.target)
-          // console.log(liTargetIndex)
-          //this.$store.commit('REMOVE_CLASS')
-          //this.$store.commit('ADD_CLASS', {vm: this, liTargetIndex, index})
           ev.target.classList.add('selectLi')
           ev.target.parentNode.classList.add('selectTr')
-          
-          //ev.target.parentNode.style.backgroundColor = '#bfa'
-           //ev.target.parentNode.className="mytestclass";
-             //console.log(ev.target.parentNode);
-          //console.log(ev.target.parentNode.classList);
-          //this.$store.commit('SAVE_INDEX', {index, targetIndex: liTargetIndex, vm: this})
 
-         //this.tdData[index].myclass="selectTr";
-          // let obj = this.tdData[index]
-         //  this.$set(this.tdData, index, obj)
-          // this.tdData[index].myclass="selectTr";
-          // let obj = this.tdData[index]
-          // this.$set(this.tdData, index, obj)
         } else if(ev.target.nodeName.toLowerCase() === 'span') {
-          // console.log(ev.target.parentNode)
-         ev.target.classList.add('selectLi')
-         ev.target.parentNode.parentNode.classList.add('selectTr')
-           //this.tdData[index].myclass="selectTr"; //排序可用
-          // let obj = this.tdData[index]
-          // this.$set(this.tdData, index, obj)
-          //this.tdData[index].myclass="selectTr";
-          //   console.log(ev.target.parentNode);
-          // console.log(ev.target.parentNode.classList);
+          console.log(ev.target)
+          ev.target.classList.add('selectLi')
+          ev.target.parentNode.parentNode.classList.add('selectTr')
         }
-        // 数据驱动
-        // if(this.selectTarget === ev.target) {
-          
-        // }else {
-        //   // 添加class之前将之前的class都清掉
-        //   this.$store.commit('REMOVE_CLASS')
-        //   this.$store.commit('ADD_CLASS', {data, index, key})
-        //   this.selectTarget = ev.target
-          // console.log(ev.target.parentNode.offsetParent)
-          // if(data === this.$store.state.comeData && this.$store.state.leaveData.indexOf(this.$store.state.comeData[index]) >= 0) {
-          //   let targetIndex = this.$store.state.leaveData.indexOf(this.$store.state.comeData[index])
-          //   // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
-          //   let targetDom = this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex]
-          //   $scrollBar.targetMove(targetDom, this.$refs.diviContent2)
-          // } else if(data === this.$store.state.leaveData && this.$store.state.comeData.indexOf(this.$store.state.leaveData[index]) >= 0) {
-          //   let targetIndex = this.$store.state.comeData.indexOf(this.$store.state.leaveData[index])
-          //   // console.log(this.$refs.divi2TbodyWrap.getElementsByTagName('ul')[targetIndex])
-          //   let targetDom = this.$refs.divi1TbodyWrap.getElementsByTagName('ul')[targetIndex]
-          //   $scrollBar.targetMove(targetDom, this.$refs.diviContent1)
-          // }
-       // }
 
         
       },
@@ -512,60 +422,123 @@
          //this.$forceUpdate()
          
       },
-//       classManage(st1) {
+      /*
+      提交服务serviceSubmit
+      */
+      serviceSubmit (ev, item, index, data, diviStr) {
+        /*flight的权限*/
+       //  console.log(this.$store.state.authData.flight)
+        if(ev.target.nodeName.toLowerCase() === 'li') {
+          let liNodes = [].slice.call(ev.target.parentNode.getElementsByTagName('li'));
+          let searchIndex = liNodes.indexOf(ev.target)
+          if(this.$store.state.authData.flight.indexOf(this.$store.state.thLeftData[searchIndex]['title']) >= 0) {
+            this.isShowFlightInfo = true
 
-//         console.log(st1.myclass);
-//       return st1.myclass;
-// // if(index==2)
-// // {
-// //    return "selectUl"
-// // }
-// //         console.log(1);
-// //         if(st1 === this.classInfo['id']) {
-// //           return "selectUl"
-// //         }else {
-// //           return ;
-// //         }
-//        }  
+            this.$http.post('http://192.168.7.53:8080/submitFlight', {
+                "flightId":"3U8925",                     
+                "data":"",                               
+                "type":"0",                            
+                "target":"协关",                         
+                "username":"ghms_admin"             
+            }).then((res) => {
+                console.log(res.data)
+            })
+
+
+            this.clickServiceData = data[index]
+            // alert('不错哟')
+
+          }
+        }else if(ev.target.nodeName.toLowerCase() === 'span') { // 服务数据
+          // console.log(ev.target.className)
+          let liNodes = [].slice.call(ev.target.parentNode.parentNode.getElementsByTagName('li'));
+          let searchIndex = liNodes.indexOf(ev.target.parentNode)
+          let serviceIndex = searchIndex - this.$store.state.thLeftData.length
+          if(this.$store.state.authData.service.indexOf(item['services'][serviceIndex]['detailName']) >= 0 && ev.target.className.indexOf('unique_service') >= 0) {
+            this.isShowSubmit = true
+            // 找到对应的服务数据
+            this.clickServiceData = data[index]
+            this.clickServiceIndex = serviceIndex
+            // 索引
+            this.saveIndex = index
+            this.isDiviScreenStr = diviStr
+
+            this.$store.commit('UPDATE_FLIGHT_ACTU_TIME', {clickServiceIndex: this.clickServiceIndex, index: this.saveIndex, str: this.isDiviScreenStr,  vm: this})
+
+          }else if(ev.target.className.indexOf('able_submit') >= 0) {
+
+            alert(`航班${this.tdData[index]['flightNo']}不支持提交`)
+
+          }
+
+        }
+      },
+      /*服务提交的确认与取消*/
+      confirmSubmit (isConfirm) {
+        if(isConfirm) {
+          // 提交服务
+        // this.$http.post('http://192.168.7.53:8080/submitService', {
+        //                 "flightId": this.clickServiceData["flightId"],
+        //                 "time": this.clickServiceData["services"][this.clickServiceIndex]["actualTime"],
+        //                 "isCancel": "0",
+        //                 "detailNO": this.clickServiceData["services"][this.clickServiceIndex]["detailNo"],
+        //                 "sore": this.clickServiceData["services"][this.clickServiceIndex]["sorE"],
+        //                 "username": this.$store.state.username
+        //             }).then((res) => {
+        //                 console.log(res.data)
+        //             })  
+
+        this.$http.post('http://192.168.7.53:8080/submitService', {
+            "flightId":"3U8925",                   
+            "time":"0004",                        
+            "isCancel":"0",                       
+            "detailNO":"0113",                   
+            "sore":"E",                         
+            "username":"ghms_admin"            
+        }).then((res) => {
+            console.log(res.data)
+        })
+
+        }
+        this.isShowSubmit = false
+      },
+      /*取消发布实离时间*/
+      cancelActuTime () {
+
+        this.isShowSubmit = false
+        this.isShowCancelTime = true
+
+      },
+      confirmCancelTime (isConfirm) {
+        // console.log(this.clickServiceIndex)
+        if(isConfirm) {
+          if(this.clickServiceData['services'][this.clickServiceIndex]['actualTime'] === '/') {
+            this.isShowCancelTime = false
+            return
+          }
+          // 取消发布时间
+          this.$store.commit('CANCEL_TIME', {vm: this})
+        }
+        this.isShowCancelTime = false
+      },
+
+      /*航班信息
+      */
+      confirmFlightInfo (isConfirm) {
+        if(isConfirm) {
+          alert(this.clickServiceData['flightNo'])
+        }
+        this.isShowFlightInfo = false
+      }
     },
     computed: {
-      backData () {
-          this.temp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0][1]))
-          let count = 0
-          for(var n in this.temp){
-            count++
-            let temp = this.$store.state.thLeftData[count]
-            this.temp[n] = temp.width
-          }
-          return this.temp
-      },
-      backComeData () {
-        this.comeTemp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0][1]))
-          let count = 0
-          for(var n in this.comeTemp){
-            count++
-            let comeTemp = this.$store.state.tabComeData[count]
-            this.comeTemp[n] = comeTemp.width
-          }
-          return this.comeTemp
-      },
-      backLeaveData () {
-        this.leaveTemp = JSON.parse(JSON.stringify(this.$store.state.data.contentData[0][1]))
-          let count = 0
-          for(var n in this.leaveTemp){
-            count++
-            let leaveTemp = this.$store.state.tabLeaveData[count]
-            this.leaveTemp[n] = leaveTemp.width
-          }
-          return this.leaveTemp
-      },
       thLeftData () {
-        if(this.$store.state.isBai) {
-          // this.$refs.mergeWrap.style.width = '100%'
-          this.$refs.theadWrap.style.width = '100%'
-          this.$refs.tbodyWrap.style.width = '100%'
-          this.isFirst = true
-        }
+        // if(this.$store.state.isBai) {
+        //   // this.$refs.mergeWrap.style.width = '100%'
+        //   this.$refs.theadWrap.style.width = '100%'
+        //   this.$refs.tbodyWrap.style.width = '100%'
+        //   this.isFirst = true
+        // }
         return this.$store.state.thLeftData
       },
       // 到港数据
@@ -898,5 +871,32 @@
   .divi_content1 .main_content{
     height: calc(100% - 32px);
     overflow: hidden;
+  }
+  /*服务提交与取消部分*/
+  .cancel_time, .service_form, .flight_info{
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 9999;
+    width: 300px;
+    height: 100px;
+    background: #fff;
+    border: 1px solid #02BDF2;
+    border-radius: 5px;
+  }
+  .flight_info .flight_title, .cancel_time .cancel_title, .service_form .service_title {
+    text-align: center;
+    margin: 20px 0;
+  }
+  .flight_info .flight_form, .cancel_time .cancel_form, .service_form .service_sub {
+    text-align: center;
+  }
+  /*实离时间
+  */
+  .unique_service {
+    background: pink;
   }
 </style>

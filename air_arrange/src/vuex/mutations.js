@@ -1,3 +1,5 @@
+import Base64 from '../utils/base64.js'
+
 export default {
     RANDOM_DATA(state) {
         let randomStrArr = ['task', 'flightState']
@@ -404,7 +406,7 @@ export default {
     /**
      * 改变td的宽度，拉伸效果
      */
-    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, id, vm, parent, targetClassName }) {
+    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, vm, parent, targetClassName }) {
         if (!state.isDiviScreen) {
             if (targetClassName === 'qq') {
                 vm.$set(state.serviceWidth[targetIndex], 'width', `${widthArr[index]}px`)
@@ -693,13 +695,14 @@ export default {
         vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
             //vm.$http.get('/api/data').then((res) => {
             res.data.d.flight.forEach((item, index) => {
-                vm.$set(state.initData, index, item)
-            })
-            console.log(state.wsUrl)
+                    vm.$set(state.initData, index, item)
+                })
                 // 复制一份初始化数据 
             state.cloneInitData = JSON.parse(JSON.stringify(res.data.d.flight))
 
-            // 到离港合并的数据
+            // 权限数据
+            state.authData = res.data.d.Auth
+                // 到离港合并的数据
             let flightNoArr = [] //航班号 
             state.initData.forEach((item, index) => {
                 flightNoArr.push(item['flightNo'])
@@ -707,7 +710,7 @@ export default {
 
             // 到港离港的数据
             let mergeData = []
-            let saveIndexArr = []
+
             state.initData.forEach((item, index, arr) => {
                     // console.log(item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10))
                     if (item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10) && item['brother'] != '/') {
@@ -716,29 +719,31 @@ export default {
 
                             let _index = flightNoArr.indexOf(item['brother'])
                                 // 连班
-                            saveIndexArr.push(index)
-                            if (saveIndexArr.indexOf(_index) < 0) {
+                            if (item['aOrD'] === 'A') {
+                                // 到港
+                                // index 到港 _index 离港
                                 mergeData.push({ index, _index })
                             }
 
-                        } else {
-                            //vm.$set(item, 'flightNo', item["flightNo"] + " / " + item["brother"])
                         }
                     }
 
                 })
                 // 整合连班航班数据
             mergeData.forEach((item) => {
-
-                vm.$set(state.initData[item["index"]], 'flightNo', state.initData[item["index"]]['flightNo'] + "/" + state.cloneInitData[item["_index"]]['flightNo'])
+                vm.$set(state.initData[item["index"]], 'flightNo', state.initData[item["index"]]['flightNo'] + " / " + state.cloneInitData[item["_index"]]['flightNo'])
+                vm.$set(state.initData[item['index']], 'repeatCount', state.initData[item['index']]['repeatCount'] + ' / ' + state.cloneInitData[item['_index']]['repeatCount'])
+                vm.$set(state.initData[item['index']], 'regNo', state.initData[item['index']]['regNo'] + ' / ' + state.cloneInitData[item['_index']]['regNo'])
 
             })
 
             let flagCount = 0
                 // 合并
             mergeData.forEach((item, index, arr) => {
+
                 state.initData.splice(item["_index"] - flagCount, 1)
                 flagCount++
+
             })
 
             // 克隆一份合屏的数据
@@ -865,8 +870,9 @@ export default {
      */
     SHOW_CONTENT(state, { val, vm }) {
         vm.$set(state.isContentShow, 'isShow', true)
+        state.username = val
         vm.$http.post('http://192.168.7.53:8080/login', { "username": val }).then((res) => {
-            // console.log(res.data.d.wsUrl, res.data.d.token)
+            // console.log(res.data)
             vm.$set(state.wsUrl, 'val', res.data.d.wsUrl)
             vm.$set(state.wsUrl, 'token', res.data.d.token)
 
@@ -875,17 +881,74 @@ export default {
             if (state.wsUrl.val) {
                 let ws = new WebSocket('ws://' + state.wsUrl.val + '/ws?dev=web&token=' + state.wsUrl.token)
                     //let ws = new WebSocket('ws://172.168.7.53:13')
+                console.log('ws://' + state.wsUrl.val + '/ws?dev=web&token=' + state.wsUrl.token)
                 ws.onopen = function() {
                     console.log('opening......')
                 }
 
                 ws.onmessage = function(e) {
-                    //console.log(e)
-                    alert('eee')
+                    let base = new Base64()
+                    let result = base.decode(JSON.parse(e.data).body)
+                    console.log(JSON.parse(result))
+                    result = JSON.parse(result)
+                        // 改变时间
+                    switch (state.updateFlightInfo.str) {
+                        case 'tdData':
+                            // 到离港
+                            vm.$set(state.initData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', result.time)
+                            break
+                        case 'comeData':
+                            // 到港
+                            vm.$set(state.comeData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', result.time)
+                            break
+
+                        case 'leaveData':
+                            // 离港
+                            console.log(state.updateFlightInfo.index)
+                            vm.$set(state.leaveData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', result.time)
+                            break
+                    }
+
                 };
+
+                ws.onerror = function() {
+                    console.log('error')
+                }
+
+                ws.onclose = function() {
+                    console.log('closing')
+                }
             }
 
         })
 
+    },
+    /**
+     * 取消发布时间
+     * @param {*} stata 
+     * @param {*} param1 
+     */
+    CANCEL_TIME(state, { vm }) {
+
+        switch (state.updateFlightInfo.str) {
+            case 'tdData':
+                // 到离港
+                vm.$set(state.initData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', '/')
+                break
+            case 'comeData':
+                // 到港
+                vm.$set(state.comeData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', '/')
+                break
+
+            case 'leaveData':
+                // 离港
+                vm.$set(state.leaveData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', '/')
+                break
+        }
+    },
+    UPDATE_FLIGHT_ACTU_TIME(state, { clickServiceIndex, index, str, vm }) {
+        vm.$set(state.updateFlightInfo, 'clickServiceIndex', clickServiceIndex)
+        vm.$set(state.updateFlightInfo, 'index', index)
+        vm.$set(state.updateFlightInfo, 'str', str)
     }
 }

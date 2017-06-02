@@ -129,5 +129,13 @@ export default {
     wsUrl: {
         val: '',
         token: ''
-    }
+    },
+    /**权限数据
+     * 
+     */
+    authData: null,
+    /**用户名 */
+    username: '',
+    /**更新相关 */
+    updateFlightInfo: {}
 }
