@@ -281,7 +281,7 @@
         this.isMergeFirstUpdate = true
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        // $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
+        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
         $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         // 鼠标滚动
@@ -355,14 +355,12 @@
         }
        
         if(ev.target.nodeName.toLowerCase() === 'li') {
-          console.log(ev.target)
           let liNodes = ev.target.parentNode.getElementsByTagName('li');
           let liTargetIndex = [].slice.call(liNodes).indexOf(ev.target)
           ev.target.classList.add('selectLi')
           ev.target.parentNode.classList.add('selectTr')
 
         } else if(ev.target.nodeName.toLowerCase() === 'span') {
-          console.log(ev.target)
           ev.target.classList.add('selectLi')
           ev.target.parentNode.parentNode.classList.add('selectTr')
         }
@@ -477,27 +475,32 @@
       confirmSubmit (isConfirm) {
         if(isConfirm) {
           // 提交服务
-        // this.$http.post('http://192.168.7.53:8080/submitService', {
-        //                 "flightId": this.clickServiceData["flightId"],
-        //                 "time": this.clickServiceData["services"][this.clickServiceIndex]["actualTime"],
-        //                 "isCancel": "0",
-        //                 "detailNO": this.clickServiceData["services"][this.clickServiceIndex]["detailNo"],
-        //                 "sore": this.clickServiceData["services"][this.clickServiceIndex]["sorE"],
-        //                 "username": this.$store.state.username
-        //             }).then((res) => {
-        //                 console.log(res.data)
-        //             })  
-
-        this.$http.post('http://192.168.7.53:8080/submitService', {
-            "flightId":"3U8925",                   
-            "time":"0004",                        
-            "isCancel":"0",                       
-            "detailNO":"0113",                   
-            "sore":"E",                         
-            "username":"ghms_admin"            
-        }).then((res) => {
-            console.log(res.data)
-        })
+          this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: true})
+          
+          setTimeout(() => {
+            console.log(this.$store.state.updateTime, '+++++', this.clickServiceData["services"][this.clickServiceIndex]["detailNo"])
+            this.$http.post('http://192.168.7.53:8080/submitService', {
+                          "flightId": this.clickServiceData["flightId"],
+                          "time": this.$store.state.updateTime,
+                          "isCancel": "0",
+                          "detailNo": this.clickServiceData["services"][this.clickServiceIndex]["detailNo"],
+                          "sore": this.clickServiceData["services"][this.clickServiceIndex]["sorE"],
+                          //"username": this.$store.state.username
+                          "username": "ghms_admin"
+                      }).then((res) => {
+                          console.log(res.data)
+                      })
+          }, 2000)
+          // this.$http.post('http://192.168.7.53:8080/submitService', {
+          //     "flightId":"3U8925",                   
+          //     "time":"0004",                        
+          //     "isCancel":"0",                       
+          //     "detailNO":"0113",                   
+          //     "sore":"E",                         
+          //     "username":"ghms_admin"            
+          // }).then((res) => {
+          //     console.log(res.data)
+          // })
 
         }
         this.isShowSubmit = false
@@ -510,7 +513,6 @@
 
       },
       confirmCancelTime (isConfirm) {
-        // console.log(this.clickServiceIndex)
         if(isConfirm) {
           if(this.clickServiceData['services'][this.clickServiceIndex]['actualTime'] === '/') {
             this.isShowCancelTime = false

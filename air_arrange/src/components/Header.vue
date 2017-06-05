@@ -6,7 +6,7 @@
         <option>请选择搜索类型(模糊搜索)</option>
         <option selected>按机型搜索</option>
         <option>按时间搜索</option>
-        <option>按航班搜索</option>
+        <option>按航班号搜索</option>
         <option>按航线搜索</option>
         <option>按航班状态搜索</option>
         <option>按机号搜索</option>
@@ -75,14 +75,14 @@ export default {
           toggle: false,
           showData: [{value: 'eq', text: '全部显示', isChecked: false}],
           logFlag: false,
-          time: '000000',
+          time: 0,
           /*服务数据的显示*/
           serviceDataInfo: [{text: '全部显示', isServiceChecked: false}],
           isServiceShow: false
         }
     },
     created () {
-      this.time = Date.now()
+      this.getTime()
     },
     mounted () {
       // 定时器，数据加载回来
@@ -107,21 +107,32 @@ export default {
         })
         
       }, 1000)
+
+      // 获取时间的数据
       let count = 0
-      setInterval(() => {  
+        setInterval(() => { 
 
-        this.time = Date.now()
-        count++
-        if((count % 10 === 0)) {
-          // alert(this.time)
-          this.time = Date.now()
-          // console.log(this.time)
-        }
+          if(this.$store.state.isGetParamTime) {
+            // 保存时间
+            this.$store.commit('UPDATE_TIME', {vm: this, time: this.time})
+            this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: false})
+          }
+          
+          this.time += 1000
+          count++
 
-      }, 1000)
-
+          if(count % 600 === 0 && count != 0) {
+            this.getTime()
+          } 
+          
+        }, 1000)
     },
     methods: {
+        getTime() {
+          this.$http.get('http://192.168.7.53:8080/getTime').then((res) => {
+            this.time = res.data
+          })
+        },
 
         addData (ev) {
           // 新增数据
@@ -144,8 +155,13 @@ export default {
           
         },
         search (ev) {
+
+          if(this.placeHolderValue.indexOf('时间') < 0) {
+            return
+          }
+          // 时间段的搜索
           ev.target.value = ''
-          this.$store.commit('SEARCH', this.searchInfo)
+          this.$store.commit('SEARCH', {vm: this, inputValue: this.inputValue, placeHolderValue: this.placeHolderValue})
 
         },
         
@@ -211,6 +227,7 @@ export default {
         },
         showService (ev, item, index) {
           if(item.text === '全部显示') {
+
             this.serviceDataInfo.forEach((item, i) => {
               item.isServiceChecked = this.serviceDataInfo[index].isServiceChecked
             })
@@ -219,15 +236,22 @@ export default {
             let arr = [].concat(this.serviceDataInfo)
             arr.splice(0, 1)
             this.serviceDataInfo[0].isServiceChecked = JSON.stringify(arr).search('false') >= 0 ? false : true
+
           }
         },
-        confirmServiceShow (isConfirm) {
 
+        confirmServiceShow (isConfirm) {
           if(isConfirm) {
-            
             this.$store.commit('SHOW_SERVICE_DATA', {serviceDataInfo: this.serviceDataInfo, vm: this})
           }
+          if(!this.$store.state.isDiviScreen){
+            $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
 
+          } else {
+
+            $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
+
+          }
           this.isServiceShow = !this.isServiceShow
         }
     },   

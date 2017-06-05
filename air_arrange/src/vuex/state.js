@@ -65,6 +65,10 @@ export default {
     leaveData: [],
     cloneComeData: [],
     cloneLeaveData: [],
+    cloneComeData2: [],
+    cloneLeaveData2: [],
+    cloneComeData3: [],
+    cloneLeaveData3: [],
     serviceData: [],
     arr,
     strRandomArr,
@@ -116,7 +120,8 @@ export default {
      * 
      */
     cloneMergeData: [],
-
+    cloneMergeData2: [],
+    cloneMergeData3: [],
     /** 内容区是否显示
      * 
      */
@@ -137,5 +142,8 @@ export default {
     /**用户名 */
     username: '',
     /**更新相关 */
-    updateFlightInfo: {}
+    updateFlightInfo: {},
+    /**是否获取时间参数*/
+    isGetParamTime: false,
+    updateTime: 0
 }

@@ -265,11 +265,12 @@ export default {
             //     dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
             // }, 20)
             if (dom.parentNode.offsetWidth > tableDom[0].offsetWidth) {
-
+                console.log('hello')
                 dom.style.width = dom.parentNode.offserWidth + 'px'
                 setTimeout(function() {
                     dom.style.width = dom.parentNode.getBoundingClientRect().width + 'px'
                 }, 20);
+
                 return
             } else {
                 dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / tableDom[0].offsetWidth + 'px'
@@ -352,6 +353,7 @@ export default {
             divArr.forEach((divDom, index) => {
                 widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
+
                     vm.$store.commit('UPDATE_IS_SORT', false)
                     targetClassName = this.className
                     if (targetClassName === 'qq') {
@@ -397,13 +399,11 @@ export default {
                     document.addEventListener('mouseup', mouseUpEnd)
 
                     function mouseUpEnd() {
-                        console.log('hello')
                         vm.$store.commit('UPDATE_IS_SORT', true)
                         vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, vm, parent, targetClassName })
                         document.removeEventListener('mousemove', callback)
                         document.removeEventListener('mouseup', mouseUpEnd)
                     }
-
                 })
 
 
