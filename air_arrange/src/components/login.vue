@@ -1,7 +1,7 @@
 <template>
     <div class='login'>
             <div class='form'>
-                <label>用户名</label><input type='text' ref='user'>
+                <label>用户名</label><input type='text' ref='user' value='ghms_admin'>
                 <label>密码</label><input type='password'>
                 <input type='button' value='登录' @click='showContent'>
             </div>

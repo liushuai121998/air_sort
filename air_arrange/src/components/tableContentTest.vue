@@ -223,6 +223,9 @@
     },
     created () {
       this.$store.commit('GET_INIT_DATA', this)
+      setInterval(() => {
+        this.$store.dispatch('FLIGHT_INFO_UPDATE', {vm: this})
+      }, 5000)
     },
     mounted () {
       // this.setInter()

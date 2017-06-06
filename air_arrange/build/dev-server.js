@@ -24,14 +24,26 @@ var app = express()
 var compiler = webpack(webpackConfig)
     // 模拟数据开始
 var data = require('../data.json')
+    // 模拟航班信息的更新
+var flightInfo = require('../flightInfoUpdate.json')
 var apiRoutes = express.Router()
 
 apiRoutes.get('/data', function(req, res, next) {
     // 获取数据
     res.json({
-        error: 0,
-        data: data
+        "error": 0,
+        "data": data
     })
+    next()
+})
+apiRoutes.get('/timeUpdate', function(req, res, next) {
+
+    // res.josn({
+    //     "error": 0,
+    //     "data": flightInfo.time
+    // })
+    res.send(flightInfo)
+
 })
 app.use('/api', apiRoutes)
 

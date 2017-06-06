@@ -50,11 +50,12 @@
         </ul>
       </section>
       <span class='show_time'>标准时间: {{time | formatDate}}</span>
-      <div class='control_wrap'>
+      <input type='text' class='show_info' :value='flightUpdateInfo.val'>
+      <!--<div class='control_wrap'>
         <span class="icon-minus"></span>
         <span class="icon-checkbox-unchecked"></span>
         <span class="icon-cross"></span>
-      </div>
+      </div>-->
     </div>
 </template>
 <script>
@@ -66,7 +67,6 @@ export default {
     data () {
         return {
           inputValue: '',
-          searchInfo: {},
           tdFlightData: [],
           isFlightClick: false,
           isInputChange: true,
@@ -78,7 +78,11 @@ export default {
           time: 0,
           /*服务数据的显示*/
           serviceDataInfo: [{text: '全部显示', isServiceChecked: false}],
-          isServiceShow: false
+          isServiceShow: false,
+          timeId: '',
+          isTime: false,
+          // 航班变化的信息
+          flightUpdateInfo: this.$store.state.flightUpdateInfo
         }
     },
     created () {
@@ -108,29 +112,38 @@ export default {
         
       }, 1000)
 
-      // 获取时间的数据
-      let count = 0
-        setInterval(() => { 
+      this.changeTime()
 
-          if(this.$store.state.isGetParamTime) {
-            // 保存时间
-            this.$store.commit('UPDATE_TIME', {vm: this, time: this.time})
-            this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: false})
-          }
-          
-          this.time += 1000
-          count++
-
-          if(count % 600 === 0 && count != 0) {
-            this.getTime()
-          } 
-          
-        }, 1000)
     },
     methods: {
+        changeTime () {
+          // 获取时间的数据
+            let count = 0
+            this.timeId = setInterval(() => { 
+              if(this.$store.state.isGetParamTime) {
+                // 保存时间
+                this.$store.commit('UPDATE_TIME', {vm: this, time: this.time})
+                this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: false})
+              }
+
+              this.time += 1000
+              count++
+              // 十分钟发送一次请求，清楚定时器
+              if(count === 600) {
+                this.isTime = true
+                this.getTime()
+                clearInterval(this.timeId)
+              } 
+            }, 1000)
+
+        },
         getTime() {
           this.$http.get('http://192.168.7.53:8080/getTime').then((res) => {
             this.time = res.data
+            if(this.isTime) {
+              this.changeTime()
+              this.isTime = false
+            }
           })
         },
 
@@ -167,22 +180,22 @@ export default {
         
         // 搜索框输入检索相关的列表
         textChange (ev) {
+
           if(!this.$store.state.isDiviScreen){
             $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
-
           } else {
-
             $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
 
           }
+
           this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
 
         },
         selectValue (ev) { 
           this.placeHolderValue = ev.target.value
           this.inputValue = ''
-          this.searchInfo = {}
-
+          // 将检索后的数据重置， 当select的值发生变化时
+          this.$store.commit('RESET_DATA_SEARCH', {vm: this})
         },
         toggleShow () {
           //this.toggle = !this.toggle
@@ -358,7 +371,7 @@ export default {
     vertical-align: middle;
     color: #fff;
     font-weight: bold;
-    margin-right: 15%;
+    /*margin-right: 15%;*/
   }
 
   .control_wrap {
@@ -400,5 +413,16 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+  /*显示变化的信息*/
+  .show_info {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    border: 1px solid #02BDF2;
+    border-radius: 4px;
+    width: 300px;
+    height: 20px;
   }
 </style>
