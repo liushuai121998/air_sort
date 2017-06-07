@@ -147,7 +147,7 @@ export default {
     isGetParamTime: false,
     updateTime: 0,
     // 航班信息的更新
-    flightUpdateInfo: { val: '不错哟' },
+    flightUpdateInfo: { val: '' },
     // 航班id
     flightIdArr: []
 }

@@ -1,6 +1,6 @@
 <template>
   <!--自定义滚动条-->
-  <div class="scroll-bar">
+  <div class="scroll-bar" >
     <span class="scroll"></span>
   </div>
 
@@ -9,8 +9,6 @@
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
     mounted () {
-        // $scrollBar.mouseScroll('.scroll', '.scrollTbody')
-        
     }
   }
 </script>

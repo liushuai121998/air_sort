@@ -106,12 +106,12 @@
           
         }else {
           if(!this.$store.state.isDiviScreen) {
-            document.querySelector('.merge_wrap').style.width = 'calc(100% - 15px)'
+            document.querySelector('.merge_wrap').style.width = '100%'
             document.querySelector('.contentWrap').style.width = '100%'
           }
 
           this.$store.state.rightContent.style.display = 'none'
-          document.querySelector('.divi_wrap').style.width = 'calc(100% - 15px)';
+          document.querySelector('.divi_wrap').style.width = '100%';
         }
         [].slice.call(document.querySelector('.divi_wrap').querySelectorAll('.contentWrap')).forEach(item => {
                 item.style.width = '100%'

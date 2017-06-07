@@ -12,7 +12,7 @@ export default {
     FLIGHT_INFO_UPDATE(context, { vm }) {
         // 航班id
         let randomId = Math.round(Math.random() * (context.state.flightIdArr.length - 1))
-            // console.log(randomId)
+
         let data = {
             time: [{
                     "flightId": randomId,
@@ -83,6 +83,13 @@ export default {
                     "eventcode": "4135",
                     "value": "取消",
                     "msg": "状态变更"
+                },
+                {
+                    "flightId": randomId,
+                    "type": "airType",
+                    "eventcode": "4135",
+                    "value": "333",
+                    "msg": "机型变更"
                 },
                 {
                     "flightId": randomId,

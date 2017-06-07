@@ -204,6 +204,7 @@ export default {
           }
         },
         show (ev, val, index) {
+
           if(val === 'eq') {
             this.showData.forEach((item, i) => {
               item.isChecked = this.showData[index].isChecked
@@ -238,6 +239,7 @@ export default {
             this.toggle = false
           }
         },
+        /*服务信息的显示*/
         showService (ev, item, index) {
           if(item.text === '全部显示') {
 
@@ -249,8 +251,8 @@ export default {
             let arr = [].concat(this.serviceDataInfo)
             arr.splice(0, 1)
             this.serviceDataInfo[0].isServiceChecked = JSON.stringify(arr).search('false') >= 0 ? false : true
-
           }
+
         },
 
         confirmServiceShow (isConfirm) {
@@ -258,12 +260,11 @@ export default {
             this.$store.commit('SHOW_SERVICE_DATA', {serviceDataInfo: this.serviceDataInfo, vm: this})
           }
           if(!this.$store.state.isDiviScreen){
-            $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
+            //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
 
           } else {
 
-            $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
-
+            //$scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
           }
           this.isServiceShow = !this.isServiceShow
         }

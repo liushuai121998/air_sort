@@ -486,6 +486,7 @@ export default {
          */
         function showDataDetail(cloneData, data, cloneLeftData, leftData) {
             // 重置数据
+            console.log(cloneData[0])
             cloneLeftData.forEach((item, index) => {
                 vm.$set(leftData, index, item)
             })
@@ -712,9 +713,13 @@ export default {
      * @param {*} vm 
      */
     GET_INIT_DATA(state, vm) {
-        //vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
+        // vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
         vm.$http.get('/api/data').then((res) => {
+
             res.data.data.d.flight.forEach((item, index) => {
+                    if (!item['mark'].trim()) {
+                        vm.$set(item, 'mark', '/')
+                    }
                     vm.$set(state.initData, index, item)
                     state.flightIdArr.push(item.flightId)
                 })
@@ -862,39 +867,27 @@ export default {
      * @param {*} param1 
      */
     SHOW_SERVICE_DATA(state, { serviceDataInfo, vm }) {
-        vm.obj = []
+        console.log(state.cloneMergeData[0]['services'])
         if (!state.isDiviScreen) {
-            // 不分屏
-            // if (state.cloneMergeData3) {
-
-            //     showServiceDataDetail(state.cloneMergeData3, state.initData)
-
-            // } else {
-            showServiceDataDetail(state.cloneMergeData, state.initData)
-                // }
-
+            let cloneData = JSON.parse(JSON.stringify(state.cloneMergeData))
+            showServiceDataDetail(cloneData, state.initData)
         } else {
-            // if (state.cloneComeData3) {
-            //     showServiceDataDetail(state.cloneComeData3, state.comeData)
-            //     showServiceDataDetail(state.cloneLeaveData3, state.leaveData)
-            // } else {
             showServiceDataDetail(state.cloneComeData, state.comeData)
             showServiceDataDetail(state.cloneLeaveData, state.leaveData)
-                // }
+
         }
 
         function showServiceDataDetail(cloneInitData, initData) {
+            console.log(cloneInitData[0]['services'])
             cloneInitData.forEach((item, index) => {
-
                 vm.$set(initData, index, item)
-
             })
 
             if (serviceDataInfo[0].isServiceChecked) {
 
-                cloneInitData.forEach((item, index) => {
-                    vm.$set(initData, index, item)
-                })
+                // cloneInitData.forEach((item, index) => {
+                //     vm.$set(initData, index, item)
+                // })
 
                 return
 
@@ -921,13 +914,14 @@ export default {
                     })
                     arrParent.push(arrChild)
                 })
+
                 initData.forEach((item, index, arr) => {
                     vm.$set(item, 'services', arrParent[index])
                 })
 
-                state.cloneMergeData2 = JSON.parse(JSON.stringify(initData))
-                state.cloneComeData2 = JSON.parse(JSON.stringify(initData))
-                state.cloneLeaveData2 = JSON.parse(JSON.stringify(initData))
+                // state.cloneMergeData2 = JSON.parse(JSON.stringify(initData))
+                // state.cloneComeData2 = JSON.parse(JSON.stringify(initData))
+                // state.cloneLeaveData2 = JSON.parse(JSON.stringify(initData))
 
             }
         }
@@ -975,41 +969,13 @@ export default {
                 }
 
                 ws.onmessage = function(e) {
-                    let base = new Base64()
-                    let result = base.decode(JSON.parse(e.data).body)
 
-                    console.log(JSON.parse(result))
-                    result = JSON.parse(result)
-                        // 将接受到的时间戳转化
-                    let date = new Date(Number(result.time))
-                    let hour = date.getHours()
-                    hour = hour < 10 ? '0' + hour : hour
-                    let minute = date.getMinutes()
-                    minute = minute < 10 ? '0' + minute : minute
-                    console.log(hour, minute)
-                    let time = hour + '' + minute
-                        // 改变时间
-                    switch (state.updateFlightInfo.str) {
-                        case 'tdData':
-                            // 到离港
-                            vm.$set(state.initData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
-                            break
-                        case 'comeData':
-                            // 到港
-                            vm.$set(state.comeData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
-                            break
-
-                        case 'leaveData':
-                            // 离港
-                            console.log(state.updateFlightInfo.index)
-                            vm.$set(state.leaveData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
-                            break
-                    }
+                    serviceDataUpdate(e.data)
 
                 };
 
                 ws.onerror = function() {
-                    console.log('error')
+                    alert('error')
                 }
 
                 ws.onclose = function() {
@@ -1019,6 +985,40 @@ export default {
 
         })
 
+        // 提交服务
+        function serviceDataUpdate(data) {
+            // 提交服务
+            let base = new Base64()
+            let result = base.decode(JSON.parse(data).body)
+            console.log(JSON.parse(result))
+            result = JSON.parse(result)
+                // 将接受到的时间戳转化
+            let date = new Date(Number(result.time))
+            let hour = date.getHours()
+            hour = hour < 10 ? '0' + hour : hour
+            let minute = date.getMinutes()
+            minute = minute < 10 ? '0' + minute : minute
+            console.log(hour, minute)
+            let time = hour + '' + minute
+                // 改变时间
+            switch (state.updateFlightInfo.str) {
+                case 'tdData':
+                    // 到离港
+                    vm.$set(state.initData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    break
+                case 'comeData':
+                    // 到港
+                    vm.$set(state.comeData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    break
+
+                case 'leaveData':
+                    // 离港
+                    console.log(state.updateFlightInfo.index)
+                    vm.$set(state.leaveData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    break
+            }
+
+        }
     },
     /**
      * 取消发布时间
@@ -1116,49 +1116,56 @@ export default {
             vm.$set(state.length, 'mergeLength', state.initData.length)
 
         } else {
+            updateInitData(state.initData, state.comeData, state.leaveData)
+            updateInitData(state.cloneMergeData, state.cloneComeData, state.cloneLeaveData)
 
-            state.initData.forEach((item, index) => {
-                // console.log(typeof data.time[randomIndex].flightId) // number
-                if (item.flightId.indexOf(data.time[randomIndex].flightId.toString()) >= 0) { // == 类型转换
-                    let type = data.time[randomIndex].type.toLowerCase()
-                    console.log('进入判断')
-                    if (item[type] === data.time[randomIndex].value) {
-                        return
-                    }
-                    vm.$set(item, type, data.time[randomIndex].value)
-                        //state.flightUpdateInfo = '航班' + item.flightNo + type + '发生变更'
-                    vm.$set(state.flightUpdateInfo, 'val', '航班' + item.flightNo + data.time[randomIndex].msg)
-                    return
-                }
-
-            })
-
-            // 到港数据
-            state.comeData.forEach((item, index) => {
-                    if (item.flightId == data.time.flightId) {
-                        let type = data.time.type.toLowerCase()
+            function updateInitData(initData, comeData, leaveData) {
+                // 到离港
+                initData.forEach((item, index) => {
+                    // console.log(typeof data.time[randomIndex].flightId) // number
+                    if (item.flightId.indexOf(data.time[randomIndex].flightId.toString()) >= 0) { // == 类型转换
+                        let type = data.time[randomIndex].type.toLowerCase()
                         console.log('进入判断')
                         if (item[type] === data.time[randomIndex].value) {
                             return
                         }
-                        vm.$set(item, type, data.time.value)
+                        vm.$set(item, type, data.time[randomIndex].value)
+                            //state.flightUpdateInfo = '航班' + item.flightNo + type + '发生变更'
+                        vm.$set(state.flightUpdateInfo, 'val', '航班' + item.flightNo + data.time[randomIndex].msg)
                         return
                     }
 
                 })
-                // 离港数据
-            state.leaveData.forEach((item, index) => {
-                if (item.flightId == data.time.flightId) {
-                    let type = data.time.type.toLowerCase()
-                    console.log('进入判断')
-                    if (item[type] === data.time[randomIndex].value) {
+
+                // 到港数据
+                comeData.forEach((item, index) => {
+                        if (item.flightId.indexOf(data.time[randomIndex].flightId.toString()) >= 0) {
+                            let type = data.time[randomIndex].type.toLowerCase()
+                            console.log('进入判断')
+                            if (item[type] === data.time[randomIndex].value) {
+                                return
+                            }
+                            vm.$set(item, type, data.time[randomIndex].value)
+                            return
+                        }
+
+                    })
+                    // 离港数据
+                leaveData.forEach((item, index) => {
+                    if (item.flightId.indexOf(data.time[randomIndex].flightId.toString()) >= 0) {
+                        let type = data.time[randomIndex].type.toLowerCase()
+                        console.log('进入判断')
+                        if (item[type] === data.time[randomIndex].value) {
+                            return
+                        }
+                        vm.$set(item, type, data.time[randomIndex].value)
                         return
                     }
-                    vm.$set(item, type, data.time.value)
-                    return
-                }
 
-            })
+                })
+
+            }
+
         }
 
     }

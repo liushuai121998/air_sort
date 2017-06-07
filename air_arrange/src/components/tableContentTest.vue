@@ -18,7 +18,7 @@
                   <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
                   <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
                   <li :style='{width: thLeftData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
+                  <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
@@ -31,22 +31,9 @@
           </div>
         </div>
       </div>
-      <div class='rightWrap'>
-        <div class='theadWrap'>
-          <ul>
-            <!--<li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>-->
-            <!--<li v-for='(item, index) in tdData[0]["services"]'>{{item.detailName}}</li>-->
-          </ul>
-        </div>
-        <div class='tbodyWrap scrollTbody'>
-          <!--<ul v-for='(item, index) in tdData' :key='index'>
-            <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>
-          </ul>-->
-          
-        </div>
-      </div>
-      <scroll-bar></scroll-bar>
-      <scroll-x-bar></scroll-x-bar>
+      
+      <!--<scroll-bar></scroll-bar>
+      <scroll-x-bar></scroll-x-bar>-->
       <right-content></right-content>
     </div>
     <div class='divi_wrap' v-show='isDiviScreen'>
@@ -71,7 +58,7 @@
                 </ul>-->
                 <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
                   <li :style='{width: tabComeData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
+                  <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
@@ -84,24 +71,10 @@
               </div>
             </div>
           </div>
-          <div class='rightWrap'>
-            <div class='theadWrap'>
-              <!--<ul>
-                <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
-              </ul>-->
-            </div>
-            <div class='tbodyWrap scrollTbody'>
-              <!--<ul v-for='(item, index) in comeData' :key='index'>
-                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>-->
-                
-                <!--<li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}'>{{str}}</li>-->
-              <!--</ul>-->
-            </div>
-          </div>
-          <div class='scroll_bar'>
+          <!--<div class='scroll_bar'>
             <span class='scroll_bar_child'></span>
           </div>
-          <scroll-x-bar></scroll-x-bar>
+          <scroll-x-bar></scroll-x-bar>-->
       </div>
       <div class='divi_content2' ref='diviContent2'>
           <div class='title_leave'><span>离港</span><div class='divi_height_scale'></div></div>
@@ -124,7 +97,7 @@
                 </ul>-->
                 <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
                   <li :style='{width: tabLeaveData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']]}}</li>
+                  <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
@@ -137,23 +110,10 @@
               </div>
             </div>
           </div>
-          <div class='rightWrap'>
-            <div class='theadWrap'>
-              <!--<ul>
-                <li v-for='(item, index) in thRightData' :style='{width: item.width}' :key='index'><div>{{item.title}}</div></li>
-              </ul>-->
-            </div>
-            <div class='tbodyWrap scrollTbody'>
-              <!--<ul v-for='(item, index) in leaveData' :key='index'>
-                <li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}' :class='{fixDataBac: randomIndexArr.indexOf(index) > 0, noFixDataBac: str===strRandomArr[Math.round(Math.random()*2)]}'>{{str}}</li>-->
-                <!--<li v-for='(str, key, i) in item[2]' :key='i' :style='{width: fixTdWidth[key]}'>{{str}}</li>-->
-              <!--</ul>-->
-            </div>
-          </div>
-          <div class='scroll_bar'>
+          <!--<div class='scroll_bar'>
             <span class='scroll_bar_child'></span>
           </div>
-          <scroll-x-bar></scroll-x-bar>
+          <scroll-x-bar></scroll-x-bar>-->
       </div>
       <right-content></right-content>
     </div>
@@ -223,36 +183,39 @@
     },
     created () {
       this.$store.commit('GET_INIT_DATA', this)
-      setInterval(() => {
-        this.$store.dispatch('FLIGHT_INFO_UPDATE', {vm: this})
-      }, 5000)
+      // setInterval(() => {
+      //   this.$store.dispatch('FLIGHT_INFO_UPDATE', {vm: this})
+      // }, 5000)
     },
     mounted () {
+
       // this.setInter()
       // this.$store.dispatch('RANDOM_DATA')
      if(this.$store.state.isDiviScreen) {
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
-
+        $scrollBar.theadFixed(this.$refs.diviContent1, '.contentWrap', '.theadWrap')
+        $scrollBar.theadFixed(this.$refs.diviContent2, '.contentWrap', '.theadWrap')
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-        $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        //$scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
 
-        $scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
+        //$scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
        
         // 鼠标滚动
-        $scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        //$scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
      }else {
+        $scrollBar.theadFixed(this.$refs.mergeWrap, '.contentWrap', '.theadWrap')
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
-        $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
+        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
-        $scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
+        //$scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
-     $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
+     //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
      
     },
     updated () {
@@ -272,29 +235,33 @@
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+
+        $scrollBar.theadFixed(this.$refs.diviContent1, '.contentWrap', '.theadWrap')
+        $scrollBar.theadFixed(this.$refs.diviContent2, '.contentWrap', '.theadWrap')
+       // $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         // 鼠标滚动
-        $scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        ///$scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
-        $scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
+        //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
+        //$scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
         
       }else if(!this.$store.state.isDiviScreen && !this.isMergeFirstUpdate){
         // 第一次进入
+        $scrollBar.theadFixed(this.$refs.mergeWrap, '.contentWrap', '.theadWrap')
         this.isMergeFirstUpdate = true
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
-        $scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
+        //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         // 鼠标滚动
-        $scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
+        //$scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
 
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
+        //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
       }
         //$scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        $scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
     },
     methods: {
       setInter () {
@@ -491,7 +458,9 @@
                           //"username": this.$store.state.username
                           "username": "ghms_admin"
                       }).then((res) => {
+                         
                           console.log(res.data)
+                          // this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: false})
                       })
           }, 2000)
           // this.$http.post('http://192.168.7.53:8080/submitService', {
@@ -521,6 +490,25 @@
             this.isShowCancelTime = false
             return
           }
+          // 取消发布时间 发送请求
+          this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: true})
+          setTimeout(() => {
+            console.log(this.$store.state.updateTime, '+++++', this.clickServiceData["services"][this.clickServiceIndex]["detailNo"])
+            this.$http.post('http://192.168.7.53:8080/submitService', {
+                          "flightId": this.clickServiceData["flightId"],
+                          "time": this.$store.state.updateTime,
+                          "isCancel": "0",
+                          "detailNo": this.clickServiceData["services"][this.clickServiceIndex]["detailNo"],
+                          "sore": this.clickServiceData["services"][this.clickServiceIndex]["sorE"],
+                          //"username": this.$store.state.username
+                          "username": "ghms_admin"
+                      }).then((res) => {
+                         
+                          console.log(res.data)
+                          // this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: false})
+                      })
+          }, 2000)
+
           // 取消发布时间
           this.$store.commit('CANCEL_TIME', {vm: this})
         }
@@ -538,12 +526,6 @@
     },
     computed: {
       thLeftData () {
-        // if(this.$store.state.isBai) {
-        //   // this.$refs.mergeWrap.style.width = '100%'
-        //   this.$refs.theadWrap.style.width = '100%'
-        //   this.$refs.tbodyWrap.style.width = '100%'
-        //   this.isFirst = true
-        // }
         return this.$store.state.thLeftData
       },
       // 到港数据
@@ -564,20 +546,6 @@
       isDiviScreen () {
         return this.$store.state.isDiviScreen
       },
-      // 到港数据
-      // comeData () {
-      //   return this.tdData.filter((item) => {
-      //     return item.aOrD === 'A'
-      //   })
-      //   // return this.$store.state.comeData
-      // },
-      // 离港数据
-      // leaveData () {
-      //   // return this.$store.state.leaveData
-      //   return this.tdData.filter((item) => {
-      //     return item.aOrD === 'D'
-      //   })
-      // }
     },
     components: {'scroll-bar': scrollBar, 'scroll-x-bar': scrollXBar, 'right-content': rightContent}
   }
@@ -596,27 +564,19 @@
     position: relative;
     width: 100%;
     float: left;
-    /*border: 2px solid red;
-    box-sizing: border-box;*/
-    /*overflow: auto;*/
+
   }
   .divi_wrap .divi_content2 {
     z-index: 2000;
   }
   
   .divi_wrap .divi_content1 .contentWrap, .divi_wrap .divi_content2 .contentWrap {
-    /*width: 80%;*/
     width: 100%;
-  }
-  .divi_wrap .divi_content1 .rightWrap, .divi_wrap .divi_content2 .rightWrap {
-    /*width: 20%;*/
   }
 
   .divi_content1 .scroll_bar, .divi_content2 .scroll_bar {
     position: absolute;
     right: -15px;
-    /*top: 68px;
-    height: calc(100% - 68px);*/
     top: 0;
     height: 100%;
     width: 15px;
@@ -658,7 +618,17 @@
   }
   .merge_wrap {
     width: 85%;
-    /*position:relative;*/
+  }
+  /*.main_content {
+    width: 100%;
+    height: 100%;
+
+  }*/
+  .main_content .tbodyWrap {
+    /*width: 100%;
+    height: calc(100% - 70px);*/
+    /*overflow-y: scroll;*/
+    /*overflow-x: hidden;*/
   }
   .merge_wrap:after {
     content: '';
@@ -682,8 +652,9 @@
     border-right: 1px solid black;
   }
   .contentWrap .main_content {
-    width: 100%;
-    overflow: hidden;
+    /*width: 100%;*/
+    /*overflow-x: scroll;*/
+    /*height: calc(100% - 100px);*/
     white-space: nowrap;
   }
   .title_come, .title_leave {
@@ -699,7 +670,7 @@
     background: #fff;
   }
 
-  .contentWrap ul, .rightWrap ul{
+  .contentWrap ul{
     /*width: auto;*/
     box-sizing: border-box;
     font-size: 0;
@@ -707,16 +678,27 @@
   }
   .contentWrap {
     position: relative;
-    height: 100%;
-    overflow: hidden;
+    height: calc(100% - 32px);
+    /*overflow-x: scroll;*/
+    overflow-x: scroll;
   }
-  .contentWrap .main_content .tbodyWrap, .contentWrap .main_content .theadWrap {
+  /*.main_content {
+    position: relative;
+  }*/
+  .contentWrap .main_content .tbodyWrap{
     /*float: left;*/
     position: absolute;
     left: 0;
     top: 0;
   }
+  .contentWrap .main_content .theadWrap  {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
   .contentWrap .main_content .tbodyWrap {
+    position: absolute;
+    left: 0;
     top: 34px;
   }
 
@@ -739,58 +721,12 @@
     border-top: none;
     box-sizing: border-box;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    /*white-space: nowrap;*/
+    /*overflow: hidden;*/
     font-size: 16px;
     height: 34px;
     line-height: 34px;
     text-align: center;
-  }
-  .rightWrap {
-    position: relative;
-    width: 20%;
-    float: left;
-    overflow: hidden;
-  }
-  /*.rightWrap .theadWrap {
-    float: left;
-  }*/
-  .rightWrap ul li {
-    display: inline-block;
-    border: 1px solid black;
-    border-left: none;
-    border-top: none;
-    box-sizing: border-box;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    font-size: 16px;
-    height: 34px;
-    line-height: 34px;
-    text-align: center;
-  }
-  .rightWrap ul li:first-child {
-    border-left: 1px solid black;
-  }
-  .tbodyWrap .delay li{
-    background-color: red;
-  }
-  .tbodyWrap .active li{
-    background-color: orange;
-  }
-  .tbodyWrap .uniqueClass{
-    background-color: #fff8c6;
-    color: black;
-  }
-  .tbodyWrap .preFlight li{
-    background-color: #b8ff3f;
-    color: black;
-  }
-  .rightWrap .tbodyWrap .fixDataBac{
-    background: #f5501f;
-  }
-  .rightWrap .tbodyWrap .noFixDataBac{
-    background: #3b3b3b;
   }
   /*搜索索引*/
   .tbodyWrap .searchTd li{
@@ -850,15 +786,15 @@
   .tbodyWrap .sevenClass li {
     background: #538ED5;
   }*/
-  .contentWrap .tbodyWrap ul .selectLi {
-    background: #3b3b3b;
-    border: 2px solid blue;
-    box-sizing: border-box;
-  }
-  .contentWrap .tbodyWrap .selectTr li:nth-child(5) {
-
+  .wrap .contentWrap .tbodyWrap ul .selectLi {
+    background: #02BDF2;
     /*border: 2px solid blue;*/
+    box-sizing: border-box;
+    /*border: 1px solid #02BDF2;
+    border-top: none;
+    border-left: none;*/
   }
+  
   /*排序箭头*/
   .wrap li.sort_li .arrow {
     position: absolute;
@@ -871,11 +807,11 @@
     display: none;
   }
   .divi_content1 .contentWrap {
-    height: 100%;
+    height: calc(100% - 30px);
   }
   .divi_content1 .main_content{
-    height: calc(100% - 32px);
-    overflow: hidden;
+    /*height: calc(100% - 32px);
+    overflow: hidden;*/
   }
   /*服务提交与取消部分*/
   .cancel_time, .service_form, .flight_info{
