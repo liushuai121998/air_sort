@@ -348,6 +348,7 @@ export default {
             let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].querySelectorAll('ul')
             divArr.forEach((divDom, index) => {
                 divDom.addEventListener('mousedown', function(ev) {
+
                     vm.$store.commit('UPDATE_IS_SORT', false)
                     ev.preventDefault();
                     // 阻止事件冒泡
