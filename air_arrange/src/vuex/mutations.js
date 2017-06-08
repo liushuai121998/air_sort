@@ -1,17 +1,6 @@
 import Base64 from '../utils/base64.js'
 
 export default {
-    RANDOM_DATA(state) {
-        let randomStrArr = ['task', 'flightState']
-        let taskRandom = ['补班', '正班']
-        let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
-        let length = state.data.contentData.length
-        if (randomStrArr[Math.round(Math.random())] === 'flightState') {
-            state.data.contentData[Math.round(Math.random() * (length - 1))]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
-        } else {
-            state.data.contentData[Math.round(Math.random() * (length - 1))]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
-        }
-    },
     /**
      * 新增数据
      * @param {*} state 
@@ -45,91 +34,6 @@ export default {
         vm.$set(state.length, 'leaveLength', state.leaveData.length)
         vm.$set(state.length, 'mergeLength', state.initData.length)
     },
-
-    /**
-     * 修改
-     * @param {*} state 
-     * @param {*} num 机位号 
-     */
-    SET_DATA(state) {
-        let randomStrArr = ['task', 'flightState']
-        let taskRandom = ['补班', '正班']
-        let flightStateRandom = ['到达/无', '到达/延误', '前起/无']
-        state.selectIndexArr.forEach((item) => {
-            if (randomStrArr[Math.round(Math.random())] === 'flightState') {
-                state.data.contentData[item]['flightState'] = flightStateRandom[Math.round(Math.random() * (flightStateRandom.length - 1))]
-            } else {
-                state.data.contentData[item]['task'] = taskRandom[Math.round(Math.random() * (taskRandom.length - 1))]
-            }
-
-        })
-    },
-
-    /**
-     * 删除
-     * @param {*} state 
-     * @param {*} arr 
-     */
-    // DELETE_DATA(state) {
-    //     // 将检索到的数据删除
-    //     let flag = 0
-    //     let cloneData = [].concat(state.data.contentData)
-    //     let cloneIndex = [].concat(state.selectIndexArr)
-    //     let selectData = []
-    //     let isClick = true
-
-    //     cloneIndex.forEach((item, index) => {
-    //         selectData.push(state.data.contentData[item])
-    //     })
-
-    //     state.searchData.forEach((item, index) => {
-    //         // 检索并选中该tr才删除
-    //         if (selectData.indexOf(item) >= 0) {
-    //             isClick = false
-    //             state.data.contentData.splice(cloneData.indexOf(item) - flag, 1)
-    //             flag++
-    //         }
-    //     })
-
-    //     // 将选中tr的删除 删除之后selectTr这个类名还在
-    //     state.selectTrArr.forEach((item, index) => {
-    //         item.classList.remove('selectTr')
-    //     })
-    //     let indexFlag = 0
-    //         // console.log(state.selectIndexArr)
-    //         // 将索引进行排序state.selectIndexArr.sort()
-    //     state.selectIndexArr.sort().forEach(function(item, index) {
-    //         if (isClick) {
-    //             state.data.contentData.splice(item - indexFlag, 1)
-    //             console.log(item, "++", index)
-    //             indexFlag++
-    //         }
-    //     });
-    //     // 点击删除按钮之后将selectIndexArr 置为空数组
-    //     state.selectIndexArr = []
-    //     state.selectTrArr = []
-    // },
-    DELETE_DATA(state, vm) {
-        let length = state.data.contentData.length
-        let randomIndex = Math.round(Math.random() * (length - 1))
-        state.data.contentData.splice(randomIndex, 1)
-        state.cloneData.contentData.splice(randomIndex, 1)
-
-        // let comeData = state.data.contentData.filter((item) => {
-        //     return (item[0].continue && item[0].continue.arrival) || item[0].arrival
-        // })
-        // comeData.forEach((item, index) => {
-        //     vm.$set(state.comeData, index, item)
-        //     vm.$set(state.cloneComeData, index, item)
-        // })
-        // let leaveData = state.data.contentData.filter((item) => {
-        //     return (item[0].continue && item[0].continue.departed) || item[0].departed
-        // })
-        // leaveData.forEach((item, index) => {
-        //     vm.$set(state.leaveData, index, item)
-        //     vm.$set(state.cloneLeaveData, index, item)
-        // })
-    },
     /**
      * 保存选中的tr的索引进行修改和删除
      * @param {*} state 
@@ -148,60 +52,6 @@ export default {
      * @param {*} state 
      */
     SORT_TABLE(state, { str, target, param, vm }) {
-
-        // if (Object.is(Number(state.data.contentData[0][1][param]), NaN)) {
-        //     if (str === 'leave') {
-        //         state.leaveData.sort(function(a, b) {
-        //             return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-        //         })
-        //     } else if (str === 'come') {
-        //         state.comeData.sort(function(a, b) {
-        //             return target.sort ? a[1][param] > b[1][param] : b[1][param] > a[1][param]
-        //         })
-        //     } else if (str === 'merge') {
-
-        //     }
-
-        // } else {
-        //     // 数字排序 
-        //     if (str === 'leave') {
-        //         state.leaveData.sort(function(a, b) {
-        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-        //         })
-        //     } else if (str === 'come') {
-        //         state.comeData.sort(function(a, b) {
-        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-        //         })
-        //     } else if (str === 'merge') {
-        //         state.data.contentData.sort(function(a, b) {
-        //             return target.sort ? a[1][param] - b[1][param] : b[1][param] - a[1][param]
-        //         })
-        //     }
-
-        // }
-
-        // if (param === 'sta') {
-        //     let sortData = []
-        //     let noSortData = []
-        //     state.initData.forEach(function(item, index) {
-        //         if (item[param]) {
-        //             sortData.push(item)
-        //         } else {
-        //             noSortData.push(item)
-        //         }
-        //     })
-        //     sortData.sort((a, b) => {
-        //             return target.sort ? a[param].slice(11, 16).split(':').join('') - b[param].slice(11, 16).split(':').join('') : b[param].slice(11, 16).split(':').join('') - a[param].slice(11, 16).split(':').join('')
-        //         })
-        //         // console.log(sortData)
-        //     target.sort ? noSortData.concat(sortData).forEach((item, index) => {
-        //         vm.$set(state.initData, index, item)
-        //     }) : sortData.concat(noSortData).forEach((item, index) => {
-        //         vm.$set(state.initData, index, item)
-        //     })
-        //     console.log(sortData)
-        // }
-
         switch (str) {
             case "merge":
                 sortData(state.initData)
@@ -656,46 +506,7 @@ export default {
     UPDATE_DIVISCREEN(state, val) {
         state.isDiviScreen = val
     },
-    /**
-     * 添加class
-     * @param {*} state 
-     * @param {*} param1 
-     */
-    ADD_CLASS(state, { vm, liTargetIndex, index }) {
-        let obj = {}
-        obj = JSON.parse(JSON.stringify(state.thLeftData[liTargetIndex]))
-        obj.class = true
-            // state.thLeftData[liTargetIndex].class = true
-            // switch (data) {
-            //     case state.comeData:
-            //         state.comeData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-            //         break
-            //     case state.leaveData:
-            //         state.leaveData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-            //         break
-            //     case state.data.contentData:
-            //         state.data.contentData[index].push({ class: 'selectLi', classParent: 'selectTr', key })
-            //         break
-            // }
-        vm.$set(state.thLeftData, liTargetIndex, obj)
-        state.initData[index]['class'] = true
-    },
-    /**
-     * 删除class
-     * @param {*} state 
-     */
-    REMOVE_CLASS(state) {
-        state.thLeftData.forEach((item, index, arr) => {
-            if (item['class']) {
-                delete item['class']
-            }
-        })
-        state.initData.forEach(item => {
-            if (item['class']) {
-                delete item['class']
-            }
-        })
-    },
+
     /**
      * 显示/隐藏rightContent
      * @param {*} state 
@@ -715,11 +526,12 @@ export default {
     GET_INIT_DATA(state, vm) {
         //vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
         vm.$http.get('/api/data').then((res) => {
-
+            let names = Object.keys(res.data.data.d.flight[0])
             res.data.data.d.flight.forEach((item, index) => {
                     if (!item['mark'].trim()) {
                         vm.$set(item, 'mark', '/')
                     }
+
                     vm.$set(state.initData, index, item)
                     state.flightIdArr.push(item.flightId)
                 })

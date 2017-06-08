@@ -14,14 +14,13 @@
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
             <!--固定部分-->
-            <div class='index_fixed '>
-              <ul>
+            <div class='index_fixed'>
+              <ul :style='{width: thLeftData[0]["width"], display: "flex", flexDirection: "column", float: "left"}'>
                   <!--序号固定-->
-                  <li :style='{width: thLeftData[0]["width"]}' v-for='(tdItem, index) in tdData'>{{index + 1}}</li>
-                  
+                  <li v-for='(tdItem, index) in tdData'>{{index + 1}}</li>
               </ul>
-              <ul>
-                  <li v-for='(tdItem, index) in tdData'  :style='{width: thLeftData[1].width}' >{{tdItem["flightNo"]}}</li>
+              <ul :style='{width: thLeftData[1]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                  <li v-for='(tdItem, index) in tdData'>{{tdItem["flightNo"]}}</li>
               </ul>
             </div>
 
@@ -39,15 +38,18 @@
 
             <div class="move_wrap">
                 <ul class='move_content' v-for='(item, i) in thLeftData.slice(2)' :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
-                    <li v-for='(tdItem, index) in tdData'  @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>{{tdItem[item['name']] || '/'}}</li>
+                    <li v-for='(tdItem, index) in tdData'  @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
+                    <li v-else-if="item['name'] === 'operationDate'" @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
+                    <li v-else @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                 </ul>
                 <ul v-for='(item, i) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
                     <li v-for='(tdItem, index) in tdData' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>
-                      <span :style='{display: "inline-block", width: parseInt(serviceWidth[i]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
-                      --><span :style='{display: "inline-block", width: parseInt(serviceWidth[i]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
+                      <span :style='{display: "inline-block", width: "50%", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
+                      --><span :style='{display: "inline-block", width: "50%", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
                     </li>
                 </ul>
             </div>
+
           </div>
         </div>
       </div>
@@ -68,22 +70,36 @@
               <div class='tbodyWrap scrollX scrollTbody'  ref='divi1TbodyWrap'>
                 <!--固定部分-->
                 <div class='index_fixed '>
-                  <ul v-for='(tdItem, index) in comeData'>
+                  <ul>
                       <!--序号固定-->
-                      <li :style='{width: tabComeData[0]["width"]}'>{{index + 1}}</li>
-                      <li v-for='(item, i) in thLeftData.slice(1)' v-if='item["name"] === "flightNo"' :style='{width: item.width}' >{{tdItem[item['name']] || '/'}}</li>
+                      <li :style='{width: tabComeData[0]["width"]}' v-for='(tdItem, index) in comeData'>{{index + 1}}</li>
+                  </ul>
+                  <ul>
+                      <li v-for='(tdItem, index) in comeData'  :style='{width: tabComeData[1].width}' >{{tdItem["flightNo"]}}</li>
                   </ul>
                 </div>
-                <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
+                <!--<ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
                   <li v-for='(item, i) in tabComeData.slice(2)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
-                  <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}'>
-                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
-                </ul>
+                </ul>-->
+                <div class="move_wrap">
+                    <ul class='move_content' v-for='(item, i) in tabComeData.slice(2)' :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
+                        <li v-for='(tdItem, index) in comeData'  @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
+                        <li v-else-if="item['name'] === 'operationDate'" @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
+                        <li v-else @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
+                    </ul>
+                    <ul v-for='(item, i) in comeData[0] && comeData[0]["services"]' :style='{width: comeServiceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                        <li v-for='(tdItem, index) in comeData' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
+                          <span :style='{display: "inline-block", width: "50%", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
+                          --><span :style='{display: "inline-block", width: "50%", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
+                        </li>
+                    </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -102,22 +118,36 @@
               <div class='tbodyWrap scrollX scrollTbody' ref='divi2TbodyWrap'>
                 <!--固定部分-->
                 <div class='index_fixed '>
-                  <ul v-for='(tdItem, index) in leaveData'>
+                  <ul>
                       <!--序号固定-->
-                      <li :style='{width: tabLeaveData[0]["width"]}'>{{index + 1}}</li>
-                      <li v-for='(item, i) in thLeftData.slice(1)' v-if='item["name"] === "flightNo"' :style='{width: item.width}' >{{tdItem[item['name']] || '/'}}</li>
+                      <li :style='{width: tabLeaveData[0]["width"]}' v-for='(tdItem, index) in leaveData'>{{index + 1}}</li>
+                  </ul>
+                  <ul>
+                      <li v-for='(tdItem, index) in leaveData'  :style='{width: tabLeaveData[1].width}' >{{tdItem["flightNo"]}}</li>
                   </ul>
                 </div>
-                <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
+                <!--<ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
                   <li v-for='(item, i) in tabLeaveData.slice(2)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
-                  <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}'>
-                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%", textAlign: "center"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%", textAlign: "center"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
-                </ul>
+                </ul>-->
+                <div class="move_wrap">
+                    <ul class='move_content' v-for='(item, i) in tabLeaveData.slice(2)' :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
+                        <li v-for='(tdItem, index) in leaveData'  @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
+                        <li v-else-if="item['name'] === 'operationDate'" @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
+                        <li v-else @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
+                    </ul>
+                    <ul v-for='(item, i) in leaveData[0] && leaveData[0]["services"]' :style='{width: leaveServiceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                        <li v-for='(tdItem, index) in leaveData' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
+                          <span :style='{display: "inline-block", width: "50%", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
+                          --><span :style='{display: "inline-block", width: "50%", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
+                        </li>
+                    </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -230,8 +260,8 @@
         this.isMergeFirstUpdate = false
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
-        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
+        //$scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
+        //$scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
 
         $scrollBar.theadFixed(this.$refs.diviContent1, '.contentWrap', '.theadWrap')
         $scrollBar.theadFixed(this.$refs.diviContent2, '.contentWrap', '.theadWrap')
@@ -244,7 +274,7 @@
         this.isMergeFirstUpdate = true
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
+        //$scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
    
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
     
@@ -347,9 +377,12 @@
        //  console.log(this.$store.state.authData.flight)
         // console.log(ev.target)
         if(ev.target.nodeName.toLowerCase() === 'li') {
-          let liNodes = [].slice.call(ev.target.parentNode.getElementsByTagName('li'));
-          let searchIndex = liNodes.indexOf(ev.target)
-          if(this.$store.state.authData.flight.indexOf(this.$store.state.thLeftData[searchIndex]['title']) >= 0) {
+
+          let ulNodes = [].slice.call(ev.target.parentNode.parentNode.getElementsByTagName('ul'));
+          let searchIndex = ulNodes.indexOf(ev.target.parentNode)
+          console.log(searchIndex)
+          if(this.$store.state.authData.flight.indexOf(this.$store.state.thLeftData[searchIndex + 2]['title']) >= 0) {
+
             this.isShowFlightInfo = true
 
             this.$http.post('http://192.168.7.53:8080/submitFlight', {
@@ -364,16 +397,16 @@
 
 
             this.clickServiceData = data[index]
-            // alert('不错哟')
 
           }
         }else if(ev.target.nodeName.toLowerCase() === 'span') { // 服务数据 服务权限
-          // console.log(ev.target.className)
-          let liNodes = [].slice.call(ev.target.parentNode.parentNode.getElementsByTagName('li'));
-          let searchIndex = liNodes.indexOf(ev.target.parentNode)
-          //let serviceIndex = searchIndex - (this.$store.state.thLeftData.length - 2)
-          let serviceIndex = searchIndex
+
+          let ulNodes = [].slice.call(ev.target.parentNode.parentNode.parentNode.getElementsByTagName('ul'));
+          let searchIndex = ulNodes.indexOf(ev.target.parentNode.parentNode)
+          let serviceIndex = searchIndex - this.$store.state.thLeftData.length + 2
+          console.log(serviceIndex)
           if(this.$store.state.authData.service.indexOf(item['services'][serviceIndex]['detailName']) >= 0 && ev.target.className.indexOf('unique_service') >= 0) {
+
             this.isShowSubmit = true
             // 找到对应的服务数据
             this.clickServiceData = data[index]
@@ -399,7 +432,7 @@
           this.$store.commit('IS_GET_PARAM_TIME', {vm: this, isGet: true})
           
           setTimeout(() => {
-            console.log(this.$store.state.updateTime, '+++++', this.clickServiceData["services"][this.clickServiceIndex]["detailNo"])
+            // console.log(this.$store.state.updateTime, '+++++', this.clickServiceData["services"][this.clickServiceIndex]["detailNo"])
             this.$http.post('http://192.168.7.53:8080/submitService', {
                           "flightId": this.clickServiceData["flightId"],
                           "time": this.$store.state.updateTime,

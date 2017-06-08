@@ -330,8 +330,6 @@ export default {
      * @param {*} vm 
      */
     widthScale(el, { mergeWrap, diviContent1, diviContent2 }, vm) {
-        //let _this = this
-        //let widthArr = []
         if (mergeWrap) {
             vm.$nextTick(() => {
                 scale(mergeWrap)
@@ -346,67 +344,37 @@ export default {
         function scale(parent) {
             let elDom = parent.querySelector(el);
             let divs = elDom.getElementsByTagName('div');
-            let wwDoms = elDom.querySelectorAll('div.ww')
-            let qqDoms = elDom.querySelectorAll('div.qq')
-            let qqArr = [].slice.call(qqDoms);
-            let divArr = [].slice.call(wwDoms);
-            let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].querySelectorAll('ul.nofixed')
-            let dom = parent.querySelector('.scroll-x')
-            let widthArr = []
-            let targetIndex
-            let targetClassName
+            let divArr = [].slice.call(divs)
+            let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].querySelectorAll('ul')
             divArr.forEach((divDom, index) => {
-                widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
                     vm.$store.commit('UPDATE_IS_SORT', false)
-                    targetClassName = this.className
-                    if (targetClassName === 'qq') {
-                        targetIndex = qqArr.indexOf(this)
-                    } else {
-                        targetIndex = divArr.indexOf(this)
-                    }
                     ev.preventDefault();
                     // 阻止事件冒泡
                     ev.stopPropagation();
                     let that = this
                     that.startPointX = ev.clientX
                     that.width = that.parentNode.offsetWidth
-                    that.parentWidth = that.parentNode.parentNode.offsetWidth
 
                     document.addEventListener('mousemove', callback)
 
                     function callback(ev) {
 
                         that.movePointX = ev.clientX
-                            //let width = that.width + that.movePointX - that.startPointX + 'px'
                         let width = that.width + that.movePointX - that.startPointX
+                        let liNodes = that.parentNode.parentNode.getElementsByTagName('li')
+                        let liIndex = [].slice.call(liNodes).indexOf(that.parentNode)
+                        if (liIndex === 0 || liIndex === 1) {
+                            return
+                        }
+                        that.parentNode.style.width = width + 'px';
+                        ulDoms[liIndex].style.width = width + 'px'
 
-                        widthArr[index] = that.width + that.movePointX - that.startPointX
-
-                        that.parentNode.style.width = width + 'px'
-                        that.parentNode.parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px';
-
-                        [].slice.call(ulDoms).forEach((ulDom) => {
-
-                            if (targetClassName === 'qq') {
-
-                                ulDom.children[wwDoms.length + targetIndex].style.width = width + 'px'
-
-                            } else {
-                                console.log(ulDom.children[targetIndex - 2]) // undefined
-                                ulDom.children[targetIndex - 2].style.width = width + 'px'
-
-                            }
-
-                        })
-
-                        ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
                     }
                     document.addEventListener('mouseup', mouseUpEnd)
 
                     function mouseUpEnd() {
                         vm.$store.commit('UPDATE_IS_SORT', true)
-                        vm.$store.commit('CHANGE_TH_WIDTH', { targetIndex, index, widthArr, parentNode: that.parentNode.parentNode, cal: that.movePointX - that.startPointX, parentWidth: that.parentWidth, vm, parent, targetClassName })
                         document.removeEventListener('mousemove', callback)
                         document.removeEventListener('mouseup', mouseUpEnd)
                     }
