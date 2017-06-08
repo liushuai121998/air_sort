@@ -6,34 +6,51 @@
         <div class='main_content'>
           <div class='theadWrap  scrollX' ref='theadWrap'>
            <ul class='tab'>
-             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
              <!--服务数据头部-->
              <li v-for='(item, serIndex) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
              <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
            </ul>
           </div> 
           <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <ul v-for='(tdItem, index) in tdData' :key='index' @mousedown='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>
-                  <!--<li :style='{width: thLeftData[0]["width"]}'>{{index + 1}}</li>-->
-                  <!--<li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backData[key]}'  :class='{uniqueClass: key === "flightState", selectLi: tdItem[3]&& tdItem[3].key === key}'  @click='selectTr($event,index, key, tdData)'>{{str}}</li>-->
-                  <!--<li v-for='(str, key, i) in tdItem' v-if="thLeftData[i] && thLeftData[i]['name'] === key">{{str}}</li>-->
-                  <li :style='{width: thLeftData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in thLeftData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
+            <!--固定部分-->
+            <div class='index_fixed '>
+              <ul>
+                  <!--序号固定-->
+                  <li :style='{width: thLeftData[0]["width"]}' v-for='(tdItem, index) in tdData'>{{index + 1}}</li>
+                  
+              </ul>
+              <ul>
+                  <li v-for='(tdItem, index) in tdData'  :style='{width: thLeftData[1].width}' >{{tdItem["flightNo"]}}</li>
+              </ul>
+            </div>
+
+            <!--<ul v-for='(tdItem, index) in tdData' :key='index' @mousedown='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' class='nofixed'>
+
+                  <li v-for='(item, i) in thLeftData.slice(2)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
-                  <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: serviceWidth[serIndex]["width"]}'>
-                    <!--{{serviceData[index][serIndex]['planTime']}}-->
-                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
-                    --><span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span>
+                    <span :style='{display: "inline-block", width: parseInt(serviceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
-            </ul>
+
+            </ul>-->
+
+            <div class="move_wrap">
+                <ul class='move_content' v-for='(item, i) in thLeftData.slice(2)' :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
+                    <li v-for='(tdItem, index) in tdData'  @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>{{tdItem[item['name']] || '/'}}</li>
+                </ul>
+                <ul v-for='(item, i) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                    <li v-for='(tdItem, index) in tdData' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")'>
+                      <span :style='{display: "inline-block", width: parseInt(serviceWidth[i]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
+                      --><span :style='{display: "inline-block", width: parseInt(serviceWidth[i]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
+                    </li>
+                </ul>
+            </div>
           </div>
         </div>
       </div>
-      
-      <!--<scroll-bar></scroll-bar>
-      <scroll-x-bar></scroll-x-bar>-->
       <right-content></right-content>
     </div>
     <div class='divi_wrap' v-show='isDiviScreen'>
@@ -42,28 +59,27 @@
           <div class='contentWrap'>
             <div class='main_content'>
               <div class='theadWrap  scrollX' ref='divi1TheadWrap'>
-              <!--<ul class='tab'>
-                <li v-for='(item,index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabComeData)'><span>{{item.title}}</span><div class='ww'></div></li>
-              </ul>-->
               <ul class='tab'>
-                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, comeData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                <li v-for='(item, index) in tabComeData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, comeData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
                 <li v-for='(item, serIndex) in comeData[0] && comeData[0]["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                 <li v-else-if='item.sorE === "E"' :style='{width: comeServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
               </ul>
               </div>
               <div class='tbodyWrap scrollX scrollTbody'  ref='divi1TbodyWrap'>
-                <!--<ul v-for='(tdItem, index) in comeData' :key='index' :class='{selectTr: tdItem[3]&& tdItem[3].classParent === "selectTr"}'>
+                <!--固定部分-->
+                <div class='index_fixed '>
+                  <ul v-for='(tdItem, index) in comeData'>
+                      <!--序号固定-->
                       <li :style='{width: tabComeData[0]["width"]}'>{{index + 1}}</li>
-                      <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backComeData[key]}' @click='selectTr($event,index, key, comeData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
-                </ul>-->
+                      <li v-for='(item, i) in thLeftData.slice(1)' v-if='item["name"] === "flightNo"' :style='{width: item.width}' >{{tdItem[item['name']] || '/'}}</li>
+                  </ul>
+                </div>
                 <ul v-for='(tdItem, index) in comeData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, comeData, "comeData")'>
-                  <li :style='{width: tabComeData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in tabComeData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
+                  <li v-for='(item, i) in tabComeData.slice(2)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: comeServiceWidth[serIndex]["width"]}'>
-                    <!--{{serviceData[index][serIndex]['planTime']}}-->
                     <span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
                     --><span :style='{display: "inline-block", width: parseInt(comeServiceWidth[serIndex]["width"])/2+"px", height: "100%"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
@@ -71,38 +87,33 @@
               </div>
             </div>
           </div>
-          <!--<div class='scroll_bar'>
-            <span class='scroll_bar_child'></span>
-          </div>
-          <scroll-x-bar></scroll-x-bar>-->
       </div>
       <div class='divi_content2' ref='diviContent2'>
           <div class='title_leave'><span>离港</span><div class='divi_height_scale'></div></div>
           <div class='contentWrap'>
             <div class='main_content'>
               <div class='theadWrap scrollX' ref='divi2TheadWrap'>
-                <!--<ul class='tab'>
-                  <li v-for='(item,index) in tabLeaveData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tabLeaveData)'><span>{{item.title}}</span><div class='ww'></div></li>
-                </ul>-->
                 <ul class='tab'>
-                  <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)' class='sort_li'><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                  <li v-for='(item, index) in tabLeaveData' :style='{width: item.width}' :key='index' @click='sortTable($event, index, leaveData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
                   <li v-for='(item, serIndex) in leaveData[0] && leaveData[0]["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
                   <li v-else-if='item.sorE === "E"' :style='{width: leaveServiceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
                 </ul>
               </div>
               <div class='tbodyWrap scrollX scrollTbody' ref='divi2TbodyWrap'>
-                <!--<ul v-for='(tdItem, index) in leaveData' :key='index' :class='{selectTr: tdItem[3]&& tdItem[3].classParent === "selectTr"}'>
+                <!--固定部分-->
+                <div class='index_fixed '>
+                  <ul v-for='(tdItem, index) in leaveData'>
+                      <!--序号固定-->
                       <li :style='{width: tabLeaveData[0]["width"]}'>{{index + 1}}</li>
-                      <li v-for='(str, key, i) in tdItem[1]' :key='i' :style='{width: backLeaveData[key]}' @click='selectTr($event,index,key, leaveData)' :class='{selectLi: tdItem[3]&& tdItem[3].key === key}'>{{str}}</li>
-                </ul>-->
+                      <li v-for='(item, i) in thLeftData.slice(1)' v-if='item["name"] === "flightNo"' :style='{width: item.width}' >{{tdItem[item['name']] || '/'}}</li>
+                  </ul>
+                </div>
                 <ul v-for='(tdItem, index) in leaveData' :key='index' @click='selectTr($event,index)' @dblclick='serviceSubmit($event, tdItem, index, leaveData, "leaveData")'>
-                  <li :style='{width: tabLeaveData[0]["width"]}'>{{index+1}}</li>
-                  <li v-for='(item, i) in tabLeaveData.slice(1)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
+                  <li v-for='(item, i) in tabLeaveData.slice(2)' :style='{width: item.width}' :key='i' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0'>{{tdItem[item['name']] || '/'}}</li>
                   <li v-else-if="item['name'] === 'operationDate'" :style='{width: item.width}'>{{tdItem[item['name']].slice(5, 10)}}</li>
                   <li v-else :style='{width: item.width}'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
                   <!--服务部分-->
                   <li v-for='(serItem, serIndex) in tdItem["services"]' :style='{width: leaveServiceWidth[serIndex]["width"]}'>
-                    <!--{{serviceData[index][serIndex]['planTime']}}-->
                     <span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", borderRight: "1px solid black", boxSizing: "border-box", height: "100%", textAlign: "center"}'>{{tdItem["services"][serIndex]['planTime']}}</span><!--
                     --><span :style='{display: "inline-block", width: parseInt(leaveServiceWidth[serIndex]["width"])/2+"px", height: "100%", textAlign: "center"}' :class='{unique_service: tdItem["services"][serIndex]["planTime"] && tdItem["services"][serIndex]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][serIndex]['actualTime']}}</span>
                   </li>
@@ -110,10 +121,6 @@
               </div>
             </div>
           </div>
-          <!--<div class='scroll_bar'>
-            <span class='scroll_bar_child'></span>
-          </div>
-          <scroll-x-bar></scroll-x-bar>-->
       </div>
       <right-content></right-content>
     </div>
@@ -188,9 +195,6 @@
       // }, 5000)
     },
     mounted () {
-
-      // this.setInter()
-      // this.$store.dispatch('RANDOM_DATA')
      if(this.$store.state.isDiviScreen) {
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
@@ -198,25 +202,18 @@
         $scrollBar.theadFixed(this.$refs.diviContent2, '.contentWrap', '.theadWrap')
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
         $scrollBar.widthScale('.tab', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        //$scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-
-        //$scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
-       
-        // 鼠标滚动
-        //$scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
      }else {
+        // this.$nextTick(() => {
+        //   $scrollBar.showEclips()
+        // })
         $scrollBar.theadFixed(this.$refs.mergeWrap, '.contentWrap', '.theadWrap')
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
-        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+      
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
-        //$scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
+    
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
-     //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
-     
     },
     updated () {
       if(!this.$store.state.isDiviScreen) {
@@ -238,13 +235,9 @@
 
         $scrollBar.theadFixed(this.$refs.diviContent1, '.contentWrap', '.theadWrap')
         $scrollBar.theadFixed(this.$refs.diviContent2, '.contentWrap', '.theadWrap')
-       // $scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
-        // 鼠标滚动
-        ///$scrollBar.mouseScroll('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
+   
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
-        //$scrollBar.diviHeightScale('.divi_height_scale', '.scroll_bar_child', '.scrollTbody', {divi1: this.$refs.diviContent1, divi2: this.$refs.diviContent2})
-        
+      
       }else if(!this.$store.state.isDiviScreen && !this.isMergeFirstUpdate){
         // 第一次进入
         $scrollBar.theadFixed(this.$refs.mergeWrap, '.contentWrap', '.theadWrap')
@@ -252,56 +245,12 @@
         this.isFirstUpdate = false
         this.$refs.mergeWrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
-        //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
-
-        // 鼠标滚动
-        //$scrollBar.mouseScroll('.scroll', '.scrollTbody', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null})
-
+   
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
-        //$scrollBar.resize('.scroll-x', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap'},  this.$store.state.isDiviScreen)
+    
       }
-        //$scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2}, this)
-        //$scrollBar.scrollXBar('.scroll-x', '.scrollX', {mergeWrap: this.$refs.mergeWrap, diviContent1: this.$refs.diviContent1, diviContent2: this.$refs.diviContent2})
     },
     methods: {
-      setInter () {
-        this.timeId1 = setInterval(() => {
-          this.$http.get('/api/data')
-          .then(res => {
-            this.tdData = res.data.data
-            //this.tdData = this.$store.state.data
-            // 随机数
-            let random = Math.round(Math.random() * 150)
-            let randomArr = ['flightState', 'task']
-            let randomStr = randomArr[Math.round(Math.random())]
-            // let randomFlight = ['到达/延误', '到达/无', '前起/无']
-            let randomObj = {
-              'flightState': '到达/延误',
-              'task': '补班'
-            }
-            /// 模拟动态数据的变化(结合离线存储技术localStorage)
-            for(var n in this.tdData[random]){
-              if(n === randomStr){
-                let local = JSON.parse(localStorage.getItem('addItem'))
-                
-                if(local){
-                  for(var i=0, len=local.length; i<len; i++){
-                    this.tdData[(local[i].random)][(local[i].n)] = randomObj[(local[i].randomStr)]
-                  }
-                  // 存储的数据大于10条, 清除定时器
-                  if(local.length > 10){
-                  clearInterval(this.timeId1)
-                }
-                }
-                this.tdData[random][n] = randomObj[randomStr]
-                let obj = {random, n, randomStr}
-                this.localArr.push(obj)
-                localStorage.setItem('addItem', JSON.stringify(this.localArr))
-                }
-            }
-          })
-        }, 5000)
-      },
       /*选中的tr*/
       selectTr(ev, index) {
         if(!this.target) {
@@ -383,7 +332,7 @@
          arrow.style.borderBottomColor = 'transparent'
          arrow.style.borderTopColor = 'red'
        }
-
+       
        this.$store.commit('SORT_TABLE', {str, target: ev.target, param: this.$store.state.thLeftData[index]['name'], vm: this})
  
         // 解决v-for强制刷新列表 this.$forceUpdate()
@@ -396,6 +345,7 @@
       serviceSubmit (ev, item, index, data, diviStr) {
         /*flight的权限*/
        //  console.log(this.$store.state.authData.flight)
+        // console.log(ev.target)
         if(ev.target.nodeName.toLowerCase() === 'li') {
           let liNodes = [].slice.call(ev.target.parentNode.getElementsByTagName('li'));
           let searchIndex = liNodes.indexOf(ev.target)
@@ -417,11 +367,12 @@
             // alert('不错哟')
 
           }
-        }else if(ev.target.nodeName.toLowerCase() === 'span') { // 服务数据
+        }else if(ev.target.nodeName.toLowerCase() === 'span') { // 服务数据 服务权限
           // console.log(ev.target.className)
           let liNodes = [].slice.call(ev.target.parentNode.parentNode.getElementsByTagName('li'));
           let searchIndex = liNodes.indexOf(ev.target.parentNode)
-          let serviceIndex = searchIndex - this.$store.state.thLeftData.length
+          //let serviceIndex = searchIndex - (this.$store.state.thLeftData.length - 2)
+          let serviceIndex = searchIndex
           if(this.$store.state.authData.service.indexOf(item['services'][serviceIndex]['detailName']) >= 0 && ev.target.className.indexOf('unique_service') >= 0) {
             this.isShowSubmit = true
             // 找到对应的服务数据
@@ -619,17 +570,7 @@
   .merge_wrap {
     width: 85%;
   }
-  /*.main_content {
-    width: 100%;
-    height: 100%;
-
-  }*/
-  .main_content .tbodyWrap {
-    /*width: 100%;
-    height: calc(100% - 70px);*/
-    /*overflow-y: scroll;*/
-    /*overflow-x: hidden;*/
-  }
+  
   .merge_wrap:after {
     content: '';
     display: block;
@@ -652,9 +593,6 @@
     border-right: 1px solid black;
   }
   .contentWrap .main_content {
-    /*width: 100%;*/
-    /*overflow-x: scroll;*/
-    /*height: calc(100% - 100px);*/
     white-space: nowrap;
   }
   .title_come, .title_leave {
@@ -682,9 +620,6 @@
     /*overflow-x: scroll;*/
     overflow-x: scroll;
   }
-  /*.main_content {
-    position: relative;
-  }*/
   .contentWrap .main_content .tbodyWrap{
     /*float: left;*/
     position: absolute;
@@ -714,15 +649,25 @@
     background: #3b3b3b;
     color: #fff;
   }
+  .tbodyWrap ul li:nth-of-type(2) {
+    /*text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;*/
+  }
+  /*.tbodyWrap ul li:nth-of-type(even) {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }*/
   .wrap ul li {
     display: inline-block;
     border: 1px solid black;
     border-left: none;
     border-top: none;
     box-sizing: border-box;
-    text-overflow: ellipsis;
-    /*white-space: nowrap;*/
-    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;*/
     font-size: 16px;
     height: 34px;
     line-height: 34px;
@@ -748,51 +693,21 @@
     top: 0;
     height: 100%;
     width: 3px;
-    /*margin-right: -1px;*/
     background:  #e8e8e8;         
-    /*background: red;*/
     cursor: e-resize;
   }       
   .qq {     
-    /*float: right;*/
     position: absolute;
     right: 0;
     top: 0;
     height: 100%;
     width: 3px;
-    /*margin-right: -1px;*/
-    /*background:  #e8e8e8;         */
     background: red;
     cursor: e-resize;
   }
-  /*.tbodyWrap .firstClass li {
-    background: #31849B;
-  }
-  .tbodyWrap .secondClass li {
-    background: #E5E0EC;
-  }
-  .tbodyWrap .thirdClass li {
-    background: #FCD5B4;
-  }
-  .tbodyWrap .forthClass li {
-    background: #B2A1C7;
-  }
-  .tbodyWrap .fifthClass li {
-    background: #E6B9B8;
-  }
-  .tbodyWrap .sixClass li {
-    background: #D7E4BC;
-  }
-  .tbodyWrap .sevenClass li {
-    background: #538ED5;
-  }*/
   .wrap .contentWrap .tbodyWrap ul .selectLi {
     background: #02BDF2;
-    /*border: 2px solid blue;*/
     box-sizing: border-box;
-    /*border: 1px solid #02BDF2;
-    border-top: none;
-    border-left: none;*/
   }
   
   /*排序箭头*/
@@ -839,5 +754,39 @@
   */
   .unique_service {
     background: pink;
+  }
+  /*将左侧固定*/
+  .wrap .index_fixed {
+    position: relative;
+    left: 0;
+    top: 0;
+    float:left;
+    z-index: 1;
+  }
+  .index_fixed ul {
+    display: flex;
+    flex-direction: column;
+    float: left;
+  }
+  .theadWrap .index_fixed{
+    z-index: 2200;
+  }
+  .move_wrap:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+  .move_wrap {
+    /*position: absolute;*/
+    /*float: left;*/
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    left: 142px;
+  }
+  .move_content li{
+    /*overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;*/
   }
 </style>

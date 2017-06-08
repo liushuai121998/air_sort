@@ -349,9 +349,8 @@ export default {
             let wwDoms = elDom.querySelectorAll('div.ww')
             let qqDoms = elDom.querySelectorAll('div.qq')
             let qqArr = [].slice.call(qqDoms);
-            let divArr = [].slice.call(divs);
-            //let ulDoms = parent.querySelectorAll('.contentWrap .scrollTbody ul')
-            let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].getElementsByTagName('ul')
+            let divArr = [].slice.call(wwDoms);
+            let ulDoms = parent.getElementsByClassName('contentWrap')[0].getElementsByClassName('scrollTbody')[0].querySelectorAll('ul.nofixed')
             let dom = parent.querySelector('.scroll-x')
             let widthArr = []
             let targetIndex
@@ -359,7 +358,6 @@ export default {
             divArr.forEach((divDom, index) => {
                 widthArr.push(divDom.parentNode.offsetWidth)
                 divDom.addEventListener('mousedown', function(ev) {
-
                     vm.$store.commit('UPDATE_IS_SORT', false)
                     targetClassName = this.className
                     if (targetClassName === 'qq') {
@@ -391,16 +389,18 @@ export default {
                         [].slice.call(ulDoms).forEach((ulDom) => {
 
                             if (targetClassName === 'qq') {
+
                                 ulDom.children[wwDoms.length + targetIndex].style.width = width + 'px'
 
                             } else {
-                                ulDom.children[targetIndex].style.width = width + 'px'
+                                console.log(ulDom.children[targetIndex - 2]) // undefined
+                                ulDom.children[targetIndex - 2].style.width = width + 'px'
+
                             }
 
                         })
-                        ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
 
-                        dom.style.width = ((dom.parentNode.offsetWidth) * (dom.parentNode.offsetWidth)) / ulDoms[0].parentNode.offsetWidth + 'px'
+                        ulDoms[0].parentNode.style.width = that.parentWidth + that.movePointX - that.startPointX + 'px'
                     }
                     document.addEventListener('mouseup', mouseUpEnd)
 
@@ -528,13 +528,60 @@ export default {
         }
 
     },
+    /**
+     * 表头固定
+     * @param {*} parent 
+     * @param {*} el 
+     * @param {*} el2 
+     */
     theadFixed(parent, el, el2) {
 
         let contentWrap = parent.querySelector(el)
         let theadWrap = contentWrap.querySelector(el2)
+        let fixedIndex = parent.querySelectorAll('.index_fixed')
+        console.log(fixedIndex.length)
         contentWrap.onscroll = function(ev) {
-            // console.log(ev)
-            theadWrap.style.top = this.scrollTop + 'px'
+            theadWrap.style.top = this.scrollTop + 'px';
+            // 计算太多 执行多次
+            [].slice.call(fixedIndex).forEach((item, index) => {
+                console.log('hhhhh')
+                item.style.left = this.scrollLeft + 'px'
+            })
+        }
+    },
+    /**
+     * 显示省略号
+     */
+    showEclips() {
+        let ulNodes = document.getElementsByTagName('ul');
+        [].slice.call(ulNodes).forEach((ulItem, ulIndex) => {
+            let liNodes = ulItem.getElementsByTagName('li');
+            [].slice.call(liNodes).forEach((liItem, liIndex) => {
+                new ellipsis(liItem)
+            })
+        })
+
+        ellipsis.prototype.format = function() {
+
+            var _cols = Math.floor(this._width / this._fontSize);
+
+            return _cols - 3;
+
+        }
+
+        function ellipsis(obj) {
+            this.obj = obj;
+            this._width = getStyle(this.obj, "width");
+            this._fontSize = getStyle(this.obj, "fontSize");
+            var limit = Math.floor(this._width / this._fontSize);
+            console.log(limit)
+            var _html = obj.innerHTML;
+            obj.innerHTML = _html.substring(0, limit) + "...";
+        }
+
+        function getStyle(e, p) {
+            var s = e.currentStyle ? e.currentStyle[p] : document.defaultView.getComputedStyle(e, null)[p];
+            return parseInt(s);
         }
     }
 }

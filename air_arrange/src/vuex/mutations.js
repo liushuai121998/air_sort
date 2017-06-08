@@ -713,7 +713,7 @@ export default {
      * @param {*} vm 
      */
     GET_INIT_DATA(state, vm) {
-        // vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
+        //vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
         vm.$http.get('/api/data').then((res) => {
 
             res.data.data.d.flight.forEach((item, index) => {
