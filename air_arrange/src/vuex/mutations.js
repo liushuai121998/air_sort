@@ -3,8 +3,8 @@ import Base64 from '../utils/base64.js'
 export default {
     /**
      * 新增数据
-     * @param {*} state 
-     * @param {*} str 
+     * @param {*} state
+     * @param {*} str
      */
     ADD_DATA(state, vm) {
 
@@ -36,8 +36,8 @@ export default {
     },
     /**
      * 保存选中的tr的索引进行修改和删除
-     * @param {*} state 
-     * @param {*} arr 
+     * @param {*} state
+     * @param {*} arr
      */
     SELECT_TR_INDEX(state, obj) {
         state.selectIndexArr = obj.index
@@ -49,7 +49,7 @@ export default {
     },
     /**
      * 排序
-     * @param {*} state 
+     * @param {*} state
      */
     SORT_TABLE(state, { str, target, param, vm }) {
         switch (str) {
@@ -86,6 +86,7 @@ export default {
      * 根据输入框输入的内容重新排序
      */
     UPDATE_TD(state, { inputValue, vm, placeHolderValue }) {
+        //检索的优化
 
         if (placeHolderValue.search('时间') > 0) {
             return
@@ -99,60 +100,30 @@ export default {
         }
 
         function dataChange(cloneData, data, isDivi) {
-            // console.log(cloneData === state.cloneMergeData, data === state.initData)
+            //debugger
             // 重置数据
+            console.time('id')
             cloneData.forEach((item, index) => {
-                //console.log(item['std'])
                 vm.$set(data, index, item)
             })
 
             let arrIndex = []
             let param = ''
             inputValue = inputValue.toUpperCase()
+
             data.forEach(function(item, index) {
                 if (placeHolderValue.search('机型') > 0) {
+
+
                     param = 'airType'
-                    if (item[param] && item[param].search(inputValue) >= 0) {
+                    if (item[param] && item[param].indexOf(inputValue) >= 0) {
                         arrIndex.push(item)
                     }
+                  //arrIndex.push(item)
 
-                } // else //if (placeHolderValue.search('时间') > 0) {
 
-                //return
-                // 时间或时间段模糊搜索
-                // param = 'std' //'std' 'etd' 'atd' 'sta' 'eta' 'ata' 服务部分 'planTime' 'actualTime'
-                // let paramObj = {
-                //         flight: ['std', 'etd', 'atd', 'sta', 'eta', 'ata'],
-                //         services: ['planTime', 'actualTime']
-                //     }
-                // 时间段搜索
-                // if (inputValue.indexOf('-') > 0) {
-                //     inputValue = inputValue.split('-') // 数组
-                //     console.log(inputValue)
-                // }
-                // 航班部分
-                // paramObj.flight.forEach((paramItem, index) => {
+                } else if (placeHolderValue.search('航班') > 0) {
 
-                //         let str = item[paramItem]
-                //         if (str && str != '/' && str.slice(11, 16).split(':').join('').search(inputValue) >= 0) {
-                //             arrIndex.push(item)
-                //         }
-
-                //     })
-                //     // 服务部分
-                // paramObj.services.forEach((paramItem, index) => {
-                //     // 服务部分的数据
-                //     item['services'].forEach((serviceItem) => {
-                //         let str = serviceItem[paramItem]
-                //         if (str && str != '/' && str.search(inputValue) >= 0) {
-                //             if (arrIndex.indexOf(item) < 0) {
-                //                 arrIndex.push(item)
-                //             }
-                //         }
-                //     })
-                // })
-                //}
-                else if (placeHolderValue.search('航班') > 0) {
                     param = 'flightNo'
                     if (item[param] && item[param].search(inputValue) >= 0) {
                         arrIndex.push(item)
@@ -175,18 +146,25 @@ export default {
                 }
 
             })
+            //data = JSON.parse(JSON.stringify(arrIndex))
+            if(arrIndex.length === data.length) {
+              return;
+            }
+            data.splice(arrIndex.length)
+            console.time('bbb')
             data.forEach((item, index, arr) => {
-
-                if (index <= arrIndex.length - 1) {
-                    vm.$set(arr, index, arrIndex[index])
-                } else {
-                    arr.splice(index)
-                }
-
+              vm.$set(arr, index, arrIndex[index])
             })
-            state.cloneMergeData3 = JSON.parse(JSON.stringify(data))
-            state.cloneComeData3 = JSON.parse(JSON.stringify(data))
-            state.cloneLeaveData3 = JSON.parse(JSON.stringify(data))
+            console.timeEnd('bbb')
+            // data.forEach((item, index, arr) => {
+            //
+            //     if (index <= arrIndex.length - 1) {
+            //         vm.$set(arr, index, arrIndex[index])
+            //     } else {
+            //         arr.splice(index)
+            //     }
+            //
+            // })
                 // 判断是否分屏, 更新数量
             if (isDivi) {
                 vm.$set(state.length, "comeLength", state.comeData.length)
@@ -198,8 +176,13 @@ export default {
         }
 
         state.inputValue = inputValue
+        vm.$nextTick(function(){
+
+          //渲染完毕
+          console.timeEnd('id')
+        });
     },
-    /** 
+    /**
      * 时间段搜索
      */
     SEARCH(state, { inputValue, vm, placeHolderValue }) {
@@ -274,46 +257,9 @@ export default {
         }
     },
     /**
-     * 改变td的宽度，拉伸效果
-     */
-    CHANGE_TH_WIDTH(state, { targetIndex, index, widthArr, parentNode, cal, parentWidth, vm, parent, targetClassName }) {
-        if (!state.isDiviScreen) {
-            if (targetClassName === 'qq') {
-                vm.$set(state.serviceWidth[targetIndex], 'width', `${widthArr[index]}px`)
-
-            } else {
-                vm.$set(state.thLeftData[targetIndex], 'width', `${widthArr[index]}px`)
-            }
-            parentNode.parentNode.style.width = parentWidth + cal + 'px'
-        } else {
-
-            if (parent.className === 'divi_content1') {
-
-                if (targetClassName === 'qq') {
-                    vm.$set(state.comeServiceWidth[targetIndex], 'width', `${widthArr[index]}px`)
-                } else {
-                    vm.$set(state.tabComeData[targetIndex], 'width', `${widthArr[index]}px`)
-                }
-                parentNode.parentNode.style.width = parentWidth + cal + 'px'
-            }
-            if (parent.className === 'divi_content2') {
-                if (targetClassName === 'qq') {
-                    vm.$set(state.leaveServiceWidth[targetIndex], 'width', `${widthArr[index]}px`)
-                } else {
-                    vm.$set(state.tabLeaveData[targetIndex], 'width', `${widthArr[index]}px`)
-                }
-                parentNode.parentNode.style.width = parentWidth + cal + 'px'
-            }
-        }
-
-    },
-    DEL_RIGHT_CONTENT(state, delArr) {
-        state.delRightContent = delArr
-    },
-    /**
      * 按需显示数据
-     * @param {*} state 
-     * @param {*} param1 
+     * @param {*} state
+     * @param {*} param1
      */
     SHOW_DATA(state, { showData, vm }) {
 
@@ -331,7 +277,7 @@ export default {
          * 根据需要显示数据
          * @param {*} cloneData 复制的内容区数据
          * @param {*} data 内容区数据
-         * @param {*} cloneLeftData 复制的头部数据 
+         * @param {*} cloneLeftData 复制的头部数据
          * @param {*} leftData 头部数据
          */
         function showDataDetail(cloneData, data, cloneLeftData, leftData) {
@@ -365,9 +311,11 @@ export default {
                 }
 
                 let arr = []
-                leftData.forEach(item => {
-                    if (textArr.indexOf(item.title) >= 0 || item.title === '序号') {
+                leftData.forEach((item, index) => {
+                    if (textArr.indexOf(item.title) >= 0 || index === 0 || index === 1) {
+
                         arr.push(item)
+
                     }
                 })
 
@@ -396,7 +344,7 @@ export default {
     },
     /**
      * 航控排序
-     * @param {*} state 
+     * @param {*} state
      */
     FLY_CONTROL_SORT(state, vm) {
         // 第一类
@@ -509,8 +457,8 @@ export default {
 
     /**
      * 显示/隐藏rightContent
-     * @param {*} state 
-     * @param {*} isShowRight 
+     * @param {*} state
+     * @param {*} isShowRight
      */
     SHOW_HIDDEN_RIGHT(state, isShowRight) {
         state.isShowRight = isShowRight
@@ -520,28 +468,27 @@ export default {
     },
     /**
      * 获取初始化数据
-     * @param {*} state 
-     * @param {*} vm 
+     * @param {*} state
+     * @param {*} vm
      */
     GET_INIT_DATA(state, vm) {
-        //vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
+        // vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
         vm.$http.get('/api/data').then((res) => {
-            let names = Object.keys(res.data.data.d.flight[0])
+
             res.data.data.d.flight.forEach((item, index) => {
                     if (!item['mark'].trim()) {
                         vm.$set(item, 'mark', '/')
                     }
-
                     vm.$set(state.initData, index, item)
                     state.flightIdArr.push(item.flightId)
                 })
-                // 复制一份初始化数据 
+                // 复制一份初始化数据
             state.cloneInitData = JSON.parse(JSON.stringify(res.data.data.d.flight))
 
             // 权限数据
             state.authData = res.data.data.d.Auth
                 // 到离港合并的数据
-            let flightNoArr = [] //航班号 
+            let flightNoArr = [] //航班号
             state.initData.forEach((item, index) => {
                 flightNoArr.push(item['flightNo'])
             })
@@ -666,17 +613,10 @@ export default {
             state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
         })
     },
-    SAVE_INDEX(state, { index, targetIndex, vm }) {
-        // state.classId = state.initData[index]['flightId']
-        // state.classTargetIndex = targetIndex
-        vm.$set(state.classInfo, 'id', state.initData[index]['flightId'])
-        vm.$set(state.classInfo, 'targetIndex', targetIndex)
-            // console.log(state.classId)
-    },
     /**
      * 服务数据的按需显示
-     * @param {*} state 
-     * @param {*} param1 
+     * @param {*} state
+     * @param {*} param1
      */
     SHOW_SERVICE_DATA(state, { serviceDataInfo, vm }) {
         console.log(state.cloneMergeData[0]['services'])
@@ -751,8 +691,8 @@ export default {
     },
     /**
      * 避免宽度拉伸与排序冲突
-     * @param {*} state 
-     * @param {*} isSort 
+     * @param {*} state
+     * @param {*} isSort
      */
     UPDATE_IS_SORT(state, isSort) {
         state.isSort = isSort
@@ -781,8 +721,19 @@ export default {
                 }
 
                 ws.onmessage = function(e) {
+                  let base = new Base64()
+                  let result = base.decode(JSON.parse(e.data).body)
+                  console.log(JSON.parse(result))
+                  result = JSON.parse(result)
+                  if(result.eventcode) {
+                    // 航班事件推送
+                    console.log(result)
+                    flightInfoUpdate(result)
 
-                    serviceDataUpdate(e.data)
+                  }else {
+                    // 服务推送
+                    serviceDataUpdate(result)
+                  }
 
                 };
 
@@ -798,13 +749,10 @@ export default {
         })
 
         // 提交服务
-        function serviceDataUpdate(data) {
+        function serviceDataUpdate(result) {
             // 提交服务
-            let base = new Base64()
-            let result = base.decode(JSON.parse(data).body)
-            console.log(JSON.parse(result))
-            result = JSON.parse(result)
                 // 将接受到的时间戳转化
+            console.log(result)
             let date = new Date(Number(result.time))
             let hour = date.getHours()
             hour = hour < 10 ? '0' + hour : hour
@@ -814,28 +762,70 @@ export default {
             let time = hour + '' + minute
                 // 改变时间
             switch (state.updateFlightInfo.str) {
+
                 case 'tdData':
                     // 到离港
                     vm.$set(state.initData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    state.serviceUpdateInfo.push('航班' + state.initData[state.updateFlightInfo.index]['flightNo'] + '服务变更为' + time)
                     break
                 case 'comeData':
                     // 到港
                     vm.$set(state.comeData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    state.serviceUpdateInfo.push('航班' + state.initData[state.updateFlightInfo.index]['flightNo'] + '服务变更为' + time)
                     break
 
                 case 'leaveData':
                     // 离港
-                    console.log(state.updateFlightInfo.index)
+                    // console.log(state.updateFlightInfo.index)
                     vm.$set(state.leaveData[state.updateFlightInfo.index]['services'][state.updateFlightInfo.clickServiceIndex], 'actualTime', time)
+                    state.serviceUpdateInfo.push('航班' + state.initData[state.updateFlightInfo.index]['flightNo'] + '服务变更为' + time)
                     break
+
             }
 
+        }
+        // 航班信息的更新
+        function flightInfoUpdate (result) {
+          // 新增航班事件
+          if(result.type === 'new') {
+            // 新增航班
+            let newData = JSON.parse(result.value)
+            state.initData.push(newData)
+            state.flightUpdateInfo.push(result.msg + newData.flightNo)
+            if(newData.aOrD === 'D') {
+              // 离港
+              state.leaveData.push(newData)
+            }else if(newData.aOrD === 'A') {
+              // 到港
+              state.comeData.push(newData)
+            }
+            vm.$set(state.length, "comeLength", state.comeData.length)
+            vm.$set(state.length, 'leaveLength', state.leaveData.length)
+            vm.$set(state.length, 'mergeLength', state.initData.length)
+            return;
+          }
+
+          // 其他的事件
+          // result.flightId
+          state.initData.forEach((item, index) => {
+
+            if(item['flightId'] === result.flightId) {
+              if(result.value.indexOf('2017-') >= 0) {
+                result.value = result.value.slice(11, 16).split(':').join('')
+              }
+              vm.$set(item, result.type,  result.value + '')
+              //console.log(item[result.type])
+              state.flightUpdateInfo.push(item['flightNo'] + '' + result.msg + '为' + result.value)
+              return;
+            }
+
+          })
         }
     },
     /**
      * 取消发布时间
-     * @param {*} stata 
-     * @param {*} param1 
+     * @param {*} stata
+     * @param {*} param1
      */
     CANCEL_TIME(state, { vm }) {
 
@@ -862,37 +852,43 @@ export default {
     },
     /**
      * 保存当前的时间作为参数发送后台
-     * @param {*} state 
-     * @param {*} param1 
+     * @param {*} state
+     * @param {*} param1
      */
     UPDATE_TIME(state, { vm, time }) {
         state.updateTime = time
     },
     /**
      * 是否需要获取时间参数
-     * @param {*} state 
-     * @param {*} param1 
+     * @param {*} state
+     * @param {*} param1
      */
     IS_GET_PARAM_TIME(state, { vm, isGet }) {
         state.isGetParamTime = isGet
     },
     /**
      * 重置检索后的数据。当select发生变化时
-     * @param {*} state 
-     * @param {*} param1 
+     * @param {*} state
+     * @param {*} param1
      */
     RESET_DATA_SEARCH(state, { vm }) {
         if (state.isDiviScreen) {
-            state.cloneComeData.forEach((item, index) => {
+            if(state.cloneComeData.length > state.comeData.length) {
+              state.cloneComeData.forEach((item, index) => {
                 vm.$set(state.comeData, index, item)
-            })
+              })
+            }
+
             state.cloneLeaveData.forEach((item, index) => {
                 vm.$set(state.leaveData, index, item)
             })
         } else {
-            state.cloneMergeData.forEach((item, index) => {
+            if(state.cloneMergeData.length > state.initData.length) {
+              state.cloneMergeData.forEach((item, index) => {
                 vm.$set(state.initData, index, item)
-            })
+              })
+            }
+
         }
     },
     /**
@@ -902,9 +898,9 @@ export default {
      * 3.航班到达事件
      * 4.航班离港事件
      * 5.新增航班事件
-     * 
-     * @param {*} state 
-     * @param {*} param1 
+     *
+     * @param {*} state
+     * @param {*} param1
      */
     FLIGHT_INFO_UPDATE(state, { data, vm }) {
         // 新增航班事件

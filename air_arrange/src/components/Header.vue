@@ -1,7 +1,7 @@
 <template>
     <div class="header">
       <!--v-model 双向数据绑定-->
-      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @keyup='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
+      <input type="text" class="search" @keydown.enter='search' :placeholder="placeHolderValue" v-model='inputValue' @keyup.enter='textChange' id='search'><label for='search' class='search_label' @click='search'><span class='icon-search'></span></label>
       <select @change='selectValue($event)'>
         <option>请选择搜索类型(模糊搜索)</option>
         <option selected>按机型搜索</option>
@@ -12,9 +12,9 @@
         <option>按机号搜索</option>
       </select>
       <!--操作数据-->
-      <input type="button" value="新增" @click='addData'>
-      <input type="button" value="修改" @click='setData'>
-      <input type="button" value="删除" @click='deleteData'>
+      <!--<input type="button" value="新增" @click='addData'>-->
+      <!--<input type="button" value="修改">-->
+      <!--<input type="button" value="删除">-->
       <select>
         <option>全部代理</option>
         <option>中国国航航空公司</option>
@@ -50,7 +50,7 @@
         </ul>
       </section>
       <span class='show_time'>标准时间: {{time | formatDate}}</span>
-      <input type='text' class='show_info' :value='flightUpdateInfo.val'>
+      <input type='text' class='show_info' :value='flightUpdateInfo && flightUpdateInfo[flightUpdateInfo.length - 1]'>
       <!--<div class='control_wrap'>
         <span class="icon-minus"></span>
         <span class="icon-checkbox-unchecked"></span>
@@ -105,11 +105,11 @@ export default {
         let serviceArr = [].concat(this.$store.state.serviceData[0])
         serviceArr.forEach((item, index) => {
           this.serviceDataInfo.push({
-            text: item['detailName'], 
+            text: item['detailName'],
             isServiceChecked: false
           })
         })
-        
+
       }, 1000)
 
       this.changeTime()
@@ -119,7 +119,7 @@ export default {
         changeTime () {
           // 获取时间的数据
             let count = 0
-            this.timeId = setInterval(() => { 
+            this.timeId = setInterval(() => {
               if(this.$store.state.isGetParamTime) {
                 // 保存时间
                 this.$store.commit('UPDATE_TIME', {vm: this, time: this.time})
@@ -133,7 +133,7 @@ export default {
                 this.isTime = true
                 this.getTime()
                 clearInterval(this.timeId)
-              } 
+              }
             }, 1000)
 
         },
@@ -153,20 +153,6 @@ export default {
           // this.$store.commit('FLY_CONTROL_SORT', this)
 
         },
-        setData () {
-          // 修改数据
-          this.$store.commit('SET_DATA')
-          // console.info(ev.target.parentNode.firstChild)
-          this.inputValue = ''
-        },
-        deleteData (ev) {  
-          if(confirm('确定要删除这些信息吗？')){
-            // 删除数据 
-            // this.$store.commit('CHANGE_CLICK_STATE')
-            this.$store.commit('DELETE_DATA', this)
-          }
-          
-        },
         search (ev) {
 
           if(this.placeHolderValue.indexOf('时间') < 0) {
@@ -177,21 +163,12 @@ export default {
           this.$store.commit('SEARCH', {vm: this, inputValue: this.inputValue, placeHolderValue: this.placeHolderValue})
 
         },
-        
+
         // 搜索框输入检索相关的列表
         textChange (ev) {
-
-          if(!this.$store.state.isDiviScreen){
-            //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
-          } else {
-            //$scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
-
-          }
-
           this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
-
         },
-        selectValue (ev) { 
+        selectValue (ev) {
           this.placeHolderValue = ev.target.value
           this.inputValue = ''
           // 将检索后的数据重置， 当select的值发生变化时
@@ -215,7 +192,7 @@ export default {
             arr.splice(0, 1)
             this.showData[0].isChecked = JSON.stringify(arr).search('false') >= 0 ? false : true
           }
-          
+
         },
         confirmShow(isShow) {
           if(this.logFlag) {
@@ -225,6 +202,12 @@ export default {
           if(isShow) {
             this.$store.commit('SHOW_DATA', {vm: this, showData: this.showData})
             //this.logFlag = true
+//            if(this.$store.state.isDiviScreen) {
+//              $scrollBar(document.querySelector('.divi_content1'), '.move_wrap', '.tab')
+//              $scrollBar(document.querySelector('.divi_content2'), '.move_wrap', '.tab')
+//            }else {
+//              $scrollBar(document.querySelector('.merge_wrap', '.move_wrap', '.tab'))
+//            }
           }else {
             this.toggle = !this.toggle
             return
@@ -258,24 +241,27 @@ export default {
         confirmServiceShow (isConfirm) {
           if(isConfirm) {
             this.$store.commit('SHOW_SERVICE_DATA', {serviceDataInfo: this.serviceDataInfo, vm: this})
-          }
-          if(!this.$store.state.isDiviScreen){
-            //$scrollBar.scrollBar('.scroll', '.scrollTbody', {mergeWrap: document.querySelector('.merge_wrap'), diviContent1: null, diviContent2: null})
-
-          } else {
-
-            //$scrollBar.scrollBar('.scroll_bar_child', '.scrollTbody', {mergeWrap: null, diviContent1: document.querySelector('.divi_content1'), diviContent2: document.querySelector('.divi_content2')})
+//            if(this.$store.state.isDiviScreen) {
+//
+//              $scrollBar(document.querySelector('.divi_content1'), '.move_wrap', '.tab')
+//              $scrollBar(document.querySelector('.divi_content2'), '.move_wrap', '.tab')
+//
+//            }else {
+//
+//              $scrollBar(document.querySelector('.merge_wrap', '.move_wrap', '.tab'))
+//
+//            }
           }
           this.isServiceShow = !this.isServiceShow
         }
-    },   
+    },
     /*时间过滤*/
     filters: {
         formatDate(time) {
             var date = new Date(time);
             return formatDate(date, ' hh:mm:ss yyyy-MM-dd');
         }
-    } 
+    }
 }
 </script>
 

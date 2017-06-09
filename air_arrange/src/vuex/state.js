@@ -110,33 +110,33 @@ export default {
         targetIndex: ''
     },
     /** 复制的服务数据
-     * 
+     *
      */
     cloneServiceData: [],
     /*是否排序
      */
     isSort: true,
     /** 克隆一份合屏的数据
-     * 
+     *
      */
     cloneMergeData: [],
     cloneMergeData2: [],
     cloneMergeData3: [],
     /** 内容区是否显示
-     * 
+     *
      */
     isContentShow: {
         isShow: false
     },
     /**wsUrl websocket地址
-     * 
+     *
      */
     wsUrl: {
         val: '',
         token: ''
     },
     /**权限数据
-     * 
+     *
      */
     authData: null,
     /**用户名 */
@@ -147,7 +147,9 @@ export default {
     isGetParamTime: false,
     updateTime: 0,
     // 航班信息的更新
-    flightUpdateInfo: { val: '' },
+    flightUpdateInfo: [],
     // 航班id
-    flightIdArr: []
+    flightIdArr: [],
+    // 服务信息的更新
+    serviceUpdateInfo: []
 }

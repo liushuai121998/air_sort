@@ -1,28 +1,115 @@
 <template>
     <div class='right_message' ref='sideContent'>
-        <section v-for='(item, index) in messages' :ref='item.secRef'>
-            <div class='header_info'>
-                <span class='header_title'>{{item.title}}</span>
-                <input type='text' :id='item.ref' :placeholder='item.holder'><label :for='item.ref'><span class='icon-search'></span></label>
-                <div class='cog' @click='hiddenSection($event, item.ref)'>
-                    <span class="icon-cog"></span>
-                </div>    
-            </div>
-            <div v-if='item.title==="消息"' class='message_area'>
-                <textarea></textarea>
-            </div>
-            <div class='hidden_set' :ref='item.ref'>
-                <div @click='deleteSec($event, item)'>
-                    删除
-                </div>
-                <div>
-                    取消事件
-                </div>
-                <div @click='undo($event, item)'>
-                    撤销上一次
-                </div>
-            </div>
-        </section>
+        <!--<section v-for='(item, index) in messages' :ref='item.secRef'>-->
+            <!--<div class='header_info'>-->
+                <!--<span class='header_title'>{{item.title}}</span>-->
+                <!--<input type='text' :id='item.ref' :placeholder='item.holder' :value="flightUpdateInfo && flightUpdateInfo[flightUpdateInfo.length - 1]"><label :for='item.ref'><span class='icon-search'></span></label>-->
+                <!--<div class='cog' @click='hiddenSection($event, item.ref)'>-->
+                    <!--<span class="icon-cog"></span>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="content_info">-->
+              <!--<ul>-->
+                <!--<li v-for="str in flightUpdateInfo" >{{str}}</li>-->
+              <!--</ul>-->
+            <!--</div>-->
+            <!--<div v-if='item.title==="消息"' class='message_area'>-->
+                <!--<textarea></textarea>-->
+            <!--</div>-->
+            <!--<div class='hidden_set' :ref='item.ref'>-->
+                <!--<div @click='deleteSec($event, item)'>-->
+                    <!--删除-->
+                <!--</div>-->
+                <!--<div>-->
+                    <!--取消事件-->
+                <!--</div>-->
+                <!--<div @click='undo($event, item)'>-->
+                    <!--撤销上一次-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</section>-->
+      <section>
+        <div class='header_info'>
+          <span class='header_title'>航班通知</span>
+          <input type='text' placeholder="搜索航班通知信息"
+                 :value="flightUpdateInfo && flightUpdateInfo[flightUpdateInfo.length - 1]"><label><span
+          class='icon-search'></span></label>
+          <div class='cog'  @click='hiddenSection(isShow = !isShow)'>
+            <span class="icon-cog"></span>
+          </div>
+        </div>
+        <div class="content_info">
+          <ul>
+            <li v-for="str in flightUpdateInfo">{{str}}</li>
+          </ul>
+        </div>
+        <div class='hidden_set' v-show="isShow">
+          <div>
+            删除
+          </div>
+          <div>
+            取消事件
+          </div>
+          <div>
+            撤销上一次
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class='header_info'>
+          <span class='header_title'>服务告警</span>
+          <input type='text' placeholder="搜索服务告警通知" :value="serviceUpdateInfo && serviceUpdateInfo[serviceUpdateInfo.length - 1]"><label><span
+          class='icon-search'></span></label>
+          <div class='cog' @click='hiddenSection(isServiceShow = !isServiceShow)'>
+            <span class="icon-cog"></span>
+          </div>
+        </div>
+        <div class="content_info" >
+          <ul>
+            <li v-for="str in serviceUpdateInfo">{{str}}</li>
+          </ul>
+        </div>
+        <div class='hidden_set' v-show="isServiceShow">
+          <div>
+            删除
+          </div>
+          <div>
+            取消事件
+          </div>
+          <div>
+            撤销上一次
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class='header_info'>
+          <span class='header_title'>消息</span>
+          <input type='text' placeholder="搜索消息"><label><span
+          class='icon-search'></span></label>
+          <div class='cog' @click='hiddenSection(isMessageShow = !isMessageShow)'>
+            <span class="icon-cog"></span>
+          </div>
+        </div>
+        <div class="content_info">
+          <ul>
+            <li v-for="str in flightUpdateInfo">{{str}}</li>
+          </ul>
+        </div>
+        <div class='message_area'>
+          <textarea></textarea>
+        </div>
+        <div class='hidden_set' v-show="isMessageShow">
+          <div>
+            删除
+          </div>
+          <div>
+            取消事件
+          </div>
+          <div>
+            撤销上一次
+          </div>
+        </div>
+      </section>
     </div>
 </template>
 <script>
@@ -31,10 +118,19 @@
         data () {
             return {
                 messages: [{secRef: '0_sec', ref: 'air', title: '航班通知', holder: '搜索航班通知信息'}, {secRef: '1_sec', ref: 'service', title: '服务告警', holder: '搜索服务告警通知'}, {secRef: '2_sec', ref: 'message', title: '消息', holder: '搜索消息'}],
-                undoArr: []
+                undoArr: [],
+                flightUpdateInfo: this.$store.state.flightUpdateInfo,
+                serviceUpdateInfo: this.$store.state.serviceUpdateInfo,
+                // 航班信息的显示
+                isShow: false,
+                // 服务告警的显示
+                isServiceShow: false,
+                // 消息的显示
+                isMessageShow: false
             }
         },
         mounted () {
+
             this.$refs.sideContent.style.height = document.documentElement.clientHeight - 30 + 'px'
             if(!this.$store.state.isDiviScreen) {
                 let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
@@ -45,15 +141,16 @@
             }
         },
         methods: {
-            hiddenSection (ev, ref) {
-                this.$refs[ref][0].isClick = !this.$refs[ref][0].isClick
-                if(this.$refs[ref][0].isClick) {
-                    // console.log(this.$refs[ref] instanceof Array)   // true
-                    this.$refs[ref][0].style.display = 'flex'
-                }else {
-                    this.$refs[ref][0].style.display = 'none'
-                }
-                
+            hiddenSection () {
+//
+//                this.$refs[ref][0].isClick = !this.$refs[ref][0].isClick
+//                if(this.$refs[ref][0].isClick) {
+//                    // console.log(this.$refs[ref] instanceof Array)   // true
+//                    this.$refs[ref][0].style.display = 'flex'
+//                }else {
+//                    this.$refs[ref][0].style.display = 'none'
+//                }
+
             },
             deleteSec (ev, item) {
                 if(confirm(`确定删除${item.title}相关信息吗`)) {
@@ -69,10 +166,10 @@
                 }
                 //this.$store.commit('DEL_RIGHT_CONTENT', this.undoArr)
                 if(this.undoArr.length === 3) {
-                    
+
                     $scrollBar.resize('.scroll-x', '.fixed-x-bar', '.scroll', {merge: '.merge_wrap', divi1: '.divi_content1', divi2: '.divi_content2'}, {content: '.contentWrap', right: '.rightWrap'},  this.$store.state.isDiviScreen)
                     this.$refs.sideContent.style.display = 'none'
-                    
+
                 }
             },
             undo(ev, item) {    // 撤销   数据驱动
@@ -80,14 +177,15 @@
                 this.$refs[item.ref][0].style.display = 'none'
                 if(this.undoArr.length > 0 ){
                     let index = Number(this.undoArr[this.undoArr.length -1].slice(0, 1))
-                    if(this.$refs[`${index + 1}_sec`][0]) {    
+                    if(this.$refs[`${index + 1}_sec`][0]) {
                         this.$refs.sideContent.insertBefore(this.$refs[`${index}_sec`][0], this.$refs[`${index+1}_sec`][0])
-                    }  
+                    }
                 }
             }
         }
     }
 </script>
+
 <style scoped>
     .right_message {
         position: absolute;
@@ -102,6 +200,8 @@
         position: relative;
         background: #3b3b3b;
         flex-grow: 1;
+        /*display: flex;*/
+        /*flex-direction: column;*/
     }
     section .header_info {
         position: relative;
@@ -145,8 +245,6 @@
         left: 0;
         right: 0;
         margin: auto;
-        /*visibility: hidden;*/
-        display: none;
         flex-direction: column;
         width: 80px;
         height: 80px;
@@ -160,12 +258,13 @@
         justify-content: center;
         border-bottom: 1px solid gray;
         flex-grow: 1;
+        margin-bottom: 10px;
         cursor: pointer;
     }
     section .hidden_set div:last-child {
         border-bottom: none;
     }
-  
+
     .icon-cog {
         position: absolute;
         left: 50%;
@@ -200,5 +299,19 @@
     .message_area textarea {
         width: 100%;
         height: 100%;
+    }
+    .content_info {
+        position: absolute;
+        width: 100%;
+        height: calc(100% - 34px);
+        overflow: auto;
+    }
+    .content_info li {
+      color: #fff;
+    }
+    input[type='text'] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 </style>
