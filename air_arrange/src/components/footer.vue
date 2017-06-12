@@ -27,7 +27,10 @@
             }
         },
         updated () {
-            
+
+        },
+        filters: {
+
         }
     }
 </script>

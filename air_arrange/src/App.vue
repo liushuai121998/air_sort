@@ -3,7 +3,9 @@
     <div v-if='isContentShow.isShow'>
       <v-header></v-header>
       <side-bar></side-bar>
-      <table-content></table-content>
+      <keep-alive>
+        <table-content v-once></table-content>
+      </keep-alive>
       <v-footer></v-footer>
     </div>
     <div v-else>
@@ -34,20 +36,19 @@ export default {
 
       }, (error) => {
         console.log('error')
-      })  
+      })
   },
   methods: {
-    
+
   },
   computed: {
     // data () {
     //   return this.$store.state.initData
     // }
-  }, 
+  },
   components: {'v-header': header, 'side-bar': sideBar, 'table-content': tableContent, 'v-footer': footer, 'login': login}
 }
 </script>
 
 <style>
-  
 </style>

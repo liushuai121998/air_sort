@@ -166,7 +166,11 @@ export default {
 
         // 搜索框输入检索相关的列表
         textChange (ev) {
+          console.time('hello')
           this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
+          this.$nextTick(() => {
+              console.timeEnd('hello')
+          })
         },
         selectValue (ev) {
           this.placeHolderValue = ev.target.value

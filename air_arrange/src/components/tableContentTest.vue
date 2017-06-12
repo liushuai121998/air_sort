@@ -1,47 +1,47 @@
 <template>
   <div class='wrap' ref='wrap'>
     <div class='merge_wrap' v-show='!isDiviScreen' ref='mergeWrap'>
-      <div class='merge_title'>到离港</div>
-      <div class='contentWrap'>
-        <div class='main_content'>
-          <div class='theadWrap  scrollX' ref='theadWrap'>
-           <ul class='tab'>
-             <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
-             <!--服务数据头部-->
-             <li v-for='(item, serIndex) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
-             <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
-           </ul>
-          </div>
-          <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
-            <!--固定部分-->
-            <div class='index_fixed'>
-              <ul :style='{width: thLeftData[0]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+        <div class='merge_title'>到离港</div>
+        <div class='contentWrap'>
+          <div class='main_content'>
+            <div class='theadWrap  scrollX' ref='theadWrap'>
+              <ul class='tab'>
+                <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
+                <!--服务数据头部-->
+                <li v-for='(item, serIndex) in tdData[0] && tdData[0]["services"]' :key="serIndex" :style='{width: serviceWidth[serIndex]["width"]}' v-if='item.sorE === "S"'><span>{{item.detailName + '-'}}</span><div class='qq'></div></li>
+                <li v-else-if='item.sorE === "E"' :style='{width: serviceWidth[serIndex]["width"]}'><span>{{item.detailName + '|'}}</span><div class='qq'></div></li>
+              </ul>
+            </div>
+            <div class='tbodyWrap scrollX scrollTbody' ref='tbodyWrap'>
+              <!--固定部分-->
+              <div class='index_fixed'>
+                <ul :style='{width: thLeftData[0]["width"], display: "flex", flexDirection: "column", float: "left"}'>
                   <!--序号固定-->
-                  <li v-for='(tdItem, index) in tdData'>{{index + 1}}</li>
-              </ul>
-              <ul :style='{width: thLeftData[1]["width"], display: "flex", flexDirection: "column", float: "left"}'>
-                  <li v-for='(tdItem, index) in tdData'>{{tdItem["flightNo"]}}</li>
-              </ul>
-            </div>
-            <div class="move_wrap">
-                <ul class='move_content' v-for='(item, i) in thLeftData.slice(2)' :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
-                    <li v-for='(tdItem, index) in tdData'  @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
-                    <li v-else-if="item['name'] === 'operationDate'" @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
-                    <li v-else @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
+                  <li v-for='(tdItem, index) in tdData' :key="index">{{index + 1}}</li>
                 </ul>
-                <ul v-for='(item, i) in tdData[0] && tdData[0]["services"]' :style='{width: serviceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
-                    <li v-for='(tdItem, index) in tdData' @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")'>
-                      <span :style='{display: "inline-block", width: "50%", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
+                <ul :style='{width: thLeftData[1]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                  <li v-for='(tdItem, index) in tdData' :key="index">{{tdItem["flightNo"]}}</li>
+                </ul>
+              </div>
+              <div class="move_wrap">
+                <ul class='move_content' v-for='(item, i) in thLeftData.slice(2)' :key="i" :style='{width: item.width, display: "flex", flexDirection: "column", float: "left"}'>
+                  <li v-for="(tdItem, index) in tdData" :key="index"  @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")' v-if='!tdItem[item["name"]] || tdItem[item["name"]].indexOf("2017-") < 0' >{{tdItem[item['name']] || '/'}}</li>
+                  <li v-else-if="item['name'] === 'operationDate'" @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")' :class='{selectLi: tdItem["class"]&&item["class"]}'>{{tdItem[item['name']].slice(5, 10)}}</li>
+                  <li v-else @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")'>{{tdItem[item['name']].slice(11, 16).split(':').join('')}}</li>
+                </ul>
+                <ul v-for='(item, i) in tdData[0] && tdData[0]["services"]' :key="i" :style='{width: serviceWidth[i]["width"], display: "flex", flexDirection: "column", float: "left"}'>
+                  <li v-for='(tdItem, index) in tdData' :key="index" @dblclick='serviceSubmit($event, tdItem, index, tdData, "tdData")' @mousedown='selectTr($event,index, "merge_wrap")'>
+                    <span :style='{display: "inline-block", width: "50%", borderRight: "1px solid black", boxSizing: "border-box", height: "100%"}'>{{tdItem["services"][i]['planTime']}}</span><!--
                       --><span :style='{display: "inline-block", width: "50%", height: "100%"}' :class='{unique_service: tdItem["services"][i]["planTime"] && tdItem["services"][i]["planTime"] != "/", able_submit: true}'>{{tdItem["services"][i]['actualTime']}}</span>
-                    </li>
+                  </li>
                 </ul>
-            </div>
+              </div>
 
+            </div>
           </div>
         </div>
+        <right-content></right-content>
       </div>
-      <right-content></right-content>
-    </div>
     <div class='divi_wrap' v-show='isDiviScreen'>
       <div class='divi_content1' ref='diviContent1'>
           <div class='title_come'>到港</div>
@@ -154,6 +154,7 @@
   </div>
 </template>
 <script>
+
   import scrollBar from './scrollBar'
   import scrollXBar from './scrollXBar'
   import rightContent from './rightContent'
@@ -161,6 +162,7 @@
   export default {
     data () {
       return {
+//        tdData: [],
         tdData: this.$store.state.initData,
         cloneTdData: this.$store.state.cloneInitData,
         comeTemp: null,
@@ -185,7 +187,8 @@
         saveIndex: 0,
         isDiviScreenStr: '',
         //航班信息发布的显示
-        isShowFlightInfo: false
+        isShowFlightInfo: false,
+        isFirst: true
       }
     },
     created () {
@@ -195,6 +198,7 @@
       // }, 5000)
     },
     mounted () {
+
      if(this.$store.state.isDiviScreen) {
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
@@ -507,6 +511,9 @@
       }
     },
     computed: {
+      tdData () {
+
+      },
       thLeftData () {
         return this.$store.state.thLeftData
       },

@@ -150,21 +150,12 @@ export default {
             if(arrIndex.length === data.length) {
               return;
             }
-            data.splice(arrIndex.length)
             console.time('bbb')
+            data.splice(arrIndex.length)
             data.forEach((item, index, arr) => {
               vm.$set(arr, index, arrIndex[index])
             })
             console.timeEnd('bbb')
-            // data.forEach((item, index, arr) => {
-            //
-            //     if (index <= arrIndex.length - 1) {
-            //         vm.$set(arr, index, arrIndex[index])
-            //     } else {
-            //         arr.splice(index)
-            //     }
-            //
-            // })
                 // 判断是否分屏, 更新数量
             if (isDivi) {
                 vm.$set(state.length, "comeLength", state.comeData.length)
@@ -176,10 +167,12 @@ export default {
         }
 
         state.inputValue = inputValue
+        console.time('id')
         vm.$nextTick(function(){
-
           //渲染完毕
+          // 如何解决性能优化啊？？？？？
           console.timeEnd('id')
+
         });
     },
     /**
@@ -566,6 +559,19 @@ export default {
 
             // 克隆一份合屏的数据
             state.cloneMergeData = JSON.parse(JSON.stringify(state.initData))
+            Object.freeze(state.cloneMergeData)
+            // let initData = state.cloneMergeData
+            // let start = 0
+            // let end = 100
+            // setInterval(() => {
+            //   if(end > state.cloneMergeData.length) {
+            //     end = state.cloneMergeData.length
+            //   }
+            //   state.initData.push(initData.slice(start, end))
+            //   start = end
+            //   end += 100
+            // }, 100)
+
                 // state.cloneMergeData.forEach((item, index) => {
 
             //     })
