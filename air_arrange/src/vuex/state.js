@@ -151,5 +151,6 @@ export default {
     // 航班id
     flightIdArr: [],
     // 服务信息的更新
-    serviceUpdateInfo: []
+    serviceUpdateInfo: [],
+    diviData: []
 }

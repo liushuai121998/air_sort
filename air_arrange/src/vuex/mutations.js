@@ -155,7 +155,32 @@ export default {
             data.forEach((item, index, arr) => {
               vm.$set(arr, index, arrIndex[index])
             })
-            console.timeEnd('bbb')
+            let diviData = JSON.parse(JSON.stringify(data))
+            if(diviData.length > 30) {
+              state.diviData.splice(30)
+              diviData.slice(0, 30).forEach((item, index) => {
+                vm.$set(state.diviData, index, item)
+              })
+              console.timeEnd('bbb')
+              vm.$nextTick(() => {
+
+                let timeId = setInterval(() => {
+                  let start = 30
+                  let end = 60
+                  if(end > diviData.length) {
+                    end = diviData.length
+                    clearInterval(timeId)
+                  }
+                  state.diviData.push(...diviData.slice(start, end))
+                  start = end
+                  end += 30
+                }, 100)
+
+                console.timeEnd('id')
+
+              })
+            }
+
                 // 判断是否分屏, 更新数量
             if (isDivi) {
                 vm.$set(state.length, "comeLength", state.comeData.length)
@@ -167,11 +192,12 @@ export default {
         }
 
         state.inputValue = inputValue
+
         console.time('id')
         vm.$nextTick(function(){
           //渲染完毕
           // 如何解决性能优化啊？？？？？
-          console.timeEnd('id')
+
 
         });
     },
@@ -443,6 +469,19 @@ export default {
 
         })
     },
+  /**
+   * 航控排序
+   * @param state
+   * @param vm
+   * @constructor
+   */
+    NEW_FLY_CONTROL_SORT (state, vm) {
+      // 第一类
+      let firstArr = state.initData.filter((item, index) => {
+        // 连班航班 离港航班没有实际起飞，延误航班(到港延误或者离港延误)
+      })
+
+    },
     // 更新是否分屏显示的状态
     UPDATE_DIVISCREEN(state, val) {
         state.isDiviScreen = val
@@ -464,11 +503,12 @@ export default {
      * @param {*} state
      * @param {*} vm
      */
-    GET_INIT_DATA(state, vm) {
+    GET_INIT_DATA(state, {vm, data, time}) {
         // vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
-        vm.$http.get('/api/data').then((res) => {
-
-            res.data.data.d.flight.forEach((item, index) => {
+        //vm.$http.get('/api/data').then((res) => {
+            console.log(time)
+            console.time('end')
+            data.flight.forEach((item, index) => {
                     if (!item['mark'].trim()) {
                         vm.$set(item, 'mark', '/')
                     }
@@ -476,10 +516,10 @@ export default {
                     state.flightIdArr.push(item.flightId)
                 })
                 // 复制一份初始化数据
-            state.cloneInitData = JSON.parse(JSON.stringify(res.data.data.d.flight))
+            state.cloneInitData = JSON.parse(JSON.stringify(data.flight))
 
             // 权限数据
-            state.authData = res.data.data.d.Auth
+            state.authData = data.Auth
                 // 到离港合并的数据
             let flightNoArr = [] //航班号
             state.initData.forEach((item, index) => {
@@ -555,26 +595,35 @@ export default {
                 flagCount++
 
             })
+            //
 
-
+            console.timeEnd('end')
             // 克隆一份合屏的数据
             state.cloneMergeData = JSON.parse(JSON.stringify(state.initData))
-            Object.freeze(state.cloneMergeData)
-            // let initData = state.cloneMergeData
-            // let start = 0
-            // let end = 100
-            // setInterval(() => {
-            //   if(end > state.cloneMergeData.length) {
-            //     end = state.cloneMergeData.length
-            //   }
-            //   state.initData.push(initData.slice(start, end))
-            //   start = end
-            //   end += 100
-            // }, 100)
+            // Object.freeze(state.cloneMergeData)
+            // 分段渲染
+            let diviData = JSON.parse(JSON.stringify(state.initData))
+            diviData.slice(0, 100).forEach((item, index) => {
+              vm.$set(state.diviData, index, item)
+            })
 
-                // state.cloneMergeData.forEach((item, index) => {
+            vm.$nextTick(() => {
+              let start = 100
+              let end = 200
+              let timeId = setInterval(() => {
+                if(end > diviData.length) {
+                  end = diviData.length
+                  clearInterval(timeId)
+                }
+                state.diviData.push(...diviData.slice(start, end))
+                start = end
+                end += 100
+              }, 100)
 
-            //     })
+            })
+
+
+
             // 到港数据
             let comeData = JSON.parse(JSON.stringify(state.cloneInitData)).filter((item) => {
                 return item.aOrD === 'A'
@@ -617,7 +666,7 @@ export default {
 
             // 复制一份服务数据
             state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
-        })
+
     },
     /**
      * 服务数据的按需显示
@@ -878,24 +927,24 @@ export default {
      * @param {*} param1
      */
     RESET_DATA_SEARCH(state, { vm }) {
-        if (state.isDiviScreen) {
-            if(state.cloneComeData.length > state.comeData.length) {
-              state.cloneComeData.forEach((item, index) => {
-                vm.$set(state.comeData, index, item)
-              })
-            }
-
-            state.cloneLeaveData.forEach((item, index) => {
-                vm.$set(state.leaveData, index, item)
-            })
-        } else {
-            if(state.cloneMergeData.length > state.initData.length) {
-              state.cloneMergeData.forEach((item, index) => {
-                vm.$set(state.initData, index, item)
-              })
-            }
-
-        }
+        // if (state.isDiviScreen) {
+        //     if(state.cloneComeData.length > state.comeData.length) {
+        //       state.cloneComeData.forEach((item, index) => {
+        //         vm.$set(state.comeData, index, item)
+        //       })
+        //     }
+        //
+        //     state.cloneLeaveData.forEach((item, index) => {
+        //         vm.$set(state.leaveData, index, item)
+        //     })
+        // } else {
+        //     if(state.cloneMergeData.length > state.initData.length) {
+        //       state.cloneMergeData.forEach((item, index) => {
+        //         vm.$set(state.initData, index, item)
+        //       })
+        //     }
+        //
+        // }
     },
     /**
      * 模拟航班信息的更新

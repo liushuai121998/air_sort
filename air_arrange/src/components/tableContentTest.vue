@@ -154,28 +154,36 @@
   </div>
 </template>
 <script>
-
+  import {mapActions} from 'vuex'
   import scrollBar from './scrollBar'
   import scrollXBar from './scrollXBar'
   import rightContent from './rightContent'
   import $scrollBar from '../js/jqueryScrollBar'
   export default {
+    props: ['getTdData'],
     data () {
       return {
-//        tdData: [],
+        //tdData: [],
         tdData: this.$store.state.initData,
-        cloneTdData: this.$store.state.cloneInitData,
+        //cloneTdData: this.$store.state.cloneInitData,
+        cloneInitData: [],
         comeTemp: null,
         leaveTemp: null,
         isFirstUpdate: false,
         isMergeFirstUpdate: false,
         selectTarget: '',
         serviceData: this.$store.state.serviceData,
+//        serviceData: [],
+//        comeData: [],
         comeData: this.$store.state.comeData,
         leaveData: this.$store.state.leaveData,
+//        leaveData: [],
         serviceWidth: this.$store.state.serviceWidth,
         comeServiceWidth: this.$store.state.comeServiceWidth,
         leaveServiceWidth: this.$store.state.leaveServiceWidth,
+//        serviceWidth: [],
+//        comeServiceWidth: [],
+//        leaveServiceWidth: [],
         target: null,
         /*服务提交与取消*/
         isShowSubmit: false,
@@ -192,10 +200,167 @@
       }
     },
     created () {
-      this.$store.commit('GET_INIT_DATA', this)
+      // this.getInitData(this)
       // setInterval(() => {
       //   this.$store.dispatch('FLIGHT_INFO_UPDATE', {vm: this})
       // }, 5000)
+      // 发送ajax请求
+      console.time('haha')
+//      this.$http.get('/api/data')
+//        .then(res => {
+//            console.timeEnd('haha')
+//            // this.tdData.push(res.data.data.d.flight)
+//
+//            res.data.data.d.flight.forEach((item, index) => {
+//              this.$set(this.tdData, index, item)
+//            })
+//          console.time('1111')
+//          let flightIdArr = []
+//          this.tdData.forEach((item, index) => {
+//            if (!item['mark'].trim()) {
+//              this.$set(item, 'mark', '/')
+//            }
+//            this.$set(this.tdData, index, item)
+//            flightIdArr.push(item.flightId)
+//          })
+//          // 复制一份初始化数据
+//          this.cloneInitData = JSON.parse(JSON.stringify(this.tdData))
+//
+//          // 权限数据
+//          this.authData = res.data.data.d.Auth
+//          // 到离港合并的数据
+//          let flightNoArr = [] //航班号
+//          this.tdData.forEach((item, index) => {
+//            flightNoArr.push(item['flightNo'])
+//          })
+//
+//          // 到港离港的数据
+//          let mergeData = []
+//
+//          this.tdData.forEach((item, index, arr) => {
+//            // console.log(item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10))
+//            if (item['operationDate'].slice(0, 10) === item['brotherDate'].slice(0, 10) && item['brother'] != '/') {
+//
+//              if (flightNoArr.indexOf(item['brother']) >= 0) {
+//
+//                let _index = flightNoArr.indexOf(item['brother'])
+//                // 连班
+//                if (item['aOrD'] === 'A') {
+//                  // 到港
+//                  // index 到港 _index 离港
+//                  mergeData.push({ index, _index })
+//                }
+//
+//              }
+//            }
+//
+//          })
+//
+//
+//          // 整合连班航班数据
+//          mergeData.forEach((item) => {
+//
+//            this.$set(this.tdData[item["index"]], 'flightNo',this.tdData[item["index"]]['flightNo'] + " / " + this.cloneInitData[item["_index"]]['flightNo'])
+//            this.$set(this.tdData[item['index']], 'repeatCount', this.tdData[item['index']]['repeatCount'] + ' / ' + this.cloneInitData[item['_index']]['repeatCount'])
+//            this.$set(this.tdData[item['index']], 'regNo', this.tdData[item['index']]['regNo'] + ' / ' + this.cloneInitData[item['_index']]['regNo'])
+//            // 航班id
+//            this.$set(this.tdData[item['index']], 'flightId', this.tdData[item['index']]['flightId'] + ' / ' + this.cloneInitData[item['_index']]['flightId'])
+//
+//            if (this.tdData[item['index']]['dori'] != this.cloneInitData[item['_index']]['dori']) {
+//              this.$set(this.tdData[item['index']], 'dori', this.cloneInitData[item['index']]['dori'] + ' / ' + this.cloneInitData[item['_index']]['dori'])
+//            }
+//            if (this.tdData[item['index']]['airType'] != this.cloneInitData[item['_index']]['airType']) {
+//              this.$set(this.tdData[item['index']], 'airType', this.tdData[item['index']]['airType'] + ' / ' + this.cloneInitData[item['_index']]['airType'])
+//            }
+//            if (this.tdData[item['index']]['status'] != this.cloneInitData[item['_index']]['status']) {
+//              this.$set(this.tdData[item['index']], 'status', this.tdData[item['index']]['status'] + ' / ' + this.cloneInitData[item['_index']]['status'])
+//            }
+//            if (this.tdData[item['index']]['vip'] != this.cloneInitData[item['_index']]['vip']) {
+//              this.$set(this.tdData[item['index']], 'vip', this.tdData[item['index']]['vip'] + ' / ' + this.cloneInitData[item['_index']]['vip'])
+//            }
+//            // 离
+//            this.$set(this.tdData[item['index']], 'etd', this.cloneInitData[item['_index']]['etd'])
+//            this.$set(this.tdData[item['index']], 'std', this.cloneInitData[item['_index']]['std'])
+//            this.$set(this.tdData[item['index']], 'atd', this.cloneInitData[item['_index']]['atd'])
+//
+//            // 服务部分合并
+//            this.tdData[item['index']]['services'].forEach((el, index, arr) => {
+//              if (el['planTime'] === '/') {
+//                this.$set(arr[index], 'planTime', this.cloneInitData[item['_index']]['services'][index]['planTime'])
+//              }
+//              if (el['actualTime'] === '/') {
+//                this.$set(arr[index], 'actualTime', this.cloneInitData[item['_index']]['services'][index]['actualTime'])
+//              }
+//            })
+//
+//          })
+//
+//          let flagCount = 0
+//          // 合并
+//          mergeData.forEach((item, index, arr) => {
+//
+//            this.tdData.splice(item["_index"] - flagCount, 1)
+//            flagCount++
+//
+//          })
+//          //
+//
+//          console.timeEnd('end')
+//          // 克隆一份合屏的数据
+//          this.cloneMergeData = JSON.parse(JSON.stringify(this.tdData))
+//
+//          // 到港数据
+//          let comeData = JSON.parse(JSON.stringify(this.cloneInitData)).filter((item) => {
+//            return item.aOrD === 'A'
+//          })
+//          comeData.forEach((item, index) => {
+//            this.$set(this.comeData, index, item)
+//          })
+//
+//          // 离港数据
+//          let leaveData = JSON.parse(JSON.stringify(this.cloneInitData)).filter((item) => {
+//            return item.aOrD === 'D'
+//          })
+//          leaveData.forEach((item, index) => {
+//            this.$set(this.leaveData, index, item)
+//          })
+//
+//          // 服务型数据
+//          this.tdData.forEach((item, index) => {
+//            // state.serviceData.push(item['services'])
+//            this.$set(this.serviceData, index, item['services'])
+//          })
+//          // 服务型数据的width
+//          this.serviceData[0].forEach((item, index) => {
+//            // console.log(item['detailName'])
+//            this.serviceWidth.push({ width: '120px' })
+//            this.comeServiceWidth.push({ width: '120px' })
+//            this.leaveServiceWidth.push({ width: '120px' })
+//          })
+//          // 监控到港离港，到离港的数据
+////          vm.$set(state.length, "comeLength", comeData.length)
+////          vm.$set(state.length, 'leaveLength', leaveData.length)
+////          vm.$set(state.length, 'mergeLength', state.initData.length)
+//
+//
+//
+////          // 复制一份到港数据
+////          state.cloneComeData = JSON.parse(JSON.stringify(state.comeData))
+////          // 复制一份离港数据
+////          state.cloneLeaveData = JSON.parse(JSON.stringify(state.leaveData))
+////
+////          // 复制一份服务数据
+////          state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
+//
+//
+//
+//            console.timeEnd('1111')
+//            this.getTdData(this.tdData)
+//            console.time('start')
+//
+//        })
+      this.$store.dispatch('GET_INIT_DATA', this)
+      console.time('start')
     },
     mounted () {
 
@@ -223,8 +388,26 @@
 
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
+
+    },
+    beforeUpdate () {
+
     },
     updated () {
+        console.timeEnd('start')
+//      let start = 30
+//      let end = 60
+//      let diviData = JSON.parse(JSON.stringify(this.$store.state.initData))
+//      let timeId = setInterval(() => {
+//        if(end > diviData.length) {
+//          end = diviData.length
+//          clearInterval(timeId)
+//        }
+//        this.tdData.push(...diviData.slice(start, end))
+//        start = end
+//        end += 30
+//      }, 100)
+
       if(!this.$store.state.isDiviScreen) {
                 let rightContent = document.querySelector('.merge_wrap').querySelector('.right_message')
                 this.$store.commit('RIGHT_CONTENT', {vm: this, rightContent})
@@ -508,12 +691,13 @@
           alert(this.clickServiceData['flightNo'])
         }
         this.isShowFlightInfo = false
-      }
+      },
+      ...mapActions ({
+        getInitData: 'GET_INIT_DATA'
+      })
     },
     computed: {
-      tdData () {
 
-      },
       thLeftData () {
         return this.$store.state.thLeftData
       },

@@ -64,6 +64,7 @@
 import {formatDate} from '../utils/time_format'
 import $scrollBar from '../js/jqueryScrollBar.js'
 export default {
+    props: ['tdData'],
     data () {
         return {
           inputValue: '',
@@ -82,7 +83,8 @@ export default {
           timeId: '',
           isTime: false,
           // 航班变化的信息
-          flightUpdateInfo: this.$store.state.flightUpdateInfo
+          flightUpdateInfo: this.$store.state.flightUpdateInfo,
+          cloneData: []
         }
     },
     created () {
@@ -113,7 +115,6 @@ export default {
       }, 1000)
 
       this.changeTime()
-
     },
     methods: {
         changeTime () {
@@ -168,10 +169,91 @@ export default {
         textChange (ev) {
           console.time('hello')
           this.$store.commit('UPDATE_TD',{inputValue: this.inputValue, vm: this, placeHolderValue: this.placeHolderValue})
-          this.$nextTick(() => {
-              console.timeEnd('hello')
-          })
+//          this.$nextTick(() => {
+//              console.timeEnd('hello')
+//          })
+//          if (this.placeHolderValue.search('时间') > 0) {
+//            return
+//          }
+
+          if (!this.$store.state.isDiviScreen) {
+
+            //console.log(this.cloneData)
+            //this.dataChange(this.cloneData, this.tdData, false)
+          } else {
+//            dataChange(state.cloneComeData, state.comeData, true)
+//            dataChange(state.cloneLeaveData, state.leaveData, true)
+          }
+          let _this = this
+
+          console.time('id')
+
+
         },
+        dataChange(cloneData, data, isDivi) {
+            //debugger
+            // 重置数据
+            console.time('id')
+
+            cloneData.forEach((item, index) => {
+              this.$set(data, index, item)
+            })
+
+            let arrIndex = []
+            let param = ''
+            this.inputValue = this.inputValue.toUpperCase()
+
+            data.forEach((item, index) => {
+              if (this.placeHolderValue.search('机型') > 0) {
+                param = 'airType'
+                if (item[param] && item[param].indexOf(this.inputValue) >= 0) {
+                  arrIndex.push(item)
+                }
+
+
+              } else if (this.placeHolderValue.search('航班') > 0) {
+
+                param = 'flightNo'
+                if (item[param] && item[param].search(this.inputValue) >= 0) {
+                  arrIndex.push(item)
+                }
+              } else if (this.placeHolderValue.search('状态') > 0) {
+                param = 'status'
+                if (item[param] && item[param].search(this.inputValue) >= 0) {
+                  arrIndex.push(item)
+                }
+              } else if (this.placeHolderValue.search('航线') > 0) {
+                param = 'line'
+                if (item[param] && item[param].search(this.inputValue) >= 0) {
+                  arrIndex.push(item)
+                }
+              } else if (this.placeHolderValue.search('机号') > 0) {
+                param = 'regNo'
+                if (item[param] && item[param].search(this.inputValue) >= 0) {
+                  arrIndex.push(item)
+                }
+              }
+
+            })
+            //data = JSON.parse(JSON.stringify(arrIndex))
+            if(arrIndex.length === data.length) {
+              return;
+            }
+            console.time('bbb')
+            data.splice(arrIndex.length)
+            data.forEach((item, index, arr) => {
+              this.$set(arr, index, arrIndex[index])
+            })
+
+            // 判断是否分屏, 更新数量
+          //            if (isDivi) {
+          //              vm.$set(state.length, "comeLength", state.comeData.length)
+          //              vm.$set(state.length, 'leaveLength', state.leaveData.length)
+          //            } else {
+          //              vm.$set(state.length, 'mergeLength', state.initData.length)
+          //            }
+
+          },
         selectValue (ev) {
           this.placeHolderValue = ev.target.value
           this.inputValue = ''

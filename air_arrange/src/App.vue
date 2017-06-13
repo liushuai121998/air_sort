@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div v-if='isContentShow.isShow'>
-      <v-header></v-header>
+      <v-header :td-data="tdData"></v-header>
       <side-bar></side-bar>
       <keep-alive>
-        <table-content v-once></table-content>
+        <table-content v-once :get-td-data="getTdData"></table-content>
       </keep-alive>
       <v-footer></v-footer>
     </div>
@@ -25,7 +25,8 @@ export default {
   name: 'app',
   data () {
     return {
-      isContentShow: this.$store.state.isContentShow
+      isContentShow: this.$store.state.isContentShow,
+      tdData: []
     }
   },
   created () {
@@ -39,7 +40,10 @@ export default {
       })
   },
   methods: {
-
+      getTdData (data) {
+        this.tdData = data
+        console.log(data)
+      }
   },
   computed: {
     // data () {

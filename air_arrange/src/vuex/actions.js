@@ -257,5 +257,14 @@ export default {
         context.commit('FLIGHT_INFO_UPDATE', { data, vm })
             //})
 
+    },
+    // 获取初始化数据
+    GET_INIT_DATA ({commit}, vm) {
+      console.time('sync')
+      vm.$http.get('/api/data').then((res) => {
+        console.timeEnd('sync')
+        console.log(Date.now())
+        commit('GET_INIT_DATA', {vm, data: res.data.data.d, time: Date.now()})
+      })
     }
 }
