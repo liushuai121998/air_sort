@@ -12,7 +12,7 @@
         <option>按机号搜索</option>
       </select>
       <!--操作数据-->
-      <!--<input type="button" value="新增" @click='addData'>-->
+      <input type="button" value="新增" @click='addData'>
       <!--<input type="button" value="修改">-->
       <!--<input type="button" value="删除">-->
       <select>

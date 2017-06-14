@@ -5,6 +5,9 @@
         <div class='contentWrap'>
           <div class='main_content'>
             <div class='theadWrap  scrollX' ref='theadWrap'>
+              <ul style="display: flex">
+                <li v-for="item in tdData">{{item.NUM}}</li>
+              </ul>
               <ul class='tab'>
                 <li v-for='(item, index) in thLeftData' :style='{width: item.width}' :key='index' @mousedown='sortTable($event, index, tdData)' :class='{sort_li: true, index_fixed: index === 0 || index === 1}' ><span>{{item.title}}</span><span class='arrow'></span><div class='ww'></div></li>
                 <!--服务数据头部-->
@@ -36,7 +39,6 @@
                   </li>
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
@@ -163,8 +165,8 @@
     props: ['getTdData'],
     data () {
       return {
-        //tdData: [],
         tdData: this.$store.state.initData,
+        //tdData: [],
         //cloneTdData: this.$store.state.cloneInitData,
         cloneInitData: [],
         comeTemp: null,
@@ -173,17 +175,11 @@
         isMergeFirstUpdate: false,
         selectTarget: '',
         serviceData: this.$store.state.serviceData,
-//        serviceData: [],
-//        comeData: [],
         comeData: this.$store.state.comeData,
         leaveData: this.$store.state.leaveData,
-//        leaveData: [],
         serviceWidth: this.$store.state.serviceWidth,
         comeServiceWidth: this.$store.state.comeServiceWidth,
         leaveServiceWidth: this.$store.state.leaveServiceWidth,
-//        serviceWidth: [],
-//        comeServiceWidth: [],
-//        leaveServiceWidth: [],
         target: null,
         /*服务提交与取消*/
         isShowSubmit: false,
@@ -196,7 +192,9 @@
         isDiviScreenStr: '',
         //航班信息发布的显示
         isShowFlightInfo: false,
-        isFirst: true
+        isFirst: true,
+        startIndex: 0,
+        len: 100
       }
     },
     created () {
@@ -360,10 +358,8 @@
 //
 //        })
       this.$store.dispatch('GET_INIT_DATA', this)
-      console.time('start')
     },
     mounted () {
-
      if(this.$store.state.isDiviScreen) {
         this.$refs.diviContent1.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
         this.$refs.diviContent2.style.height = (document.documentElement.clientHeight - 60) / 2 + 'px'
@@ -384,14 +380,14 @@
         $scrollBar.widthScale('.tab', {mergeWrap: this.$refs.mergeWrap, diviContent1: null, diviContent2: null}, this)
 
         $scrollBar.moveWrapWidth(this.$refs.mergeWrap, '.move_wrap', '.tab')
-
+        //$scrollBar.mouseScroll({vm: this, mergeWrap: this.$refs.mergeWrap})
 
      }
      this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
 
     },
     beforeUpdate () {
-
+        console.time('start')
     },
     updated () {
         console.timeEnd('start')
@@ -442,6 +438,8 @@
 
         this.$refs.wrap.style.height = document.documentElement.clientHeight - 60 + 'px'
         $scrollBar.moveWrapWidth(this.$refs.mergeWrap, '.move_wrap', '.tab')
+
+        //$scrollBar.mouseScroll({vm: this, mergeWrap: this.$refs.mergeWrap})
       }
     },
     methods: {

@@ -152,5 +152,12 @@ export default {
     flightIdArr: [],
     // 服务信息的更新
     serviceUpdateInfo: [],
-    diviData: []
+    diviData: [],
+  // content部分的this
+    contentThis: null,
+    // 是否航控排序
+    isSorted: false,
+    // 航班排序数据
+    flyData: [],
+    highFlyData: []
 }

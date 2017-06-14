@@ -29,11 +29,11 @@
   import $scrollBar from '../js/jqueryScrollBar.js'
   export default {
     data () {
-        
+
         return {
           style: {
               height: window.innerHeight + 'px',
-              
+
           },
           isChecked: this.$store.state.isDiviScreen,
           isSorted: false,
@@ -53,9 +53,9 @@
           Array.prototype.slice.call(this.$refs.sideWrap.children).forEach((item) => {
             item.firstElementChild.style.color = 'white'
           })
-          ev.target.toggleClick = !ev.target.toggleClick  
+          ev.target.toggleClick = !ev.target.toggleClick
           if(this.isReverse) {
-            ev.target.toggleClick = !ev.target.toggleClick  
+            ev.target.toggleClick = !ev.target.toggleClick
             this.isReverse = false
           }
           if(ev.target.toggleClick) {
@@ -84,7 +84,9 @@
         this.isReverse = true
 
         if(this.isSorted) {
-          this.$store.commit('FLY_CONTROL_SORT', this) 
+          this.$store.commit('NEW_FLY_CONTROL_SORT', this)
+        }else {
+          this.$store.commit('NO_FLY_CONTROL_SORT', this)
         }
       },
       showRightContent () {
@@ -103,7 +105,7 @@
             document.querySelector('.merge_wrap').style.width = '85%'
             document.querySelector('.contentWrap').style.width = '100%'
           }
-          
+
         }else {
           if(!this.$store.state.isDiviScreen) {
             document.querySelector('.merge_wrap').style.width = '100%'
@@ -161,5 +163,5 @@
   .side .cog section span {
     float: left;
   }
-  
+
 </style>

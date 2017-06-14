@@ -167,39 +167,133 @@ export default {
             }
         }
     },
-    /**
-     * 选中的目标移动到视口之内
-     * @param {*} targetDom
-     * @param {*} divi
-     */
-    targetMove(targetDom, divi) {
-        //console.log(targetDom.offsetParent)
-        if ((targetDom.getBoundingClientRect().top - divi.getBoundingClientRect().top) >= divi.offsetHeight) {
-            let top = -((targetDom.getBoundingClientRect().top - divi.getBoundingClientRect().top) - divi.offsetHeight + targetDom.offsetHeight)
+  /**
+   * 鼠标滚轮滚动
+   * (解决) 鼠标向下滚 页面向上
+   *        鼠标向上滚 页面向下
+   * @param {*} el
+   * @param {*} tal
+   */
+  mouseScroll({vm, mergeWrap}) {
+    // if (mergeWrap) {
+    //   mouseMove(mergeWrap)
+    // } else {
+    //   mouseMove(diviContent1)
+    //   mouseMove(diviContent2)
+    // }
+    mouseMove(mergeWrap)
 
-            move(top)
-        } else if (targetDom.getBoundingClientRect().top < divi.getBoundingClientRect().top) {
-            let top = divi.getBoundingClientRect().top - targetDom.getBoundingClientRect().top + divi.offsetHeight - targetDom.offsetHeight
-            move(top)
+
+    function mouseMove(parent) {
+      // 滚动条的dom
+      // let dom = parent.querySelector(el)
+      // // 表格的dom tbody
+      // let tableDom = parent.querySelectorAll(tal)
+
+      /**
+       *
+       * @param {*事件对象} obj
+       * @param {*事件类型} type
+       * @param {*回调函数} fn
+       */
+      function addEvent(obj, type, fn) {
+        if (obj.attachEvent) {
+          // IE
+          obj.attachEvent('on' + type, fn)
+        } else {
+          // chrome和fireFox
+          obj.addEventListener(type, fn, false)
         }
+      }
+      // chrome IE
+      addEvent(parent, 'mousewheel', function(ev) {
+        // console.log(tableDom, 'tableDom')
+        // if (tableDom[0].offsetHeight <= parent.offsetHeight) {
+        //   return
+        // }
+        // ev = ev || event
+        //console.log(ev.wheelDelta, ev)
+        // ev.whellDelta 为正 鼠标向上滚 (120)
+        // ev.wheelDelta 为负 鼠标向下滚 (-120)
 
-        function move(top) {
+        // const maxT = dom.parentNode.offsetHeight - dom.clientHeight
+        // let top = 0
+        // let tableMaxT = (tableDom[0].offsetHeight + 10) - (dom.parentNode.offsetHeight - 68)
+        // // if (tableDom[0].offsetHeight < document.documentElement.clientHeight) {
+        // //     return
+        // // }
+        // const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
+        if (ev.wheelDelta > 0) {
+          // 鼠标向上滚 滚动条向上滚
+          // top = dom.offsetTop - 30
+          // top += css(dom, 'translateY') - 10
+          // if (top < 0) {
+          //   top = 0
+          // }
 
-            let tableDom = divi.querySelectorAll('.scrollTbody')
-            let dom = divi.querySelector('.scroll_bar_child')
-            let currentTop = css(tableDom[0], 'translateY')
-            top = top + currentTop
-            let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight + 68
-            const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
-            css(dom, 'translateY', -top / scale)
-
-            for (var i = 0, len = tableDom.length; i < len; i++) {
-                css(tableDom[i], 'translateY', top)
-            }
-
+          vm.startIndex--
+          if(vm.startIndex < 0) {
+            vm.startIndex = 0
+          }
+          vm.tdData = vm.$store.state.initData.slice(vm.startIndex, vm.startIndex + vm.len)
+        } else if (ev.wheelDelta < 0) {
+          // 向下滚 滚动条向下滚
+          // top = dom.offsetTop + 30
+          //top += css(dom, 'translateY') + 10
+          // if (top > maxT) {
+          //   top = maxT
+          // }
+          vm.startIndex++
+          if(vm.startIndex + vm.len > vm.$store.state.initData.length) {
+            vm.startIndex = vm.$store.state.initData.length - vm.len
+          }
+          vm.tdData = vm.$store.state.initData.slice(vm.startIndex, vm.startIndex + vm.len)
         }
+        // dom.style.top = top + 'px'
+        // for (var i = 0, len = tableDom.length; i < len; i++) {
+        //   tableDom[i].style.top = -top * scale + 34 + 'px'
+        //
+        // }
+      })
+      // fireFox
+      // addEvent(parent, 'DOMMouseScroll', function(ev) {
+      //   ev = ev || event
+      //   //console.log(ev.detail, 'ev______________________')
+      //   // ev.detail 为负 鼠标向上滚 (-3)
+      //   // ev.detail 为正 鼠标向下滚 (3)
+      //   const maxT = dom.parentNode.offsetHeight - dom.clientHeight
+      //   let top = 0
+      //   let tableMaxT = tableDom[0].offsetHeight - dom.parentNode.offsetHeight
+      //   const scale = tableMaxT / (dom.parentNode.offsetHeight - dom.clientHeight)
+      //   if (ev.detail > 0) {
+      //     // 向上滚
+      //     // top += dom.offsetTop + 20
+      //     top += css(dom, 'translateY') + 10
+      //     if (top > maxT) {
+      //       top = maxT
+      //     }
+      //
+      //   } else if (ev.detail < 0) {
+      //     // 向下滚
+      //     // top += dom.offsetTop - 20
+      //     top += css(dom, 'translateY') - 10
+      //     if (top < 0) {
+      //       top = 0
+      //     }
+      //
+      //   }
+      //   // dom.style.top = top + 'px'
+      //   css(dom, 'translateY', top)
+      //   //css(dom, 'translateZ')
+      //   for (var i = 0, len = tableDom.length; i < len; i++) {
+      //     //tableDom[i].style.top = -top * scale + 'px'
+      //     css(tableDom[i], 'translateY', -top * scale)
+      //     // css(tableDom[i], 'translateZ', 1)
+      //   }
+      // })
 
-    },
+    }
+  },
     /**
      * 表头固定
      * @param {*} parent

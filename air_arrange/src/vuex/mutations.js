@@ -1,5 +1,11 @@
 import Base64 from '../utils/base64.js'
 
+let _init = {
+  sortData () {
+
+  }
+}
+
 export default {
     /**
      * 新增数据
@@ -11,8 +17,24 @@ export default {
         let length = state.initData.length
         let randomIndex = Math.round(Math.random() * (length - 1))
         let contentStr = state.cloneMergeData[randomIndex]
+        let cloneContentStr = state.cloneMergeData[randomIndex]
+        if(state.isSorted) {
+          // 上一个和下一个的NUM取中间值
+          console.log(contentStr.NUM)
+          state.initData.push(contentStr)
+          state.cloneMergeData.push(cloneContentStr)
+          state.initData.sort((a, b) => {
+            return a.NUM - b.NUM
+          })
+          return
+        }else {
+          contentStr.NUM = 175.5
+        }
+
         state.initData.push(contentStr)
-        state.cloneMergeData.push(contentStr)
+
+
+        state.cloneMergeData.push(cloneContentStr)
         state.serviceData.push(contentStr['services'])
 
         // 到港数据
@@ -95,8 +117,8 @@ export default {
         if (!state.isDiviScreen) {
             dataChange(state.cloneMergeData, state.initData, false)
         } else {
-            dataChange(state.cloneComeData, state.comeData, true)
-            dataChange(state.cloneLeaveData, state.leaveData, true)
+            // dataChange(state.cloneComeData, state.comeData, true)
+            // dataChange(state.cloneLeaveData, state.leaveData, true)
         }
 
         function dataChange(cloneData, data, isDivi) {
@@ -106,6 +128,7 @@ export default {
             cloneData.forEach((item, index) => {
                 vm.$set(data, index, item)
             })
+            //data = cloneData
 
             let arrIndex = []
             let param = ''
@@ -151,36 +174,12 @@ export default {
               return;
             }
             console.time('bbb')
+
             data.splice(arrIndex.length)
             data.forEach((item, index, arr) => {
               vm.$set(arr, index, arrIndex[index])
             })
-            let diviData = JSON.parse(JSON.stringify(data))
-            if(diviData.length > 30) {
-              state.diviData.splice(30)
-              diviData.slice(0, 30).forEach((item, index) => {
-                vm.$set(state.diviData, index, item)
-              })
-              console.timeEnd('bbb')
-              vm.$nextTick(() => {
-
-                let timeId = setInterval(() => {
-                  let start = 30
-                  let end = 60
-                  if(end > diviData.length) {
-                    end = diviData.length
-                    clearInterval(timeId)
-                  }
-                  state.diviData.push(...diviData.slice(start, end))
-                  start = end
-                  end += 30
-                }, 100)
-
-                console.timeEnd('id')
-
-              })
-            }
-
+            state.contentThis.tdData = arrIndex
                 // 判断是否分屏, 更新数量
             if (isDivi) {
                 vm.$set(state.length, "comeLength", state.comeData.length)
@@ -191,14 +190,12 @@ export default {
 
         }
 
-        state.inputValue = inputValue
+        //state.inputValue = inputValue
 
-        console.time('id')
+        console.time('render')
         vm.$nextTick(function(){
           //渲染完毕
-          // 如何解决性能优化啊？？？？？
-
-
+          console.timeEnd('render')
         });
     },
     /**
@@ -476,9 +473,32 @@ export default {
    * @constructor
    */
     NEW_FLY_CONTROL_SORT (state, vm) {
-      // 第一类
-      let firstArr = state.initData.filter((item, index) => {
-        // 连班航班 离港航班没有实际起飞，延误航班(到港延误或者离港延误)
+      state.isSorted = vm.isSorted
+      // state.initData.sort((a, b) => {
+      //   return a.NUM - b.NUM
+      // })
+
+
+      state.contentThis.tdData = state.flyData.sort((a, b) => {
+        return a['NUM'] - b['NUM']
+      })
+
+      console.time('render')
+      vm.$nextTick(() => {
+        console.timeEnd('render')
+      })
+
+    },
+  /**
+   * 不选择航控排序
+   * @param state
+   * @param vm
+   * @constructor
+   */
+    NO_FLY_CONTROL_SORT (state,vm) {
+
+      state.cloneMergeData.forEach((item, index) => {
+        vm.$set(state.initData, index, item)
       })
 
     },
@@ -504,6 +524,7 @@ export default {
      * @param {*} vm
      */
     GET_INIT_DATA(state, {vm, data, time}) {
+        state.contentThis = vm
         // vm.$http.post('http://192.168.7.53:8080/getInitData', { "username": 'ghms_admin' }).then((res) => {
         //vm.$http.get('/api/data').then((res) => {
             console.log(time)
@@ -511,14 +532,20 @@ export default {
             data.flight.forEach((item, index) => {
                     if (!item['mark'].trim()) {
                         vm.$set(item, 'mark', '/')
+                        // item.mark = '/'
                     }
                     vm.$set(state.initData, index, item)
                     state.flightIdArr.push(item.flightId)
                 })
-                // 复制一份初始化数据
-            state.cloneInitData = JSON.parse(JSON.stringify(data.flight))
 
+            //state.initData = data.flight
+                // 复制一份初始化数据
+            console.time('stringify')
+            //state.cloneInitData = JSON.parse(JSON.stringify(data.flight))
+            state.cloneInitData = [].concat(data.flight)
+            console.timeEnd('stringify')
             // 权限数据
+            console.time('auth')
             state.authData = data.Auth
                 // 到离港合并的数据
             let flightNoArr = [] //航班号
@@ -547,6 +574,7 @@ export default {
                 }
 
             })
+            console.timeEnd('auth')
 
 
             // 整合连班航班数据
@@ -589,53 +617,135 @@ export default {
 
             let flagCount = 0
                 // 合并
+            console.time('merge')
             mergeData.forEach((item, index, arr) => {
 
                 state.initData.splice(item["_index"] - flagCount, 1)
                 flagCount++
 
             })
+            console.timeEnd('merge')
             //
-
+            //state.contentThis.tdData = state.initData
             console.timeEnd('end')
             // 克隆一份合屏的数据
-            state.cloneMergeData = JSON.parse(JSON.stringify(state.initData))
+            // state.cloneMergeData = JSON.parse(JSON.stringify(state.initData))
+
+            state.cloneMergeData = [].concat(state.initData)
+
+            // state.initData.forEach((item, index) => {
+            //   if(index === 175) {
+            //     item.NUM = 168.5
+            //   }else {
+            //     item.NUM = index
+            //   }
+            // })
+
+            // 航控排序
+            let arr1 = []
+            let arr2 = []
+            let arr3 = []
+            let arr4 = []
+            let arr5 = []
+            let arr6 = []
+            let arr7 = []
+            let arr8 = []
+            let arr9 = []
+            let arr10 = []
+            let arr11 = []
+            let arr12 = []
+            state.initData.forEach((item, index) => {
+              if(!item.level) {
+                return
+              }
+              switch (item.level.aoc) {
+                case "1":
+                  arr1.push(item)
+                  break
+                case "2":
+                  arr2.push(item)
+                  break
+                case "3":
+                  arr3.push(item)
+                  break
+                case "4":
+                  arr4.push(item)
+                  break
+                case "5":
+                  arr5.push(item)
+                  break
+                case "6":
+                  arr6.push(item)
+                  break
+                case "7":
+                  arr7.push(item)
+                  break
+                case "8":
+                  arr8.push(item)
+                  break
+                case "9":
+                  arr9.push(item)
+                  break
+                case "10":
+                  arr10.push(item)
+                  break
+                case "11":
+                  arr11.push(item)
+                  break
+                case "12":
+                  arr12.push(item)
+                  break
+
+              }
+            })
+
+            arr1.sort(sortData('std'))
+            arr2.sort(sortData('std'))
+            arr3.sort(sortData('std'))
+            arr4.sort(sortData('std'))
+            arr5.sort(sortData('std'))
+            arr6.sort(sortData('eta'))
+            arr7.sort(sortData('std'))
+            arr8.sort(sortData('sta'))
+            arr9.sort(sortData('ata'))
+            arr10.sort(sortData('std'))
+            arr11.sort(sortData('sta'))
+            arr12.sort(sortData('atd'))
+
+            function sortData(str) {
+              return function (a, b) {
+                let val1 = a[str]
+                let val2 = b[str]
+                return val1 - val2
+              }
+            }
+
+            // 排完序
+            state.highFlyData.push(arr1, arr2, arr3, arr4, arr5, arr6, arr7, arr8, arr9, arr10, arr11, arr12)
+            // 将二位数组拍平   [].concat.apply([],arr)
+            state.flyData = [].concat.apply([], state.highFlyData);
+
+            state.flyData.forEach((item, index) => {
+              item.NUM = index
+            })
+
+
             // Object.freeze(state.cloneMergeData)
-            // 分段渲染
-            let diviData = JSON.parse(JSON.stringify(state.initData))
-            diviData.slice(0, 100).forEach((item, index) => {
-              vm.$set(state.diviData, index, item)
-            })
-
-            vm.$nextTick(() => {
-              let start = 100
-              let end = 200
-              let timeId = setInterval(() => {
-                if(end > diviData.length) {
-                  end = diviData.length
-                  clearInterval(timeId)
-                }
-                state.diviData.push(...diviData.slice(start, end))
-                start = end
-                end += 100
-              }, 100)
-
-            })
-
-
 
             // 到港数据
             let comeData = JSON.parse(JSON.stringify(state.cloneInitData)).filter((item) => {
                 return item.aOrD === 'A'
             })
+            state.contentThis.comeData = comeData
             comeData.forEach((item, index) => {
                 vm.$set(state.comeData, index, item)
             })
-
-            // 离港数据
+            //
+            // // 离港数据
             let leaveData = JSON.parse(JSON.stringify(state.cloneInitData)).filter((item) => {
                 return item.aOrD === 'D'
             })
+            state.contentThis.leaveData = leaveData
             leaveData.forEach((item, index) => {
                 vm.$set(state.leaveData, index, item)
             })
@@ -645,6 +755,7 @@ export default {
                     // state.serviceData.push(item['services'])
                     vm.$set(state.serviceData, index, item['services'])
                 })
+            state.contentThis.serviceData = state.serviceData
                 // 服务型数据的width
             state.serviceData[0].forEach((item, index) => {
                     // console.log(item['detailName'])
@@ -652,20 +763,27 @@ export default {
                     state.comeServiceWidth.push({ width: '120px' })
                     state.leaveServiceWidth.push({ width: '120px' })
                 })
+            // state.contentThis.serviceWidth = state.serviceWidth
+            // state.contentThis.comeServiceWidth = state.comeServiceWidth
+            // state.contentThis.leaveServiceWidth = state.leaveServiceWidth
                 // 监控到港离港，到离港的数据
             vm.$set(state.length, "comeLength", comeData.length)
             vm.$set(state.length, 'leaveLength', leaveData.length)
             vm.$set(state.length, 'mergeLength', state.initData.length)
 
 
-
-            // 复制一份到港数据
-            state.cloneComeData = JSON.parse(JSON.stringify(state.comeData))
-                // 复制一份离港数据
-            state.cloneLeaveData = JSON.parse(JSON.stringify(state.leaveData))
-
-            // 复制一份服务数据
-            state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
+            console.time('parse')
+            //复制一份到港数据
+            // state.cloneComeData = JSON.parse(JSON.stringify(state.comeData))
+            //     // 复制一份离港数据
+            // state.cloneLeaveData = JSON.parse(JSON.stringify(state.leaveData))
+            //
+            // // 复制一份服务数据
+            // state.cloneServiceData = JSON.parse(JSON.stringify(state.serviceData))
+            state.cloneComeData = [].concat(comeData)
+            state.cloneLeaveData = [].concat(leaveData)
+            state.cloneServiceData = [].concat(state.serviceData)
+            console.timeEnd('parse')
 
     },
     /**
@@ -846,6 +964,22 @@ export default {
             // 新增航班
             let newData = JSON.parse(result.value)
             state.initData.push(newData)
+            if(!newData.level) {
+              return
+            }
+            let level = newData.level.aoc
+
+            state.highFlyData[level].push(newData)
+            state.highFlyData[level].sort((a, b) => {
+              return a['std'] - b['std']
+            })
+            let index = state.highFlyData[level].indexOf(newData)
+
+            state.highFlyData[level][inex].NUM = (state.hightFlyData[level][index - 1].NUM + state.highFlyData[level][index + 1].NUM) / 2
+
+            state.flyData = [].concat.apply([], state.highFlyData)
+
+
             state.flightUpdateInfo.push(result.msg + newData.flightNo)
             if(newData.aOrD === 'D') {
               // 离港
